@@ -7,24 +7,53 @@
 #include <SDL3/SDL_scancode.h>
 #include <SDL3/SDL_timer.h>
 #include <SDL3/SDL_audio.h>
-#include <corecrt.h>
+#include <SDL3/SDL_video.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <vulkan/vulkan_core.h>
 
 static RuinInternal engine = {0};
 
 
-RBool ri_init(RuinInternal *engine) {
+RnConfig *rnConfigGet() {
+    return &engine.pending_config;
+}
+
+void rnConfigUpdatePlatform() {
+    SDL_SetWindowTitle(engine.platform.window.window, engine.pending_config.window.title);
+    SDL_SetWindowFullscreen(engine.platform.window.window, engine.pending_config.window.fullscreen);
+    SDL_SetWindowBordered(engine.platform.window.window, !engine.pending_config.window.borderless);
+    SDL_SetWindowResizable(engine.platform.window.window, engine.pending_config.window.resizable);
+    engine.platform.active_config = engine.pending_config.window;
+    engine.platform.window.resized = 1;
+}
+
+
+void rnConfigUpdateRenderer() {
+    engine.renderer.sync.current_frame = 0;
+    engine.renderer.sync.skip_wait     = 1;
+    engine.renderer.active_config      = engine.pending_config.renderer;
+}
+
+
+RnBool rnSelfInit(RnConfig *c) {
+
+    engine.platform.active_config  = c->window;
+    engine.platform.pending_config = c->window;
+    engine.renderer.active_config  = c->renderer;
+    engine.renderer.pending_config = c->renderer;
     
-    ri__platform_init(&engine->platform);
+    ri_platform_init(&engine.platform);
+    ri_renderer_init(&engine.renderer, &engine.platform);
 
-    engine->entities.next_entity_id = 1;
-    engine->entities.dense_entities = (cvec){0};
+    engine.entities.next_entity_id = 1;
+    engine.entities.dense_entities = (cvec){0};
 
-    engine->components = (RI_Components){0};
-    engine->components.transforms.sparse_data      = malloc(RUIN_MAX_ENTITIES * sizeof(RTransform));
+    engine.components = (RI_Components){0};
+/*
+    engine.components.transforms.sparse_data      = malloc(RUIN_MAX_ENTITIES * sizeof(RTransform));
     engine->components.renderer_2ds.sparse_data    = malloc(RUIN_MAX_ENTITIES * sizeof(RSpriteRenderer));
     engine->components.renderer_3ds.sparse_data    = malloc(RUIN_MAX_ENTITIES * sizeof(RMeshRenderer));
     engine->components.sound_players.sparse_data   = malloc(RUIN_MAX_ENTITIES * sizeof(RSoundPlayer));
@@ -32,18 +61,19 @@ RBool ri_init(RuinInternal *engine) {
     engine->components.sound_listeners.sparse_data = malloc(RUIN_MAX_ENTITIES * sizeof(RSoundListener));
     engine->components.camera_2ds.sparse_data      = malloc(RUIN_MAX_ENTITIES * sizeof(RCamera2D));
     engine->components.camera_3ds.sparse_data      = malloc(RUIN_MAX_ENTITIES * sizeof(RCamera3D));
+*/
 
-
-    ri_comp_transform_init(engine);
+    ri_comp_transform_init(&engine);
 
     return 1;
 }
 
-void ri_kill(RuinInternal *engine) {
-    ri__renderer_kill(&engine->renderer);
-    ri__platform_kill(&engine->platform);
+void rnSelfKill() {
+    ri_renderer_kill(&engine.renderer);
+    ri_platform_kill(&engine.platform);
 
-    free(engine->components.transforms.sparse_data);
+    free(engine.components.transforms.sparse_data);
+/*
     free(engine->components.renderer_2ds.sparse_data);
     free(engine->components.renderer_3ds.sparse_data);
     free(engine->components.sound_players.sparse_data);
@@ -51,44 +81,24 @@ void ri_kill(RuinInternal *engine) {
     free(engine->components.sound_listeners.sparse_data);
     free(engine->components.camera_2ds.sparse_data);
     free(engine->components.camera_3ds.sparse_data);
-
-    ri_comp_transform_kill(engine);
-}
-
-
-RBool ruinInit(void) {
-    ri_init(&engine);
-
-    return 1;
-}
-
-RBool ruinKill(void) {
-    ri_kill(&engine);
-
-    return 1;
-}
-
-RBool ruinWindowCreate(int32_t w, int32_t h, const char *title) {
-    if (!ri_window_create(&engine.platform, w, h, title)) {
-        return 0;
-    }
-
-    ri_renderer_init(&engine.renderer, &engine.platform);
-    
-    return 1;
-}
-
-RBool ruinWindowRunning() {
-    return ri_window_running(&engine.platform);
+*/
+    ri_comp_transform_kill(&engine);
 }
 
 
 
-void ruinFrameBegin() {
-    ri_time_update(&engine.platform);
+
+RnBool rnSelfRunning() {
+    return ri_platform_window_running(&engine.platform);
 }
 
-void ruinFrameEnd() {
+
+
+void rnFrameBegin() {
+    ri_platform_time_update(&engine.platform);
+}
+
+void rnFrameEnd() {
 
     engine.platform.window.resized = 0;
 
@@ -104,8 +114,8 @@ void ruinFrameEnd() {
 
     if (engine.platform.window.resized) {
 
-        if (engine.platform.window.width == 0 || engine.platform.window.height == 0) {
-            printf("%d, %d\n", engine.platform.window.width, engine.platform.window.height);
+        if (engine.platform.active_config.width == 0 || engine.platform.active_config.height == 0) {
+            printf("%d, %d\n", engine.platform.active_config.width, engine.platform.active_config.height);
             return;
         }
         ri_renderer_recreate_swapchain(&engine.renderer, &engine.platform);
@@ -113,7 +123,7 @@ void ruinFrameEnd() {
         return;
     }
 
-    if (engine.platform.window.width == 0 || engine.platform.window.height == 0) {
+    if (engine.platform.active_config.width == 0 || engine.platform.active_config.height == 0) {
         return;
     }
 
@@ -124,26 +134,26 @@ void ruinFrameEnd() {
 }
 
 
-RBool ruinKeyDown(RKey k) {
+RnBool rnKeyDown(RnKey k) {
     return ( engine.platform.input.keys_now[k]) &&
            (!engine.platform.input.keys_was[k]);
 }
-RBool ruinKeyHold(RKey k) {
+RnBool rnKeyHold(RnKey k) {
     return engine.platform.input.keys_now[k];
 }
-RBool ruinKeyUp(RKey k) {
+RnBool rnKeyUp(RnKey k) {
     return ( engine.platform.input.keys_was[k]) &&
            (!engine.platform.input.keys_now[k]);
 }
 
-RBool ruinMouseDown(RMouseButton b) {
+RnBool rnMouseDown(RnMouseButton b) {
     return ( engine.platform.input.mouse_now[b - 1]) &&
            (!engine.platform.input.mouse_was[b - 1]);
 }
-RBool ruinMouseHold(RMouseButton b) {
+RnBool rnMouseHold(RnMouseButton b) {
     return engine.platform.input.mouse_now[b - 1];
 }
-RBool ruinMouseUp(RMouseButton b) {
+RnBool rnMouseUp(RnMouseButton b) {
     return ( engine.platform.input.mouse_was[b - 1]) &&
            (!engine.platform.input.mouse_now[b - 1]);
 }
@@ -153,25 +163,25 @@ float ruinMouseScroll() {
 }
 
 
-uint8_t ruinTimeFPS() {
+uint8_t rnTimeFPS() {
     return engine.platform.time.fps;
 }
-float ruinTimeDelta() {
+float rnTimeDelta() {
     return engine.platform.time.delta;
 }
-float ruinTimeDeltaFixed() {
+float rnTimeDeltaFixed() {
     return engine.platform.time.fixed_delta;
 }
-float ruinTimeElapsed() {
+float rnTimeElapsed() {
     return engine.platform.time.elapsed;
 }
-float ruinTimeElapsedFixed() {
+float rnTimeElapsedFixed() {
     return engine.platform.time.fixed_elapsed;
 }
-void ruinTimeSetSpeed(float s) {
+void rnTimeSetSpeed(float s) {
     engine.platform.time.speed = s;
 }
-void ruinTimeSetTargetFPS(uint8_t t) {
+void rnTimeSetTargetFPS(uint8_t t) {
     if (t == 0) {
         engine.platform.time.target_delta = 0;
         return;
@@ -180,27 +190,27 @@ void ruinTimeSetTargetFPS(uint8_t t) {
     engine.platform.time.target_delta = 1.0 / (float)t;
 }
 
-REntityID ruinEntityCreate() {
-    cvec_push(engine.entities.dense_entities, engine.entities.next_entity_id, REntityID);
+RnEntity rnEntityCreate() {
+    cvec_push(engine.entities.dense_entities, engine.entities.next_entity_id, RnEntity);
     engine.entities.next_entity_id += 1;
 
     return engine.entities.next_entity_id - 1;
 }
 
-void ruinEntityKill(REntityID e) {
-    cvec_remove(engine.entities.dense_entities, e, REntityID);
+void rnEntityKill(RnEntity e) {
+    cvec_remove(engine.entities.dense_entities, e, RnEntity);
 }
 
-RBool ruinEntityValid(REntityID e) {
-    REntityID id = RUIN_INVALID_ID;
-    cvec_index(engine.entities.dense_entities, e, REntityID, id);
+RnBool rnEntityValid(RnEntity e) {
+    RnEntity id = RUIN_INVALID_ID;
+    cvec_index(engine.entities.dense_entities, e, RnEntity, id);
 
     return id;
 }
 
 
-RTransform ruinDefaultTransform() {
-    return (RTransform){
+RnTransform ruinDefaultTransform() {
+    return (RnTransform){
         .position = {0},
         .rotation = {0},
         .scale    = { 1.0f, 1.0f, 1.0f },
@@ -209,50 +219,50 @@ RTransform ruinDefaultTransform() {
     };
 }
 
-void ruinEntityTransformAdd(REntityID e, RTransform t) {
-   ((RTransform*)engine.components.transforms.sparse_data)[e] = t;
-   cvec_push(engine.components.transforms.dense_indices, e, REntityID);
+void rnEntityTransformAdd(RnEntity e, RnTransform t) {
+   ((RnTransform*)engine.components.transforms.sparse_data)[e] = t;
+   cvec_push(engine.components.transforms.dense_indices, e, RnEntity);
 }
-void ruinEntityTransformKill(REntityID e) {
-    cvec_remove_at(engine.components.transforms.dense_indices, e, REntityID);
+void rnEntityTransformKill(RnEntity e) {
+    cvec_remove_at(engine.components.transforms.dense_indices, e, RnEntity);
 }
-RTransform *ruinEntityTransformGet(REntityID e) {
+RnTransform *rnEntityTransformGet(RnEntity e) {
 #ifdef RUIN_ENABLE_DEBUG
-    REntityID id = (REntityID)-1;
-    cvec_index(engine.entities.dense_entities, e, REntityID, id);
+    RnEntity id = (RnEntity)-1;
+    cvec_index(engine.entities.dense_entities, e, RnEntity, id);
 
-    if (id == (REntityID)-1) {
+    if (id == (RnEntity)-1) {
         RUIN_DEBUG("Failed to get RTansform of Entity #%d", e);
         return NULL;
     }
 #endif
     
-    return &(void_t(engine.components.transforms.sparse_data, RTransform)[e]);
+    return &(void_t(engine.components.transforms.sparse_data, RnTransform)[e]);
 }
-RVec3 ruinEntityTransformGetWorldPosition(REntityID e) {
+RnVec3 rnEntityTransformGetWorldPosition(RnEntity e) {
     vec3 *v = &(engine.component_internals.transform_internal.sparse_world_positions[e]);
 
     RUIN_DEBUG("addr: %p", v);
 
-    return (RVec3){
+    return (RnVec3){
         .x = (*v)[0],
         .y = (*v)[1],
         .z = (*v)[2]
     };
 }
-RVec3 ruinEntityTransformGetWorldRotation(REntityID e) {
+RnVec3 rnEntityTransformGetWorldRotation(RnEntity e) {
     vec3 *v = &(engine.component_internals.transform_internal.sparse_world_rotations[e]);
 
-    return (RVec3){
+    return (RnVec3){
         .x = (*v)[0],
         .y = (*v)[1],
         .z = (*v)[2]
     };
 }
-RVec3 ruinEntityTransformGetWorldScale(REntityID e) {
+RnVec3 rnEntityTransformGetWorldScale(RnEntity e) {
     vec3 *v = &(engine.component_internals.transform_internal.sparse_world_scales[e]);
 
-    return (RVec3){
+    return (RnVec3){
         .x = (*v)[0],
         .y = (*v)[1],
         .z = (*v)[2]

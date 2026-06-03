@@ -2,21 +2,21 @@
 #include "math.h"
 
 
-RVec2 ruinVec2(float x, float y) {
-    return (RVec2){
+RnVec2 rnVec2(float x, float y) {
+    return (RnVec2){
         .x = x,
         .y = y
     };
 }
-RVec3 ruinVec3(float x, float y, float z) {
-    return (RVec3){
+RnVec3 rnVec3(float x, float y, float z) {
+    return (RnVec3){
         .x = x,
         .y = y,
         .z = z
     };
 }
-RVec4 ruinVec4(float x, float y, float z, float w) {
-    return (RVec4){
+RnVec4 rnVec4(float x, float y, float z, float w) {
+    return (RnVec4){
         .x = x,
         .y = y,
         .z = z,
@@ -25,110 +25,110 @@ RVec4 ruinVec4(float x, float y, float z, float w) {
 }
 
 
-RVec2 ruinVec2Sum(const RVec2 *a, const RVec2 *b) {
-    return (RVec2){
+RnVec2 rnVec2Sum(const RnVec2 *a, const RnVec2 *b) {
+    return (RnVec2){
         .x = a->x + b->x,
         .y = a->y + b->y
     };
 }
-RVec2 ruinVec2Sub(const RVec2 *a, const RVec2 *b) {
-    return (RVec2){
+RnVec2 rnVec2Sub(const RnVec2 *a, const RnVec2 *b) {
+    return (RnVec2){
         .x = a->x - b->x,
         .y = a->y - b->y
     };
 }
-RVec2 ruinVec2Mul(const RVec2 *a, float f) {
-    return (RVec2){
+RnVec2 rnVec2Mul(const RnVec2 *a, float f) {
+    return (RnVec2){
         .x = a->x * f,
         .y = a->y * f
     };
 }
-RVec2 ruinVec2Div(const RVec2 *a, float f) {
-    return (RVec2){
+RnVec2 rnVec2Div(const RnVec2 *a, float f) {
+    return (RnVec2){
         .x = a->x / f,
         .y = a->y / f
     };
 }
 
-float ruinVec2Mag(const RVec2 *v) {
+float rnVec2Mag(const RnVec2 *v) {
     return sqrtf(v->x * v->x + v->y * v->y);
 }
-RVec2 ruinVec2Nor(const RVec2 *v) {
-    const float m = ruinVec2Mag(v);
+RnVec2 rnVec2Nor(const RnVec2 *v) {
+    const float m = rnVec2Mag(v);
 
-    return (RVec2){
+    return (RnVec2){
         .x = (float)v->x / m,
         .y = (float)v->y / m
     };
 }
 
-RVec3 ruinVec3Sum(const RVec3 *a, const RVec3 *b) {
-    return (RVec3){
+RnVec3 rnVec3Sum(const RnVec3 *a, const RnVec3 *b) {
+    return (RnVec3){
         .x = a->x + b->x,
         .y = a->y + b->y,
         .z = a->z + b->z
     };
 }
-RVec3 ruinVec3Sub(const RVec3 *a, const RVec3 *b) {
-    return (RVec3){
+RnVec3 rnVec3Sub(const RnVec3 *a, const RnVec3 *b) {
+    return (RnVec3){
         .x = a->x - b->x,
         .y = a->y - b->y,
         .z = a->z - b->z
     };
 }
-RVec3 ruinVec3Mul(const RVec3 *a, float f) {
-    return (RVec3){
+RnVec3 rnVec3Mul(const RnVec3 *a, float f) {
+    return (RnVec3){
         .x = a->x * f,
         .y = a->y * f,
         .z = a->z * f
     };
 }
-RVec3 ruinVec3Div(const RVec3 *a, float f) {
-    return (RVec3){
+RnVec3 rnVec3Div(const RnVec3 *a, float f) {
+    return (RnVec3){
         .x = a->x / f,
         .y = a->y / f,
         .z = a->z / f
     };
 }
 
-float ruinVec3Mag(const RVec3 *v) {
+float rnVec3Mag(const RnVec3 *v) {
     return sqrtf(v->x * v->x + v->y * v->y + v->z * v->z);
 }
-RVec3 ruinVec3Nor(const RVec3 *v) {
-    const float m = ruinVec3Mag(v);
-    return (RVec3){
+RnVec3 rnVec3Nor(const RnVec3 *v) {
+    const float m = rnVec3Mag(v);
+    return (RnVec3){
         .x = v->x / m,
         .y = v->y / m,
         .z = v->z / m
     };
 }
 
-RVec4 ruinVec4Sum(const RVec4 *a, const RVec4 *b) {
-    return (RVec4){
+RnVec4 rnVec4Sum(const RnVec4 *a, const RnVec4 *b) {
+    return (RnVec4){
         .x = a->x + b->x,
         .y = a->y + b->y,
         .z = a->z + b->z,
         .w = a->w + b->w
     };
 }
-RVec4 ruinVec4Sub(const RVec4 *a, const RVec4 *b) {
-    return (RVec4){
+RnVec4 rnVec4Sub(const RnVec4 *a, const RnVec4 *b) {
+    return (RnVec4){
         .x = a->x - b->x,
         .y = a->y - b->y,
         .z = a->z - b->z,
         .w = a->w - b->w
     };
 }
-RVec4 ruinVec4Mul(const RVec4 *a, float f) {
-    return (RVec4){
+RnVec4 rnVec4Mul(const RnVec4 *a, float f) {
+    return (RnVec4){
         .x = a->x * f,
         .y = a->y * f,
         .z = a->z * f,
         .w = a->w * f
     };
 }
-RVec4 ruinVec4Div(const RVec4 *a, float f) {
-    return (RVec4){
+RnVec4 rnVec4Div(const RnVec4 *a, float f) {
+    return (RnVec4){
         .x = a->x / f,
         .y = a->y / f,
         .z = a->z / f,
@@ -136,12 +136,12 @@ RVec4 ruinVec4Div(const RVec4 *a, float f) {
     };
 }
 
-float ruinVec4Mag(const RVec4 *v) {
+float rnVec4Mag(const RnVec4 *v) {
     return sqrtf(v->x * v->x + v->y * v->y + v->z * v->w);
 }
-RVec4 ruinVec4Nor(const RVec4 *v) {
-    const float m = ruinVec4Mag(v);
-    return (RVec4){
+RnVec4 rnVec4Nor(const RnVec4 *v) {
+    const float m = rnVec4Mag(v);
+    return (RnVec4){
         .x = v->x / m,
         .y = v->y / m,
         .z = v->z / m,

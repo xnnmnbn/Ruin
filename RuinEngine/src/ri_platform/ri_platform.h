@@ -1,7 +1,9 @@
 #ifndef RI_PLATFORM_H
 #define RI_PLATFORM_H
 
-#include <SDL3/SDL_video.h>
+#include "ruin.h"
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -12,9 +14,6 @@ extern "C" {
 
 typedef struct RI_Window {
     SDL_Window *window;
-    int32_t     width;
-    int32_t     height;
-    const char *title;
     uint8_t     running;
     uint8_t     resized;
 } RI_Window;
@@ -45,26 +44,27 @@ typedef struct RI_Input {
 } RI_Input;
 
 typedef struct RI_Platform {
-    RI_Window window;
-    RI_Time   time;
-    RI_Input  input;
+    RnConfigWindow active_config;
+    RnConfigWindow pending_config;
+    RI_Window      window;
+    RI_Time        time;
+    RI_Input       input;
 } RI_Platform;
 
 
-uint8_t ri_window_init();
-uint8_t ri_window_create(RI_Platform *p, int32_t w, int32_t h, const char *title);
-uint8_t ri_window_running(RI_Platform *p);
-void    ri_window_kill(RI_Platform *p);
+void    ri_platform_window_init(RI_Platform *p);
+uint8_t ri_platform_window_running(RI_Platform *p);
+void    ri_platform_window_kill(RI_Platform *p);
 
-void ri_input_init(RI_Platform *p);
-void ri_input_update(RI_Platform *p);
-void ri_input_kill(RI_Platform *p);
+void ri_platform_input_init(RI_Platform *p);
+void ri_platform_input_update(RI_Platform *p);
+void ri_platform_input_kill(RI_Platform *p);
 
-void ri_time_init(RI_Platform *p);
-void ri_time_update(RI_Platform *p);
+void ri_platform_time_init(RI_Platform *p);
+void ri_platform_time_update(RI_Platform *p);
 
-void ri__platform_init(RI_Platform *p);
-void ri__platform_kill(RI_Platform *p);
+void ri_platform_init(RI_Platform *p);
+void ri_platform_kill(RI_Platform *p);
 
 #ifdef __cplusplus
 }

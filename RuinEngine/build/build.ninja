@@ -11,7 +11,7 @@
 # =============================================================================
 
 # =============================================================================
-# Project: RuinEngine
+# Project: Ruin
 # Configurations: 
 # =============================================================================
 
@@ -34,202 +34,174 @@ include CMakeFiles/rules.ninja
 #############################################
 # Logical path to working directory; prefix for absolute paths.
 
-cmake_ninja_workdir = C$:/Users/xnnmnbn/Desktop/RuinEngine/build/
+cmake_ninja_workdir = C$:/Users/xnnmnbn/Desktop/Ruin/build/
 # =============================================================================
-# Object build statements for STATIC_LIBRARY target RuinEngine
+# Object build statements for STATIC_LIBRARY target Ruin
 
 
 #############################################
-# Order-only phony target for RuinEngine
+# Order-only phony target for Ruin
 
-build cmake_object_order_depends_target_RuinEngine: phony || .
+build cmake_object_order_depends_target_Ruin: phony || .
 
-build CMakeFiles/RuinEngine.dir/src/ri_platform/ri_platform.c.obj: C_COMPILER__RuinEngine_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_platform/ri_platform.c || cmake_object_order_depends_target_RuinEngine
-  DEP_FILE = CMakeFiles\RuinEngine.dir\src\ri_platform\ri_platform.c.obj.d
+build CMakeFiles/Ruin.dir/src/ri_platform/ri_platform.c.obj: C_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ri_platform/ri_platform.c || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ri_platform\ri_platform.c.obj.d
   FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\RuinEngine.dir\src\ri_platform
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src\ri_platform
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
-build CMakeFiles/RuinEngine.dir/src/ri_platform/ri_platform_input.c.obj: C_COMPILER__RuinEngine_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_platform/ri_platform_input.c || cmake_object_order_depends_target_RuinEngine
-  DEP_FILE = CMakeFiles\RuinEngine.dir\src\ri_platform\ri_platform_input.c.obj.d
+build CMakeFiles/Ruin.dir/src/ri_platform/ri_platform_input.c.obj: C_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ri_platform/ri_platform_input.c || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ri_platform\ri_platform_input.c.obj.d
   FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\RuinEngine.dir\src\ri_platform
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src\ri_platform
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
-build CMakeFiles/RuinEngine.dir/src/ri_platform/ri_platform_time.c.obj: C_COMPILER__RuinEngine_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_platform/ri_platform_time.c || cmake_object_order_depends_target_RuinEngine
-  DEP_FILE = CMakeFiles\RuinEngine.dir\src\ri_platform\ri_platform_time.c.obj.d
+build CMakeFiles/Ruin.dir/src/ri_platform/ri_platform_time.c.obj: C_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ri_platform/ri_platform_time.c || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ri_platform\ri_platform_time.c.obj.d
   FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\RuinEngine.dir\src\ri_platform
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src\ri_platform
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
-build CMakeFiles/RuinEngine.dir/src/ri_platform/ri_platform_window.c.obj: C_COMPILER__RuinEngine_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_platform/ri_platform_window.c || cmake_object_order_depends_target_RuinEngine
-  DEP_FILE = CMakeFiles\RuinEngine.dir\src\ri_platform\ri_platform_window.c.obj.d
+build CMakeFiles/Ruin.dir/src/ri_platform/ri_platform_window.c.obj: C_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ri_platform/ri_platform_window.c || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ri_platform\ri_platform_window.c.obj.d
   FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\RuinEngine.dir\src\ri_platform
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src\ri_platform
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
-build CMakeFiles/RuinEngine.dir/src/ri_renderer/draw_frame.c.obj: C_COMPILER__RuinEngine_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/draw_frame.c || cmake_object_order_depends_target_RuinEngine
-  DEP_FILE = CMakeFiles\RuinEngine.dir\src\ri_renderer\draw_frame.c.obj.d
+build CMakeFiles/Ruin.dir/src/ri_renderer/draw_frame.c.obj: C_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ri_renderer/draw_frame.c || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ri_renderer\draw_frame.c.obj.d
   FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\RuinEngine.dir\src\ri_renderer
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src\ri_renderer
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
-build CMakeFiles/RuinEngine.dir/src/ri_renderer/record_command.c.obj: C_COMPILER__RuinEngine_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/record_command.c || cmake_object_order_depends_target_RuinEngine
-  DEP_FILE = CMakeFiles\RuinEngine.dir\src\ri_renderer\record_command.c.obj.d
+build CMakeFiles/Ruin.dir/src/ri_renderer/record_command.c.obj: C_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ri_renderer/record_command.c || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ri_renderer\record_command.c.obj.d
   FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\RuinEngine.dir\src\ri_renderer
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src\ri_renderer
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
-build CMakeFiles/RuinEngine.dir/src/ri_renderer/ri_renderer.c.obj: C_COMPILER__RuinEngine_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer.c || cmake_object_order_depends_target_RuinEngine
-  DEP_FILE = CMakeFiles\RuinEngine.dir\src\ri_renderer\ri_renderer.c.obj.d
+build CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer.c.obj: C_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ri_renderer/ri_renderer.c || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ri_renderer\ri_renderer.c.obj.d
   FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\RuinEngine.dir\src\ri_renderer
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src\ri_renderer
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
-build CMakeFiles/RuinEngine.dir/src/ri_renderer/ri_renderer_command.c.obj: C_COMPILER__RuinEngine_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer_command.c || cmake_object_order_depends_target_RuinEngine
-  DEP_FILE = CMakeFiles\RuinEngine.dir\src\ri_renderer\ri_renderer_command.c.obj.d
+build CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_command.c.obj: C_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ri_renderer/ri_renderer_command.c || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ri_renderer\ri_renderer_command.c.obj.d
   FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\RuinEngine.dir\src\ri_renderer
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src\ri_renderer
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
-build CMakeFiles/RuinEngine.dir/src/ri_renderer/ri_renderer_core.c.obj: C_COMPILER__RuinEngine_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer_core.c || cmake_object_order_depends_target_RuinEngine
-  DEP_FILE = CMakeFiles\RuinEngine.dir\src\ri_renderer\ri_renderer_core.c.obj.d
+build CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_core.c.obj: C_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ri_renderer/ri_renderer_core.c || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ri_renderer\ri_renderer_core.c.obj.d
   FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\RuinEngine.dir\src\ri_renderer
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src\ri_renderer
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
-build CMakeFiles/RuinEngine.dir/src/ri_renderer/ri_renderer_framebuffer.c.obj: C_COMPILER__RuinEngine_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer_framebuffer.c || cmake_object_order_depends_target_RuinEngine
-  DEP_FILE = CMakeFiles\RuinEngine.dir\src\ri_renderer\ri_renderer_framebuffer.c.obj.d
+build CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_framebuffer.c.obj: C_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ri_renderer/ri_renderer_framebuffer.c || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ri_renderer\ri_renderer_framebuffer.c.obj.d
   FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\RuinEngine.dir\src\ri_renderer
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src\ri_renderer
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
-build CMakeFiles/RuinEngine.dir/src/ri_renderer/ri_renderer_pipeline.c.obj: C_COMPILER__RuinEngine_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer_pipeline.c || cmake_object_order_depends_target_RuinEngine
-  DEP_FILE = CMakeFiles\RuinEngine.dir\src\ri_renderer\ri_renderer_pipeline.c.obj.d
+build CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_pipeline.c.obj: C_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ri_renderer/ri_renderer_pipeline.c || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ri_renderer\ri_renderer_pipeline.c.obj.d
   FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\RuinEngine.dir\src\ri_renderer
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src\ri_renderer
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
-build CMakeFiles/RuinEngine.dir/src/ri_renderer/ri_renderer_renderpass.c.obj: C_COMPILER__RuinEngine_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer_renderpass.c || cmake_object_order_depends_target_RuinEngine
-  DEP_FILE = CMakeFiles\RuinEngine.dir\src\ri_renderer\ri_renderer_renderpass.c.obj.d
+build CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_renderpass.c.obj: C_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ri_renderer/ri_renderer_renderpass.c || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ri_renderer\ri_renderer_renderpass.c.obj.d
   FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\RuinEngine.dir\src\ri_renderer
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src\ri_renderer
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
-build CMakeFiles/RuinEngine.dir/src/ri_renderer/ri_renderer_swapchain.c.obj: C_COMPILER__RuinEngine_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer_swapchain.c || cmake_object_order_depends_target_RuinEngine
-  DEP_FILE = CMakeFiles\RuinEngine.dir\src\ri_renderer\ri_renderer_swapchain.c.obj.d
+build CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_swapchain.c.obj: C_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ri_renderer/ri_renderer_swapchain.c || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ri_renderer\ri_renderer_swapchain.c.obj.d
   FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\RuinEngine.dir\src\ri_renderer
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src\ri_renderer
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
-build CMakeFiles/RuinEngine.dir/src/ri_renderer/ri_renderer_sync.c.obj: C_COMPILER__RuinEngine_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer_sync.c || cmake_object_order_depends_target_RuinEngine
-  DEP_FILE = CMakeFiles\RuinEngine.dir\src\ri_renderer\ri_renderer_sync.c.obj.d
+build CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_sync.c.obj: C_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ri_renderer/ri_renderer_sync.c || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ri_renderer\ri_renderer_sync.c.obj.d
   FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\RuinEngine.dir\src\ri_renderer
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src\ri_renderer
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
-build CMakeFiles/RuinEngine.dir/src/ruin.c.obj: C_COMPILER__RuinEngine_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/src/ruin.c || cmake_object_order_depends_target_RuinEngine
-  DEP_FILE = CMakeFiles\RuinEngine.dir\src\ruin.c.obj.d
-  FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\RuinEngine.dir\src
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+build CMakeFiles/Ruin.dir/src/ri_renderer/vma.cpp.obj: CXX_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ri_renderer/vma.cpp || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ri_renderer\vma.cpp.obj.d
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src\ri_renderer
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
-build CMakeFiles/RuinEngine.dir/src/ruin_comp_transform.c.obj: C_COMPILER__RuinEngine_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/src/ruin_comp_transform.c || cmake_object_order_depends_target_RuinEngine
-  DEP_FILE = CMakeFiles\RuinEngine.dir\src\ruin_comp_transform.c.obj.d
+build CMakeFiles/Ruin.dir/src/ruin.c.obj: C_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ruin.c || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ruin.c.obj.d
   FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\RuinEngine.dir\src
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
-build CMakeFiles/RuinEngine.dir/src/ruin_math.c.obj: C_COMPILER__RuinEngine_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/src/ruin_math.c || cmake_object_order_depends_target_RuinEngine
-  DEP_FILE = CMakeFiles\RuinEngine.dir\src\ruin_math.c.obj.d
+build CMakeFiles/Ruin.dir/src/ruin_comp_transform.c.obj: C_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ruin_comp_transform.c || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ruin_comp_transform.c.obj.d
   FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\RuinEngine.dir\src
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
+
+build CMakeFiles/Ruin.dir/src/ruin_math.c.obj: C_COMPILER__Ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/src/ruin_math.c || cmake_object_order_depends_target_Ruin
+  DEP_FILE = CMakeFiles\Ruin.dir\src\ruin_math.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -IC:/Users/xnnmnbn/Desktop/Ruin/src -IC:/Users/xnnmnbn/Desktop/Ruin/external
+  OBJECT_DIR = CMakeFiles\Ruin.dir
+  OBJECT_FILE_DIR = CMakeFiles\Ruin.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
 
 # =============================================================================
-# Link build statements for STATIC_LIBRARY target RuinEngine
+# Link build statements for STATIC_LIBRARY target Ruin
 
 
 #############################################
-# Link the static library libRuinEngine.a
+# Link the static library libRuin.a
 
-build libRuinEngine.a: C_STATIC_LIBRARY_LINKER__RuinEngine_ CMakeFiles/RuinEngine.dir/src/ri_platform/ri_platform.c.obj CMakeFiles/RuinEngine.dir/src/ri_platform/ri_platform_input.c.obj CMakeFiles/RuinEngine.dir/src/ri_platform/ri_platform_time.c.obj CMakeFiles/RuinEngine.dir/src/ri_platform/ri_platform_window.c.obj CMakeFiles/RuinEngine.dir/src/ri_renderer/draw_frame.c.obj CMakeFiles/RuinEngine.dir/src/ri_renderer/record_command.c.obj CMakeFiles/RuinEngine.dir/src/ri_renderer/ri_renderer.c.obj CMakeFiles/RuinEngine.dir/src/ri_renderer/ri_renderer_command.c.obj CMakeFiles/RuinEngine.dir/src/ri_renderer/ri_renderer_core.c.obj CMakeFiles/RuinEngine.dir/src/ri_renderer/ri_renderer_framebuffer.c.obj CMakeFiles/RuinEngine.dir/src/ri_renderer/ri_renderer_pipeline.c.obj CMakeFiles/RuinEngine.dir/src/ri_renderer/ri_renderer_renderpass.c.obj CMakeFiles/RuinEngine.dir/src/ri_renderer/ri_renderer_swapchain.c.obj CMakeFiles/RuinEngine.dir/src/ri_renderer/ri_renderer_sync.c.obj CMakeFiles/RuinEngine.dir/src/ruin.c.obj CMakeFiles/RuinEngine.dir/src/ruin_comp_transform.c.obj CMakeFiles/RuinEngine.dir/src/ruin_math.c.obj
-  OBJECT_DIR = CMakeFiles\RuinEngine.dir
+build libRuin.a: CXX_STATIC_LIBRARY_LINKER__Ruin_ CMakeFiles/Ruin.dir/src/ri_platform/ri_platform.c.obj CMakeFiles/Ruin.dir/src/ri_platform/ri_platform_input.c.obj CMakeFiles/Ruin.dir/src/ri_platform/ri_platform_time.c.obj CMakeFiles/Ruin.dir/src/ri_platform/ri_platform_window.c.obj CMakeFiles/Ruin.dir/src/ri_renderer/draw_frame.c.obj CMakeFiles/Ruin.dir/src/ri_renderer/record_command.c.obj CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer.c.obj CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_command.c.obj CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_core.c.obj CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_framebuffer.c.obj CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_pipeline.c.obj CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_renderpass.c.obj CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_swapchain.c.obj CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_sync.c.obj CMakeFiles/Ruin.dir/src/ri_renderer/vma.cpp.obj CMakeFiles/Ruin.dir/src/ruin.c.obj CMakeFiles/Ruin.dir/src/ruin_comp_transform.c.obj CMakeFiles/Ruin.dir/src/ruin_math.c.obj
+  OBJECT_DIR = CMakeFiles\Ruin.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
-  TARGET_COMPILE_PDB = CMakeFiles\RuinEngine.dir\RuinEngine.pdb
-  TARGET_FILE = libRuinEngine.a
-  TARGET_PDB = libRuinEngine.pdb
-  TARGET_SUPPORT_DIR = CMakeFiles\RuinEngine.dir
+  TARGET_FILE = libRuin.a
+  TARGET_PDB = Ruin.a.dbg
+  TARGET_SUPPORT_DIR = CMakeFiles\Ruin.dir
 
 # =============================================================================
 # Object build statements for EXECUTABLE target ruin
@@ -238,16 +210,14 @@ build libRuinEngine.a: C_STATIC_LIBRARY_LINKER__RuinEngine_ CMakeFiles/RuinEngin
 #############################################
 # Order-only phony target for ruin
 
-build cmake_object_order_depends_target_ruin: phony || cmake_object_order_depends_target_RuinEngine
+build cmake_object_order_depends_target_ruin: phony || cmake_object_order_depends_target_Ruin
 
-build CMakeFiles/ruin.dir/test/main.c.obj: C_COMPILER__ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/RuinEngine/test/main.c || cmake_object_order_depends_target_ruin
+build CMakeFiles/ruin.dir/test/main.c.obj: C_COMPILER__ruin_unscanned_ C$:/Users/xnnmnbn/Desktop/Ruin/test/main.c || cmake_object_order_depends_target_ruin
   DEP_FILE = CMakeFiles\ruin.dir\test\main.c.obj.d
   FLAGS = -std=gnu11
-  INCLUDES = -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -isystem C:/VulkanSDK/1.4.350.0/include
+  INCLUDES = -IC:/Users/xnnmnbn/Desktop/Ruin/include -isystem C:/VulkanSDK/1.4.350.0/include
   OBJECT_DIR = CMakeFiles\ruin.dir
   OBJECT_FILE_DIR = CMakeFiles\ruin.dir\test
-  TARGET_COMPILE_PDB = CMakeFiles\ruin.dir\
-  TARGET_PDB = ruin.pdb
   TARGET_SUPPORT_DIR = CMakeFiles\ruin.dir
 
 
@@ -258,16 +228,15 @@ build CMakeFiles/ruin.dir/test/main.c.obj: C_COMPILER__ruin_unscanned_ C$:/Users
 #############################################
 # Link the executable ruin.exe
 
-build ruin.exe: C_EXECUTABLE_LINKER__ruin_ CMakeFiles/ruin.dir/test/main.c.obj | libRuinEngine.a C$:/msys64/mingw64/lib/libSDL3.dll.a C$:/VulkanSDK/1.4.350.0/Lib/vulkan-1.lib || libRuinEngine.a
+build ruin.exe: CXX_EXECUTABLE_LINKER__ruin_ CMakeFiles/ruin.dir/test/main.c.obj | libRuin.a C$:/msys64/mingw64/lib/libSDL3.dll.a C$:/VulkanSDK/1.4.350.0/Lib/vulkan-1.lib || libRuin.a
   LINK_FLAGS = -static
-  LINK_LIBRARIES = libRuinEngine.a  C:/msys64/mingw64/lib/libSDL3.dll.a  C:/VulkanSDK/1.4.350.0/Lib/vulkan-1.lib  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  LINK_LIBRARIES = libRuin.a  C:/msys64/mingw64/lib/libSDL3.dll.a  C:/VulkanSDK/1.4.350.0/Lib/vulkan-1.lib  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\ruin.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
-  TARGET_COMPILE_PDB = CMakeFiles\ruin.dir\
   TARGET_FILE = ruin.exe
   TARGET_IMPLIB = libruin.dll.a
-  TARGET_PDB = ruin.pdb
+  TARGET_PDB = ruin.exe.dbg
   TARGET_SUPPORT_DIR = CMakeFiles\ruin.dir
 
 
@@ -275,7 +244,7 @@ build ruin.exe: C_EXECUTABLE_LINKER__ruin_ CMakeFiles/ruin.dir/test/main.c.obj |
 # Utility command for edit_cache
 
 build CMakeFiles/edit_cache.util: CUSTOM_COMMAND
-  COMMAND = C:\Windows\system32\cmd.exe /C "cd /D C:\Users\xnnmnbn\Desktop\RuinEngine\build && C:\msys64\mingw64\bin\cmake.exe -E echo "No interactive CMake dialog available.""
+  COMMAND = C:\Windows\system32\cmd.exe /C "cd /D C:\Users\xnnmnbn\Desktop\Ruin\build && C:\msys64\mingw64\bin\cmake.exe -E echo "No interactive CMake dialog available.""
   DESC = No interactive CMake dialog available...
   restat = 1
 
@@ -286,7 +255,7 @@ build edit_cache: phony CMakeFiles/edit_cache.util
 # Utility command for rebuild_cache
 
 build CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
-  COMMAND = C:\Windows\system32\cmd.exe /C "cd /D C:\Users\xnnmnbn\Desktop\RuinEngine\build && C:\msys64\mingw64\bin\cmake.exe --regenerate-during-build -SC:\Users\xnnmnbn\Desktop\RuinEngine -BC:\Users\xnnmnbn\Desktop\RuinEngine\build"
+  COMMAND = C:\Windows\system32\cmd.exe /C "cd /D C:\Users\xnnmnbn\Desktop\Ruin\build && C:\msys64\mingw64\bin\cmake.exe --regenerate-during-build -SC:\Users\xnnmnbn\Desktop\Ruin -BC:\Users\xnnmnbn\Desktop\Ruin\build"
   DESC = Running CMake to regenerate build system...
   pool = console
   restat = 1
@@ -296,7 +265,7 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 # =============================================================================
 # Target aliases.
 
-build RuinEngine: phony libRuinEngine.a
+build Ruin: phony libRuin.a
 
 build ruin: phony ruin.exe
 
@@ -306,9 +275,9 @@ build ruin: phony ruin.exe
 # =============================================================================
 
 #############################################
-# Folder: C:/Users/xnnmnbn/Desktop/RuinEngine/build
+# Folder: C:/Users/xnnmnbn/Desktop/Ruin/build
 
-build all: phony libRuinEngine.a ruin.exe
+build all: phony libRuin.a ruin.exe
 
 # =============================================================================
 # Built-in targets
@@ -317,13 +286,13 @@ build all: phony libRuinEngine.a ruin.exe
 #############################################
 # Phony target to force glob verification run.
 
-build C$:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/VerifyGlobs.cmake_force: phony
+build C$:/Users/xnnmnbn/Desktop/Ruin/build/CMakeFiles/VerifyGlobs.cmake_force: phony
 
 
 #############################################
 # Re-run CMake to check if globbed directories changed.
 
-build C$:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/cmake.verify_globs: VERIFY_GLOBS | C$:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/VerifyGlobs.cmake_force
+build C$:/Users/xnnmnbn/Desktop/Ruin/build/CMakeFiles/cmake.verify_globs: VERIFY_GLOBS | C$:/Users/xnnmnbn/Desktop/Ruin/build/CMakeFiles/VerifyGlobs.cmake_force
   pool = console
   restat = 1
 
@@ -331,14 +300,14 @@ build C$:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/cmake.verify_globs: 
 #############################################
 # Re-run CMake if any of its inputs changed.
 
-build build.ninja C$:/Users/xnnmnbn/Desktop/RuinEngine/build/cmake_install.cmake: RERUN_CMAKE C$:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/cmake.verify_globs | C$:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/VerifyGlobs.cmake C$:/Users/xnnmnbn/Desktop/RuinEngine/CMakeLists.txt C$:/msys64/mingw64/lib/cmake/SDL3/SDL3Config.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3ConfigVersion.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3headersTargets.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3sharedTargets-release.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3sharedTargets.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3staticTargets-release.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3staticTargets.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3testTargets-release.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3testTargets.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCCompiler.cmake.in C$:/msys64/mingw64/share/cmake/Modules/CMakeCCompilerABI.c C$:/msys64/mingw64/share/cmake/Modules/CMakeCInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCommonLanguageInclude.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCompilerIdDetection.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCompilerABI.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCompilerId.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCompilerSupport.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineRCCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineSystem.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeFindBinUtils.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeGenericSystem.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeInitializeConfigs.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeLanguageInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeNinjaFindMake.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeParseImplicitIncludeInfo.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeParseImplicitLinkInfo.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeParseLibraryArchitecture.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeRCCompiler.cmake.in C$:/msys64/mingw64/share/cmake/Modules/CMakeRCInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeSystem.cmake.in C$:/msys64/mingw64/share/cmake/Modules/CMakeSystemSpecificInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeTestCCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeTestCompilerCommon.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeTestRCCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/ADSP-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/ARMCC-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/ARMClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/AppleClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Borland-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Bruce-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Clang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Clang-DetermineCompilerInternal.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Compaq-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Cray-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/CrayClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Diab-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Embarcadero-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Fujitsu-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/FujitsuClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GHS-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-FindBinUtils.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/HP-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/IAR-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/IBMCPP-C-DetermineVersionInternal.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/IBMClang-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Intel-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/IntelLLVM-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/LCC-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/MSVC-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/NVHPC-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/NVIDIA-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/OpenWatcom-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/OrangeC-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/PGI-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/PathScale-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Renesas-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/SCO-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/SDCC-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/SunPro-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/TI-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/TIClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Tasking-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/TinyCC-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/VisualAge-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Watcom-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/XL-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/XLClang-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/zOS-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/FeatureSummary.cmake C$:/msys64/mingw64/share/cmake/Modules/FindPackageHandleStandardArgs.cmake C$:/msys64/mingw64/share/cmake/Modules/FindPackageMessage.cmake C$:/msys64/mingw64/share/cmake/Modules/FindVulkan.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeDetermineLinkerId.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeInspectCLinker.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/FeatureTesting.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-Initialize.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-windres.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/WindowsPaths.cmake CMakeCache.txt CMakeFiles/4.3.2/CMakeCCompiler.cmake CMakeFiles/4.3.2/CMakeRCCompiler.cmake CMakeFiles/4.3.2/CMakeSystem.cmake
+build build.ninja C$:/Users/xnnmnbn/Desktop/Ruin/build/cmake_install.cmake: RERUN_CMAKE C$:/Users/xnnmnbn/Desktop/Ruin/build/CMakeFiles/cmake.verify_globs | C$:/Users/xnnmnbn/Desktop/Ruin/build/CMakeFiles/VerifyGlobs.cmake C$:/Users/xnnmnbn/Desktop/Ruin/CMakeLists.txt C$:/msys64/mingw64/lib/cmake/SDL3/SDL3Config.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3ConfigVersion.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3headersTargets.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3sharedTargets-release.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3sharedTargets.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3staticTargets-release.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3staticTargets.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3testTargets-release.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3testTargets.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCXXInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCommonLanguageInclude.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeGenericSystem.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeInitializeConfigs.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeLanguageInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeRCInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeSystemSpecificInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-CXX.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/FeatureSummary.cmake C$:/msys64/mingw64/share/cmake/Modules/FindPackageHandleStandardArgs.cmake C$:/msys64/mingw64/share/cmake/Modules/FindPackageMessage.cmake C$:/msys64/mingw64/share/cmake/Modules/FindVulkan.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCXXLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU-CXX.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU-CXX.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-CXX.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-Initialize.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-windres.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/WindowsPaths.cmake CMakeCache.txt CMakeFiles/4.3.2/CMakeCCompiler.cmake CMakeFiles/4.3.2/CMakeCXXCompiler.cmake CMakeFiles/4.3.2/CMakeRCCompiler.cmake CMakeFiles/4.3.2/CMakeSystem.cmake
   pool = console
 
 
 #############################################
 # A missing CMake input file is not an error.
 
-build C$:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/VerifyGlobs.cmake C$:/Users/xnnmnbn/Desktop/RuinEngine/CMakeLists.txt C$:/msys64/mingw64/lib/cmake/SDL3/SDL3Config.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3ConfigVersion.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3headersTargets.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3sharedTargets-release.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3sharedTargets.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3staticTargets-release.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3staticTargets.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3testTargets-release.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3testTargets.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCCompiler.cmake.in C$:/msys64/mingw64/share/cmake/Modules/CMakeCCompilerABI.c C$:/msys64/mingw64/share/cmake/Modules/CMakeCInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCommonLanguageInclude.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCompilerIdDetection.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCompilerABI.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCompilerId.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCompilerSupport.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineRCCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineSystem.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeFindBinUtils.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeGenericSystem.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeInitializeConfigs.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeLanguageInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeNinjaFindMake.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeParseImplicitIncludeInfo.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeParseImplicitLinkInfo.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeParseLibraryArchitecture.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeRCCompiler.cmake.in C$:/msys64/mingw64/share/cmake/Modules/CMakeRCInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeSystem.cmake.in C$:/msys64/mingw64/share/cmake/Modules/CMakeSystemSpecificInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeTestCCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeTestCompilerCommon.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeTestRCCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/ADSP-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/ARMCC-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/ARMClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/AppleClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Borland-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Bruce-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Clang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Clang-DetermineCompilerInternal.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Compaq-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Cray-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/CrayClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Diab-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Embarcadero-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Fujitsu-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/FujitsuClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GHS-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-FindBinUtils.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/HP-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/IAR-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/IBMCPP-C-DetermineVersionInternal.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/IBMClang-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Intel-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/IntelLLVM-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/LCC-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/MSVC-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/NVHPC-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/NVIDIA-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/OpenWatcom-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/OrangeC-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/PGI-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/PathScale-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Renesas-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/SCO-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/SDCC-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/SunPro-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/TI-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/TIClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Tasking-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/TinyCC-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/VisualAge-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Watcom-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/XL-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/XLClang-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/zOS-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/FeatureSummary.cmake C$:/msys64/mingw64/share/cmake/Modules/FindPackageHandleStandardArgs.cmake C$:/msys64/mingw64/share/cmake/Modules/FindPackageMessage.cmake C$:/msys64/mingw64/share/cmake/Modules/FindVulkan.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeDetermineLinkerId.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeInspectCLinker.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/FeatureTesting.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-Initialize.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-windres.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/WindowsPaths.cmake CMakeCache.txt CMakeFiles/4.3.2/CMakeCCompiler.cmake CMakeFiles/4.3.2/CMakeRCCompiler.cmake CMakeFiles/4.3.2/CMakeSystem.cmake: phony
+build C$:/Users/xnnmnbn/Desktop/Ruin/build/CMakeFiles/VerifyGlobs.cmake C$:/Users/xnnmnbn/Desktop/Ruin/CMakeLists.txt C$:/msys64/mingw64/lib/cmake/SDL3/SDL3Config.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3ConfigVersion.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3headersTargets.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3sharedTargets-release.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3sharedTargets.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3staticTargets-release.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3staticTargets.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3testTargets-release.cmake C$:/msys64/mingw64/lib/cmake/SDL3/SDL3testTargets.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCXXInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCommonLanguageInclude.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeGenericSystem.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeInitializeConfigs.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeLanguageInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeRCInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeSystemSpecificInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-CXX.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/FeatureSummary.cmake C$:/msys64/mingw64/share/cmake/Modules/FindPackageHandleStandardArgs.cmake C$:/msys64/mingw64/share/cmake/Modules/FindPackageMessage.cmake C$:/msys64/mingw64/share/cmake/Modules/FindVulkan.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCXXLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU-CXX.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU-CXX.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-CXX.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-Initialize.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-windres.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/WindowsPaths.cmake CMakeCache.txt CMakeFiles/4.3.2/CMakeCCompiler.cmake CMakeFiles/4.3.2/CMakeCXXCompiler.cmake CMakeFiles/4.3.2/CMakeRCCompiler.cmake CMakeFiles/4.3.2/CMakeSystem.cmake: phony
 
 
 #############################################

@@ -1,43 +1,42 @@
 #include "ri_platform.h"
+#include "ruin.h"
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_gpu.h>
+#include <SDL3/SDL_init.h>
 #include <SDL3/SDL_oldnames.h>
 #include <SDL3/SDL_video.h>
 #include <stdint.h>
 #include <stdio.h>
 
-
-uint8_t ri_window_init() {
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) == 0) {
-        printf("Failed to init SDL3 window.\n");
-        return 0;
+void ri_platform_window_init(RI_Platform *p) {
+    if (SDL_Init(SDL_INIT_VIDEO) == 0) {
+        printf("Failed to init SDL.\n");
+        printf("%s\n", SDL_GetError());
+        return;
     }
 
-    return 1;
-}
+    SDL_WindowFlags flags = SDL_WINDOW_VULKAN;
 
-uint8_t ri_window_create(RI_Platform *p, int32_t w, int32_t h, const char *title) {    
-    p->window.window = SDL_CreateWindow(title, w, h, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
+    RnConfigWindow *cfg = &p->active_config;
 
-    //printf("%p\n", p->window.window);
+    if (cfg->borderless) flags |= SDL_WINDOW_BORDERLESS;
+    if (cfg->fullscreen) flags |= SDL_WINDOW_FULLSCREEN;
+    if (cfg->resizable)  flags |= SDL_WINDOW_RESIZABLE;
+    
+    p->window.window = SDL_CreateWindow(cfg->title, cfg->width, cfg->height, flags);
 
     if (!p->window.window) {
         printf("Failed to create window.\n");
         printf("%s\n", SDL_GetError());
-        return 0;
+        return;
     }
     
-    p->window.title = title;
-    p->window.width = w;
-    p->window.height = h;
     p->window.running = 1;
 
     printf("Window created.\n");
-
-    return 1;
 }
 
-uint8_t ri_window_running(RI_Platform *p) {
+uint8_t ri_platform_window_running(RI_Platform *p) {
     p->input.mouse_x      = 0.0;
     p->input.mouse_y      = 0.0;
     p->input.mouse_dx     = 0.0;
@@ -59,7 +58,8 @@ uint8_t ri_window_running(RI_Platform *p) {
             case SDL_EVENT_WINDOW_RESIZED:
                 printf("RESIZED\n");
                 p->window.resized = 1;
-                SDL_GetWindowSize(p->window.window, &p->window.width, &p->window.height);
+                p->active_config.width  = event.window.data1;
+                p->active_config.height = event.window.data2;
         }
     }
 
@@ -82,7 +82,10 @@ uint8_t ri_window_running(RI_Platform *p) {
 }
 
 
-void  ri_window_kill(RI_Platform *p) {
-    SDL_DestroyWindow(p->window.window);
+void  ri_platform_window_kill(RI_Platform *p) {
+    if (p->window.window) {
+        SDL_DestroyWindow(p->window.window);
+    }
+    p->active_config = (RnConfigWindow){0};
 }
 

@@ -288,6 +288,8 @@ void ri_renderer_create_logical_device(RI_Renderer *r) {
         printf("Presentation queue acquired.\n");
         return;
     }
+
+    r->core.present_queue = r->core.graphics_queue;
     
     printf("You don't have presentation queue.\n");
     printf("Graphics queue will be used for presentation.\n");

@@ -74,8 +74,8 @@ typedef struct {
 } RI_Assets;
 
 typedef struct {
-    cvec       dense_entities;  // iterator
-    REntityID  next_entity_id;  // counter never decreases
+    cvec      dense_entities;  // iterator
+    RnEntity  next_entity_id;  // counter never decreases
 } RI_Entities;
 
 
@@ -83,6 +83,9 @@ typedef struct {
 
 
 typedef struct RuinInternal {
+    RnConfig    active_config;
+    RnConfig    pending_config;
+
     RI_Platform platform;
     RI_Renderer renderer;
 
@@ -94,17 +97,8 @@ typedef struct RuinInternal {
 } RuinInternal;
 
 
-RBool ri_init(RuinInternal *engine);
-void  ri_kill(RuinInternal *engine);
-
-
-
-
-
 void ri_entities_init(RuinInternal *engine);
 void ri_entities_kill(RuinInternal *engine);
-
-
 
 
 

@@ -2,7 +2,7 @@
 
 #include <SDL3/SDL_timer.h>
 
-void ri_time_init(RI_Platform *p) {
+void ri_platform_time_init(RI_Platform *p) {
     p->time = (RI_Time){0};
     p->time.freq = SDL_GetPerformanceFrequency();
     p->time.now  = SDL_GetPerformanceCounter();
@@ -14,7 +14,7 @@ static uint8_t frame_count = 0;
 static float   each_second = 0.0f;
 static size_t  sum_fps = 0;
 
-void ri_time_update(RI_Platform *p) {
+void ri_platform_time_update(RI_Platform *p) {
     p->time.was = p->time.now;
     p->time.now = SDL_GetPerformanceCounter();
 

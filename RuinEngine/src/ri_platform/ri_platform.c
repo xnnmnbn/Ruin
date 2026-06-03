@@ -2,17 +2,22 @@
 
 #include <stdio.h>
 
-void ri__platform_init(RI_Platform *p) {
-    ri_window_init();
-    ri_input_init(p);
-    ri_time_init(p);	
+void ri_platform_init(RI_Platform *p) {
+    ri_platform_window_init(p);
+    ri_platform_input_init(p);
+    ri_platform_time_init(p);
+
+    printf("Platform initialized.\n");
 }
 
-void ri__platform_kill(RI_Platform *p) {
-    ri_input_kill(p);
+void ri_platform_kill(RI_Platform *p) {
     if (p->window.window != NULL) {
-        ri_window_kill(p);
+        ri_platform_window_kill(p);
     }
 
-    printf("Platform killed succesfully.\n");
+    if (p->input.keys_now != NULL) {
+        ri_platform_input_kill(p);
+    }
+
+    printf("Platform killed.\n");
 }

@@ -107,7 +107,10 @@ void ri_renderer_init(RI_Renderer *r, RI_Platform *p) {
     ri_renderer_create_surface(r, p);
     ri_renderer_select_physical_device(r);
     ri_renderer_create_logical_device(r);
-    ri_renderer_create_swapchain(r, p);
+
+    ri_renderer_create_vma(r);
+
+    ri_renderer_create_swapchain(r);
     ri_renderer_get_swapchain_image_views(r);
     ri_renderer_create_renderpass_present(r);
     ri_renderer_create_pipeline_test(r);
@@ -118,7 +121,7 @@ void ri_renderer_init(RI_Renderer *r, RI_Platform *p) {
 
 
 
-void ri__renderer_kill(RI_Renderer *r) {
+void ri_renderer_kill(RI_Renderer *r) {
     if (r->core.device == VK_NULL_HANDLE) {
         printf("Renderer was not killed since it has never been created.\n");
         return;
@@ -136,7 +139,6 @@ void ri__renderer_kill(RI_Renderer *r) {
     for (size_t i = 0; i < r->swapchain.swapchain_image_count; i++) {
         vkDestroyFramebuffer(r->core.device, r->swapchain.swapchain_framebuffers[i], NULL);
     }
-    free(r->swapchain.swapchain_framebuffers);
     
     vkDestroyPipeline(r->core.device, r->pipelines.test_pipeline.pipeline, NULL);
     vkDestroyPipelineLayout(r->core.device, r->pipelines.test_pipeline.layout, NULL);
@@ -144,9 +146,9 @@ void ri__renderer_kill(RI_Renderer *r) {
     for (size_t i = 0; i < r->swapchain.swapchain_image_count; i++) {
         vkDestroyImageView(r->core.device, r->swapchain.swapchain_image_views[i], NULL);
     }
-    free(r->swapchain.swapchain_images);
-    free(r->swapchain.swapchain_image_views);
     vkDestroySwapchainKHR(r->core.device, r->swapchain.swapchain, NULL);
+
+    ri_renderer_kill_vma(r);
     
     vkDestroyDevice(r->core.device, NULL);
 
@@ -156,7 +158,7 @@ void ri__renderer_kill(RI_Renderer *r) {
     vkDestroySurfaceKHR(r->core.instance, r->core.surface, NULL);
     vkDestroyInstance(r->core.instance, NULL);
 
-    printf("Renderer killed successfully.\n");
+    printf("Renderer killed.\n");
 }
 
 

@@ -1,108 +1,52 @@
 #include "ruin.h"
 
 #include <stdio.h>
-
-typedef struct {
-    REntityID  camera;
-    REntityID  player;
-    REntityID  enemy;
-    REntityID  pistol1;
-    REntityID  pistol2;
-    REntityID  background;
-    REntityID *bullet_pool;
-    size_t     bullet_count;
-    size_t     next_bullet_idx;
-} MyGameEntities;
-
-typedef struct {
-    RTransform  *player_t;
-    RTransform  *enemy_t;
-    RTransform  *background_t;
-    RTransform  *pistol1_t;
-    RTransform  *pistol2_t;
-    RTransform **bullet_ts;
-} MyGameTransforms;
-
-typedef struct {
-    RSpriteRenderer *player;
-    RSpriteRenderer *enemy;
-    RSpriteRenderer *pistol1;
-    RSpriteRenderer *pistol2;
-    RSpriteRenderer *background;
-    RSpriteRenderer *bullets;
-} MyGameRenderers2D;
-
-typedef struct {
-    RTextureID background;
-    RTextureID player_idle;
-    RTextureID player_walking1;
-    RTextureID player_walking2;
-    RTextureID enemy_idle;
-    RTextureID enemy_walking1;
-    RTextureID enemy_walking2;
-    RTextureID pistol;
-    RTextureID bullet;
-} MyGameTextures;
-
-typedef struct {
-    RSoundID walking;
-    RSoundID pistol_boom;
-    RSoundID pistol_reload;
-} MyGameSounds;
-
-typedef struct {
-    RMusicID battle;
-    RMusicID win;
-    RMusicID fail;
-} MyGameMusics;
-
-typedef struct {
-    MyGameEntities    entities;
-    MyGameTextures    textures;
-    MyGameSounds      sounds;
-    MyGameMusics      musics;
-    MyGameTransforms  transforms;
-    MyGameRenderers2D renderers;
-} MyGame;
-
-static MyGame game = {0};
-
-void myGameInit(MyGame *g) {
-    ruinInit();
-    ruinWindowCreate(800, 450, "Ruin Test");
-    ruinTimeSetTargetFPS(30);
-    
-
-    ruinEntityTransformGet(89);
-}
-
-void myGameUpdate(MyGame *g) {
-ruinFrameBegin();
-
-    if (ruinKeyHold(RUIN_KEY_SPACE)) {
-        RUIN_DEBUG("FPS: %d", ruinTimeFPS());
-    }
-    
-    
-ruinFrameEnd();
-}
-
-void myGameKill(MyGame *g) {
-    ruinKill();
-}
+#include <vulkan/vulkan_core.h>
 
 
 int main(void) {
 
-    setvbuf(stdout, NULL, _IONBF, 0);
+    RnConfig *cfg = rnConfigGet();
 
-    myGameInit(&game);
+    cfg->window.title      = "Ruin Test";
+    cfg->window.width      = 800;
+    cfg->window.height     = 450;
+    cfg->window.resizable  = RN_TRUE;
+    cfg->window.borderless = RN_FALSE;
 
-    while (ruinWindowRunning()) {
-        myGameUpdate(&game);
+    cfg->audio.sound_volume = 1.0f;
+    cfg->audio.music_volume = 1.0f;
+
+    cfg->renderer.max_frames_in_flight = 2;
+    cfg->renderer.resolution_x         = 800;
+    cfg->renderer.resolution_y         = 450;
+    cfg->renderer.max_anisotropy       = 1.0f;
+    cfg->renderer.multisampling        = 1;
+    cfg->renderer.vsync                = RN_FALSE;
+    
+
+    rnSelfInit(cfg);
+
+    while (rnSelfRunning()) {
+    rnFrameBegin();
+
+        if (rnKeyHold(RUIN_KEY_SPACE)) {
+            printf("FPS: %d\n", rnTimeFPS());
+        }
+
+        if (rnKeyDown(RUIN_KEY_LEFT_CTRL)) {
+            cfg->renderer.max_frames_in_flight = 3;
+            cfg->window.fullscreen = !cfg->window.fullscreen;
+            cfg->window.borderless = !cfg->window.borderless;
+            rnConfigUpdatePlatform();
+            rnConfigUpdateRenderer();
+            printf("ok\n");
+        }
+
+    rnFrameEnd();
     }
 
-    myGameKill(&game);
+    rnSelfKill();
 
     return 0;
 }

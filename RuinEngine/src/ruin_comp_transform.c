@@ -15,11 +15,11 @@ static RuinInternal *eng_ptr;
 #define from_void(V, T) ((T*)V)
 
 int32_t sortByParent(const void *_a, const void *_b) {
-    REntityID a = *((REntityID*)_a);
-    REntityID b = *((REntityID*)_b);
+    RnEntity a = *((RnEntity*)_a);
+    RnEntity b = *((RnEntity*)_b);
 
-    int32_t p_a = (from_void(eng_ptr->components.transforms.sparse_data, RTransform)[a].parent != 0);
-    int32_t p_b = (from_void(eng_ptr->components.transforms.sparse_data, RTransform)[b].parent != 0);
+    int32_t p_a = (from_void(eng_ptr->components.transforms.sparse_data, RnTransform)[a].parent != 0);
+    int32_t p_b = (from_void(eng_ptr->components.transforms.sparse_data, RnTransform)[b].parent != 0);
 
     return p_b - p_a;
 }
@@ -52,11 +52,11 @@ void ri_comp_transform_kill(RuinInternal *engine) {
 void ri_comp_transform_update(RuinInternal *engine) {
     size_t user_created_transform_count = engine->components.transforms.dense_indices.len;
 
-    qsort(engine->components.transforms.dense_indices.data, engine->components.transforms.dense_indices.len, sizeof(REntityID), sortByParent);
+    qsort(engine->components.transforms.dense_indices.data, engine->components.transforms.dense_indices.len, sizeof(RnEntity), sortByParent);
     
     for (size_t i = 0; i < user_created_transform_count; i++) {
-        REntityID   e  =  cvec_t(engine->components.transforms.dense_indices, REntityID)[i];
-        RTransform *t  = &void_t(engine->components.transforms.sparse_data, RTransform)[e];
+        RnEntity     e  =  cvec_t(engine->components.transforms.dense_indices, RnEntity)[i];
+        RnTransform *t  = &void_t(engine->components.transforms.sparse_data, RnTransform)[e];
 
         if (t->dirty) continue;
         

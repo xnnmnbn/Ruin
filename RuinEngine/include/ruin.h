@@ -1,5 +1,5 @@
-#ifndef RUIN_ENGINE_H
-#define RUIN_ENGINE_H
+#ifndef RUIN_H
+#define RUIN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -8,12 +8,12 @@ extern "C" {
 #include <stdint.h>
 #include <stddef.h>
 
-typedef uint8_t RBool;
+typedef uint8_t RnBool;
 
-#define RUIN_TRUE 1
-#define RUIN_FALSE 0
+#define RN_TRUE  1
+#define RN_FALSE 0
 
-// #define RUIN_ENABLE_DEBUG
+// #define RN_ENABLE_DEBUG
 
 #define RUIN_DEBUG(fmt, ...) printf("[ruin] " fmt "\n", ##__VA_ARGS__)
 
@@ -28,15 +28,15 @@ typedef uint8_t RBool;
 #define RUIN_MAX_SOUND_LISTENERS 1
 #define RUIN_MAX_ENTITIES        20000
 
-typedef uint32_t REntityID;
-typedef uint16_t RTextureID;
-typedef uint16_t RMaterialID;
-typedef uint16_t RSoundID;
-typedef uint16_t RMusicID;
-typedef uint16_t RMeshID;
-typedef uint8_t  RRenderTargetID;
+typedef uint32_t RnEntity;
+typedef uint16_t RnTexture;
+typedef uint16_t RnMaterial;
+typedef uint16_t RnSound;
+typedef uint16_t RnMusic;
+typedef uint16_t RnMesh;
+typedef uint8_t  RnRenderTarget;
 
-typedef enum RKey {
+typedef enum {
     RUIN_KEY_0 = 39,
     RUIN_KEY_1 = 30,
     RUIN_KEY_2 = 31,
@@ -105,17 +105,17 @@ typedef enum RKey {
     RUIN_KEY_DOWN  = 81,
     RUIN_KEY_LEFT  = 80,
     RUIN_KEY_RIGHT = 79
-} RKey;
+} RnKey;
 
-typedef enum RMouseButton {
+typedef enum {
     RUIN_MOUSE_LEFT   = 1,
     RUIN_MOUSE_MIDDLE = 2,
     RUIN_MOUSE_RIGHT  = 3,
     RUIN_MOUSE_X1     = 4,
     RUIN_MOUSE_X2     = 5
-} RMouseButton;
+} RnMouseButton;
 
-typedef enum RMaterialMask {
+typedef enum {
     RUIN_MAT3D_MASK_ALBEDO        = 1 << 0,
     RUIN_MAT3D_MASK_NORMAL        = 1 << 1,
     RUIN_MAT3D_MASK_ROUGHNESS     = 1 << 2,
@@ -131,296 +131,322 @@ typedef enum RMaterialMask {
                                     RUIN_MAT3D_MASK_ROUGHNESS | RUIN_MAT3D_MASK_ROUGHNESS_VAL |
                                     RUIN_MAT3D_MASK_TINT      | RUIN_MAT3D_MASK_ALPHA         |
                                     RUIN_MAT3D_MASK_TILING_X  | RUIN_MAT3D_MASK_TILING_Y
-} RMaterialMask;
+} RnMaterialMask;
 
-typedef enum RProjection {
+typedef enum {
     RUIN_PROJECTION_ORTHOGRAPHIC,
     RUIN_PROJECTION_PERSPECTIVE
-} RProjection;
+} RnProjection;
 
-typedef enum RRigidBodyType {
+typedef enum {
     RUIN_RIGIDBODY_TYPE_DYNAMIC,
     RUIN_RIGIDBODY_TYPE_STATIC,
     RUIN_RIGIDBODY_TYPE_KINEMATIC
-} RRigidBodyType;
+} RnRigidBodyType;
 
-typedef enum RRigidBody2DShape {
+typedef enum {
     RUIN_RIGIDBODY2D_SHAPE_SQUARE,
     RUIN_RIGIDBODY2D_SHAPE_CIRCLE
-} RRigidBody2DShape;
+} RnRigidBody2DShape;
 
-typedef enum RRigidBody3DShape {
+typedef enum {
     RUIN_RIGIDBODY3D_SHAPE_CUBE,
     RUIN_RIGIDBODY3D_SHAPE_SPHERE,
     RUIN_RIGIDBODY3D_SHAPE_CYLINDER
-} RRigidBody3DShape;
+} RnRigidBody3DShape;
 
 
 
-typedef struct RVec2 {
+
+
+typedef struct {
     float x, y;
-} RVec2;
+} RnVec2;
 
-typedef struct RVec3 {
+typedef struct {
     float x, y, z;
-} RVec3;
+} RnVec3;
 
-typedef struct RVec4 {
+typedef struct {
     float x, y, z, w;
-} RVec4;
+} RnVec4;
 
-typedef struct RColor {
+typedef struct {
     float r, g, b, a;
-} RColor;
-
-typedef struct RTransform {
-    RVec3      position;
-    RVec3      rotation;
-    RVec3      scale;
-    REntityID  parent;
-    RBool      dirty;
-} RTransform;
-
-typedef struct RPhysicsWorld {
-    RVec3 gravity;
-} RPhysicsWorld;
-
-typedef struct RRigidBody2D {
-    RRigidBodyType    type;
-    RRigidBody2DShape shape;
-    RVec3             position;
-    RVec3             rotation;
-    RVec3             scale;
-    RVec3             velocity;
-    RVec3             angular_velocity;
-    float             mass;
-    float             friction;
-    float             restitution;
-    RBool             ignore_gravity;
-} RRigidBody2D;
-
-typedef struct RRigidBody3D {
-    RRigidBodyType    type;
-    RRigidBody3DShape shape;
-    RVec3             position;
-    RVec3             rotation;
-    RVec3             scale;
-    RVec3             velocity;
-    RVec3             angular_velocity;
-    float             mass;
-    float             friction;
-    float             restitution;
-    RBool             ignore_gravity;
-} RRigidBody3D;
-
-typedef struct RSoundListener {
-    RVec3 position;
-    RVec3 rotation;
-    RVec3 velocity;
-} RSoundListener;
-
-typedef struct RSoundPlayer {
-    RSoundID sound;
-    float    volume;
-} RSoundPlayer;
-
-typedef struct RMusicPlayer {
-    RMusicID music;
-    float    volume;
-} RMusicPlayer;
+} RnColor;
 
 
-typedef struct RMaterialInfo {
-    RMaterialMask masks;
-    RTextureID    albedo;
-    RTextureID    normal;
-    RTextureID    roughness;
-    RTextureID    metallic;
-    RColor        tint;
-    float         alpha;
-    float         roughness_val;
-    float         metallic_val;
-    float         tiling_x;
-    float         tiling_y;
-} RMaterialInfo;
 
-typedef struct RRenderTargetInfo {
+typedef struct {
+    const char *title;
+    uint32_t    width;
+    uint32_t    height;
+    RnBool      borderless;
+    RnBool      resizable;
+    RnBool      fullscreen;
+} RnConfigWindow;
+
+typedef struct {
+    RnBool   vsync;
+    uint8_t  multisampling;
+    uint8_t  max_frames_in_flight;
+    float    max_anisotropy;
+    uint32_t resolution_x;
+    uint32_t resolution_y;
+} RnConfigRenderer;
+
+typedef struct {
+    float sound_volume;
+    float music_volume;
+} RnConfigAudio;
+
+
+typedef struct {
+    RnConfigWindow   window;
+    RnConfigRenderer renderer;
+    RnConfigAudio    audio;
+} RnConfig;
+
+
+typedef struct {
+    RnVec3      position;
+    RnVec3      rotation;
+    RnVec3      scale;
+    RnEntity    parent;
+    RnBool      dirty;
+} RnTransform;
+
+typedef struct {
+    RnVec3 gravity;
+} RnPhysicsWorld;
+
+typedef struct {
+    RnRigidBodyType    type;
+    RnRigidBody2DShape shape;
+    RnVec3             position;
+    RnVec3             rotation;
+    RnVec3             scale;
+    RnVec3             velocity;
+    RnVec3             angular_velocity;
+    float              mass;
+    float              friction;
+    float              restitution;
+    RnBool             ignore_gravity;
+} RnRigidBody2D;
+
+typedef struct {
+    RnRigidBodyType    type;
+    RnRigidBody3DShape shape;
+    RnVec3             position;
+    RnVec3             rotation;
+    RnVec3             scale;
+    RnVec3             velocity;
+    RnVec3             angular_velocity;
+    float              mass;
+    float              friction;
+    float              restitution;
+    RnBool             ignore_gravity;
+} RnRigidBody3D;
+
+typedef struct {
+    RnVec3 position;
+    RnVec3 rotation;
+    RnVec3 velocity;
+} RnSoundListener;
+
+typedef struct {
+    RnSound sound;
+    float   volume;
+} RnSoundPlayer;
+
+typedef struct {
+    RnMusic music;
+    float   volume;
+} RnMusicPlayer;
+
+
+typedef struct {
+    RnMaterialMask masks;
+    RnTexture      albedo;
+    RnTexture      normal;
+    RnTexture      roughness;
+    RnTexture      metallic;
+    RnColor        tint;
+    float          alpha;
+    float          roughness_val;
+    float          metallic_val;
+    float          tiling_x;
+    float          tiling_y;
+} RnMaterialInfo;
+
+typedef struct {
     int32_t width;
     int32_t height;
-    RBool   depth;
-} RRenderTargetInfo;
+    RnBool  depth;
+} RnRenderTargetInfo;
 
-typedef struct RCamera2D {
-    RRenderTargetID target;
-    float width;
-    float height;
-    float far;
-    float near;
-} RCamera2D;
+typedef struct {
+    RnRenderTarget target;
+    float          width;
+    float          height;
+    float          far;
+    float          near;
+} RnCamera2D;
 
-typedef struct RCamera3D {
-    RRenderTargetID target;
-    float width;
-    float height;
-    float far;
-    float near;
-    float fov;
-} RCamera3D;
+typedef struct {
+    RnRenderTarget target;
+    float          width;
+    float          height;
+    float          far;
+    float          near;
+    float          fov;
+} RnCamera3D;
 
-typedef struct RSpriteRenderer {
-    RTextureID texture;
-    RColor     tint;
-    float      opacity;
-} RSpriteRenderer;
+typedef struct {
+    RnTexture texture;
+    RnColor   tint;
+    float     opacity;
+} RnSpriteRenderer;
 
-typedef struct RMeshRenderer {
-    RMeshID mesh;
-} RMeshRenderer;
+typedef struct {
+    RnMesh mesh;
+} RnMeshRenderer;
 
-RVec2 ruinVec2(float x, float y);
-RVec3 ruinVec3(float x, float y, float z);
-RVec4 ruinVec4(float x, float y, float z, float w);
+RnVec2 rnVec2(float x, float y);
+RnVec3 rnVec3(float x, float y, float z);
+RnVec4 rnVec4(float x, float y, float z, float w);
 
-RVec2 ruinVec2Sum(const RVec2 *a, const RVec2 *b);
-RVec2 ruinVec2Sub(const RVec2 *a, const RVec2 *b);
-RVec2 ruinVec2Mul(const RVec2 *a, float f);
-RVec2 ruinVec2Div(const RVec2 *a, float f);
+RnVec2 rnVec2Sum(const RnVec2 *a, const RnVec2 *b);
+RnVec2 rnVec2Sub(const RnVec2 *a, const RnVec2 *b);
+RnVec2 rnVec2Mul(const RnVec2 *a, float f);
+RnVec2 rnVec2Div(const RnVec2 *a, float f);
 
-float ruinVec2Mag(const RVec2 *v);
-RVec2 ruinVec2Nor(const RVec2 *v);
+float  rnVec2Mag(const RnVec2 *v);
+RnVec2 rnVec2Nor(const RnVec2 *v);
 
-RVec3 ruinVec3Sum(const RVec3 *a, const RVec3 *b);
-RVec3 ruinVec3Sub(const RVec3 *a, const RVec3 *b);
-RVec3 ruinVec3Mul(const RVec3 *a, float f);
-RVec3 ruinVec3Div(const RVec3 *a, float f);
+RnVec3 rnVec3Sum(const RnVec3 *a, const RnVec3 *b);
+RnVec3 rnVec3Sub(const RnVec3 *a, const RnVec3 *b);
+RnVec3 rnVec3Mul(const RnVec3 *a, float f);
+RnVec3 rnVec3Div(const RnVec3 *a, float f);
 
-float ruinVec3Mag(const RVec3 *v);
-RVec3 ruinVec3Nor(const RVec3 *v);
+float  rnVec3Mag(const RnVec3 *v);
+RnVec3 rnVec3Nor(const RnVec3 *v);
 
-RVec4 ruinVec4Sum(const RVec4 *a, const RVec4 *b);
-RVec4 ruinVec4Sub(const RVec4 *a, const RVec4 *b);
-RVec4 ruinVec4Mul(const RVec4 *a, float f);
-RVec4 ruinVec4Div(const RVec4 *a, float f);
+RnVec4 rnVec4Sum(const RnVec4 *a, const RnVec4 *b);
+RnVec4 rnVec4Sub(const RnVec4 *a, const RnVec4 *b);
+RnVec4 rnVec4Mul(const RnVec4 *a, float f);
+RnVec4 rnVec4Div(const RnVec4 *a, float f);
 
-float ruinVec4Mag(const RVec4 *v);
-RVec4 ruinVec4Nor(const RVec4 *v);
+float  rnVec4Mag(const RnVec4 *v);
+RnVec4 rnVec4Nor(const RnVec4 *v);
 
-RBool ruinInit(void);
-RBool ruinKill(void);
+RnBool rnSelfInit(RnConfig *c);
+RnBool rnSelfRunning(void);
+void   rnSelfKill(void);
 
-void ruinFrameBegin(void);
-void ruinFrameEnd(void);
+RnConfig *rnConfigGet(void);
+void      rnConfigUpdatePlatform(void);
+void      rnConfigUpdateRenderer(void);
+void      rnConfigUpdateAudio(void);
+void      rnConfigUpdateAll(void);
+void      rnConfigReset(void);
 
-REntityID ruinEntityCreate(void);
-void      ruinEntityKill(REntityID e);
-RBool     ruinEntityValid(REntityID e);
+void rnFrameBegin(void);
+void rnFrameEnd(void);
 
-RBool ruinWindowCreate(int32_t w, int32_t h, const char *title);
-RBool ruinWindowRunning(void);
-RVec2 ruinWindowSize(void);
-RVec2 ruinWindowPosition(void);
-RBool ruinWindowFocused(void);
-RBool ruinWindowMinimized(void);
-RBool ruinWindowFullscreen(void);
+RnEntity rnEntityCreate(void);
+void     rnEntityKill(RnEntity e);
+RnBool   rnEntityValid(RnEntity e);
 
-void ruinWindowSetTitle(const char *t);
-void ruinWindowSetSize(int32_t w, int32_t h);
-void ruinWindowSetFullscreen(RBool f);
-void ruinWindowSetVsync(RBool vs);
-void ruinWindowSetCursorVisible(RBool v);
-void ruinWindowSetCursorLocked(RBool l);
-void ruinWindowSetProjection(RProjection p);
-void ruinWindowSetResolution(int32_t w, int32_t h);
+uint8_t rnTimeFPS(void);
+float   rnTimeDelta(void);
+float   rnTimeElapsed(void);
+float   rnTimeDeltaFixed(void);
+float   rnTimeElapsedFixed(void);
+void    rnTimeSetSpeed(float s);
+void    rnTimeSetTargetFPS(uint8_t t);
 
-uint8_t ruinTimeFPS(void);
-float   ruinTimeDelta(void);
-float   ruinTimeElapsed(void);
-float   ruinTimeDeltaFixed(void);
-float   ruinTimeElapsedFixed(void);
-void    ruinTimeSetSpeed(float s);
-void    ruinTimeSetTargetFPS(uint8_t t);
+RnBool rnKeyDown(RnKey k);
+RnBool rnKeyHold(RnKey k);
+RnBool rnKeyUp(RnKey k);
 
-RBool ruinKeyDown(RKey k);
-RBool ruinKeyHold(RKey k);
-RBool ruinKeyUp(RKey k);
+RnBool rnMouseDown(RnMouseButton b);
+RnBool rnMouseHold(RnMouseButton b);
+RnBool rnMouseUp(RnMouseButton b);
+float  rnMouseScroll(void);
 
-RBool ruinMouseDown(RMouseButton b);
-RBool ruinMouseHold(RMouseButton b);
-RBool ruinMouseUp(RMouseButton b);
-float ruinMouseScroll(void);
+RnRenderTarget rnRenderTargetCreate(RnRenderTargetInfo *i);
+void           rnRenderTargetKill(RnRenderTarget t);
 
-RRenderTargetID ruinRenderTargetCreate(RRenderTargetInfo *i);
-void            ruinRenderTargetKill(RRenderTargetID t);
+RnTexture rnTextureLoad(const char *path);
+RnTexture rnTextureFromRenderTarget(RnRenderTarget t);
+void      rnTextureKill(RnTexture t);
 
-RTextureID ruinTextureLoad(const char *path);
-RTextureID ruinTextureFromRenderTarget(RRenderTargetID t);
-void       ruinTextureKill(RTextureID t);
+RnMesh rnMeshLoad(const char *path);
+void   rnMeshKill(RnMesh m);
 
-RMeshID ruinMeshLoad(const char *path);
-void    ruinMeshKill(RMeshID m);
+RnSound rnSoundLOad(const char *path);
+void    rnSoundKill(RnSound s);
 
-RSoundID ruinSoundLOad(const char *path);
-void     ruinSoundKill(RSoundID s);
+RnMusic rnMusicLoad(const char *path);
+void    rnMusicKill(RnMusic m);
 
-RMusicID ruinMusicLoad(const char *path);
-void     ruinMusicKill(RMusicID m);
+RnMaterial rnMaterialCreate(const RnMaterialInfo *i);
+void       rnMaterialUpdate(RnMaterial m, const RnMaterialInfo *i);
+void       rnMaterialKill(RnMaterial m);
 
-RMaterialID ruinMaterialCreate(const RMaterialInfo *i);
-void        ruinMaterialUpdate(RMaterialID m, const RMaterialInfo *i);
-void        ruinMaterialKill(RMaterialID m);
+RnTransform  rnDefaultTransform(void);
+RnTransform *rnEntityTransformGet(RnEntity e);
+void         rnEntityTransformAdd(RnEntity e, RnTransform t);
+void         rnEntityTransformKill(RnEntity e);
+void         rnEntityTransformSetDirty(RnEntity e, RnBool d);
+RnVec3       rnEntityTransformGetWorldPosition(RnEntity e);
+RnVec3       rnEntityTransformGetWorldRotation(RnEntity e);
+RnVec3       rnEntityTransformGetWorldScale(RnEntity e);
 
-RTransform  ruinDefaultTransform(void);
-RTransform *ruinEntityTransformGet(REntityID e);
-void        ruinEntityTransformAdd(REntityID e, RTransform t);
-void        ruinEntityTransformKill(REntityID e);
-void        ruinEntityTransformSetDirty(REntityID e, RBool d);
-RVec3       ruinEntityTransformGetWorldPosition(REntityID e);
-RVec3       ruinEntityTransformGetWorldRotation(REntityID e);
-RVec3       ruinEntityTransformGetWorldScale(REntityID e);
+RnRigidBody2D *rnEntityRigidBody2dGet(RnEntity e);
+void           rnEntityRigidBody2dAdd(RnEntity e, RnRigidBody2D b);
+void           rnEntityRigidBody2dKill(RnEntity e);
 
-RRigidBody2D *ruinEntityRigidBody2dGet(REntityID e);
-void          ruinEntityRigidBody2dAdd(REntityID e, RRigidBody2D b);
-void          ruinEntityRigidBody2dKill(REntityID e);
+RnRigidBody3D *rnEntityRigidBody3dGet(RnEntity e);
+void           rnEntityRigidBody3dAdd(RnEntity e, RnRigidBody3D b);
+void           rnEntityRigidBody3dKill(RnEntity e);
 
-RRigidBody3D *ruinEntityRigidBody3dGet(REntityID e);
-void          ruinEntityRigidBody3dAdd(REntityID e, RRigidBody3D b);
-void          ruinEntityRigidBody3dKill(REntityID e);
+RnSoundListener *rnEntitySoundListenerGet(RnEntity e);
+void             rnEntitySoundListenerAdd(RnEntity e, RnSoundListener l);
+void             rnEntitySoundListenerKill(RnEntity e);
 
-RSoundListener *ruinEntitySoundListenerGet(REntityID e);
-void            ruinEntitySoundListenerAdd(REntityID e, RSoundListener l);
-void            ruinEntitySoundListenerKill(REntityID e);
+RnSoundPlayer *rnEntitySoundPlayerGet(RnEntity e);
+void           rnEntitySoundPlayerAdd(RnEntity e, RnSoundPlayer p);
+void           rnEntitySoundPlayerKill(RnEntity e);
+void           rnEntitySoundPlayerPlay(RnEntity e);
+void           rnEntitySoundPlayerStop(RnEntity e);
 
-RSoundPlayer *ruinEntitySoundPlayerGet(REntityID e);
-void          ruinEntitySoundPlayerAdd(REntityID e, RSoundPlayer p);
-void          ruinEntitySoundPlayerKill(REntityID e);
-void          ruinEntitySoundPlayerPlay(REntityID e);
-void          ruinEntitySoundPlayerStop(REntityID e);
-
-RMusicPlayer *ruinEntityMusicPlayerGet(REntityID e);
-void          ruinEntityMusicPlayerAdd(REntityID e, RMusicPlayer p);
-void          ruinEntityMusicPlayerKill(REntityID e);
-void          ruinEntityMusicPlayerPlay(REntityID e);
-void          ruinEntityMusicPlayerStop(REntityID e);
+RnMusicPlayer *rnEntityMusicPlayerGet(RnEntity e);
+void           rnEntityMusicPlayerAdd(RnEntity e, RnMusicPlayer p);
+void           rnEntityMusicPlayerKill(RnEntity e);
+void           rnEntityMusicPlayerPlay(RnEntity e);
+void           rnEntityMusicPlayerStop(RnEntity e);
 
 
 
-RCamera2D *ruinEntityCamera2dGet(REntityID e);
-void       ruinEntityCamera2dAdd(REntityID e, RCamera2D c);
-void       ruinEntityCamera2dKill(REntityID e);
-void       ruinEntityCamera2dSetRenderTarget(REntityID e, RRenderTargetID t);
+RnCamera2D *rnEntityCamera2dGet(RnEntity e);
+void        rnEntityCamera2dAdd(RnEntity e, RnCamera2D c);
+void        rnEntityCamera2dKill(RnEntity e);
+void        rnEntityCamera2dSetRenderTarget(RnEntity e, RnRenderTarget t);
 
-RCamera3D *ruinEntityCamera3dGet(REntityID e);
-void       ruinEntityCamera3dAdd(REntityID e, RCamera3D c);
-void       ruinEntityCamera3dKill(REntityID e);
-void       ruinEntityCamera3dSetRenderTarget(REntityID e, RRenderTargetID t);
+RnCamera3D *rnEntityCamera3dGet(RnEntity e);
+void        rnEntityCamera3dAdd(RnEntity e, RnCamera3D c);
+void        rnEntityCamera3dKill(RnEntity e);
+void        rnEntityCamera3dSetRenderTarget(RnEntity e, RnRenderTarget t);
 
-void ruinEntityCameraUse(REntityID e, RProjection p);
+void rnEntityCameraUse(RnEntity e, RnProjection p);
 
-void ruinEntitySpriteRendererAdd(REntityID e, RSpriteRenderer r);
-void ruinEntitySpriteRendererKill(REntityID e);
+void rnEntitySpriteRendererAdd(RnEntity e, RnSpriteRenderer r);
+void rnEntitySpriteRendererKill(RnEntity e);
 
-void ruinEntityMeshRendererAdd(REntityID e, RMeshRenderer r);
-void ruinEntityMeshRendererKill(REntityID e);
+void rnEntityMeshRendererAdd(RnEntity e, RnMeshRenderer r);
+void rnEntityMeshRendererKill(RnEntity e);
 
 
 

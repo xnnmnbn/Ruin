@@ -2,9 +2,13 @@
 #define RI_RENDERER_H
 
 #include "ri_platform/ri_platform.h"
+#include "ruin.h"
 #include <stdint.h>
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
+
+#include "vk_mem_alloc.h"
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,9 +23,8 @@ extern "C" {
 #endif
 
 
-#define DEFAULT_MULTISAMPLING VK_SAMPLE_COUNT_1_BIT
 #define MAX_SWAPCHAIN_IMAGES 8
-#define MAX_FRAMES_IN_FLIGHT 2
+#define MAX_FRAMES_IN_FLIGHT 8
 
 
 typedef struct {
@@ -51,16 +54,16 @@ typedef struct {
     VkDevice                 device;
     VkQueue                  graphics_queue;
     VkQueue                  present_queue;
-    // VmaAllocator             allocator;
+    VmaAllocator             allocator;
 } RI_Renderer_Core;
 
 typedef struct {
     VkSwapchainKHR swapchain;
     VkFormat       swapchain_image_format;
     VkExtent2D     swapchain_extent;
-    VkImage       *swapchain_images;
-    VkImageView   *swapchain_image_views;
-    VkFramebuffer *swapchain_framebuffers;
+    VkImage        swapchain_images[MAX_SWAPCHAIN_IMAGES];
+    VkImageView    swapchain_image_views[MAX_SWAPCHAIN_IMAGES];
+    VkFramebuffer  swapchain_framebuffers[MAX_SWAPCHAIN_IMAGES];
     uint32_t       swapchain_image_count;
 } RI_Renderer_Swapchain;
 
@@ -91,9 +94,12 @@ typedef struct {
     VkSemaphore render_finished_semaphores[MAX_SWAPCHAIN_IMAGES];
     VkFence     in_flight_fences[MAX_FRAMES_IN_FLIGHT];
     uint32_t    current_frame;
+    uint8_t     skip_wait;
 } RI_Renderer_Sync;
 
 typedef struct {
+    RnConfigRenderer         active_config;
+    RnConfigRenderer         pending_config;
     RI_Renderer_Core         core;
     RI_Renderer_Swapchain    swapchain;
     RI_Renderer_RenderPasses renderpasses;
@@ -108,7 +114,7 @@ QueueFamilyIndices find_queue_family_indices(RI_Renderer_Core *c);
 SwapchainSupportDetails query_swapchain_support(RI_Renderer *r);
 VkSurfaceFormatKHR choose_swap_surface_format(VkSurfaceFormatKHR *formats, uint32_t count);
 VkPresentModeKHR choose_swap_present_mode(VkPresentModeKHR *mods, uint32_t count);
-VkExtent2D choose_swap_extent(VkSurfaceCapabilitiesKHR *caps, RI_Platform *p);
+VkExtent2D choose_swap_extent(VkSurfaceCapabilitiesKHR *caps, RI_Renderer *r);
 
 void create_memory_allocator(RI_Renderer *r);
 
@@ -125,10 +131,14 @@ void ri_renderer_select_physical_device(RI_Renderer *r);
 void ri_renderer_create_logical_device(RI_Renderer *r);
 
 
+void ri_renderer_create_vma(RI_Renderer *r);
+void ri_renderer_kill_vma(RI_Renderer *r);
+
+
 void ri_renderer_init(RI_Renderer *r, RI_Platform *p);
 
 
-void ri_renderer_create_swapchain(RI_Renderer *r, RI_Platform *p);
+void ri_renderer_create_swapchain(RI_Renderer *r);
 void ri_renderer_get_swapchain_image_views(RI_Renderer *r);
 
 
@@ -153,7 +163,7 @@ void draw_frame(RI_Renderer *r, RI_Platform *p);
 
 void ri_renderer_create_pipeline_test(RI_Renderer *r);
 
-void ri__renderer_kill(RI_Renderer *r);
+void ri_renderer_kill(RI_Renderer *r);
 
 
 #ifdef __cplusplus

@@ -5,8 +5,6 @@
 #include <vulkan/vulkan_core.h>
 
 void ri_renderer_create_swapchain_framebuffers(RI_Renderer *r) {
-
-    r->swapchain.swapchain_framebuffers = malloc(r->swapchain.swapchain_image_count * sizeof(VkFramebuffer));
     
     for (size_t i = 0; i < r->swapchain.swapchain_image_count; i++) {
 
@@ -19,8 +17,8 @@ void ri_renderer_create_swapchain_framebuffers(RI_Renderer *r) {
         fi.pAttachments    = attachments;
         fi.attachmentCount = 1;
         fi.layers          = 1;
-        fi.width           = r->swapchain.swapchain_extent.width;
-        fi.height          = r->swapchain.swapchain_extent.height;
+        fi.width           = r->active_config.resolution_x;
+        fi.height          = r->active_config.resolution_y;
         fi.renderPass      = r->renderpasses.present_pass;
 
         if (vkCreateFramebuffer(r->core.device, &fi, NULL, &(r->swapchain.swapchain_framebuffers[i])) != VK_SUCCESS) {

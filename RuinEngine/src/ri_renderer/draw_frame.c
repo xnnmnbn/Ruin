@@ -10,7 +10,11 @@ void draw_frame(RI_Renderer *r, RI_Platform *p) {
     uint32_t current_frame = r->sync.current_frame;
     uint32_t image_index;
 
-    vkWaitForFences(device, 1, &(r->sync.in_flight_fences[current_frame]), VK_TRUE, UINT64_MAX);
+    //if (!r->sync.skip_wait) {
+        vkWaitForFences(device, 1, &(r->sync.in_flight_fences[current_frame]), VK_TRUE, UINT64_MAX);
+    //}
+
+    //r->sync.skip_wait = 0;
 
     VkResult res = vkAcquireNextImageKHR(
         device,
@@ -21,13 +25,12 @@ void draw_frame(RI_Renderer *r, RI_Platform *p) {
         &image_index
     );
 
-    if (res != VK_SUCCESS) {
-        printf("COULDN'T ACQUIRE NEXT IMAGE\n");
-        return;
-    }
-
     if (res == VK_ERROR_OUT_OF_DATE_KHR) {
         ri_renderer_recreate_swapchain(r, p);
+        return;
+    } else if (res != VK_SUCCESS && res != VK_SUBOPTIMAL_KHR) {
+        printf("COULDN'T ACQUIRE NEXT IMAGE\n");
+        return;
     }
 
     vkResetFences(device, 1, &(r->sync.in_flight_fences[current_frame]));
@@ -66,16 +69,16 @@ void draw_frame(RI_Renderer *r, RI_Platform *p) {
     pi.waitSemaphoreCount = 1;
     pi.pImageIndices = &image_index;
 
-    VkQueue present_queue = (r->core.present_queue == VK_NULL_HANDLE)
-        ? r->core.graphics_queue
-        : r->core.present_queue;
-
-    res = vkQueuePresentKHR(present_queue, &pi);
+    res = vkQueuePresentKHR(r->core.present_queue, &pi);
 
     if (res == VK_ERROR_OUT_OF_DATE_KHR || res == VK_SUBOPTIMAL_KHR) {
         ri_renderer_recreate_swapchain(r, p);
     }
 
 
-    r->sync.current_frame = (r->sync.current_frame + 1) % MAX_FRAMES_IN_FLIGHT;
+    r->sync.current_frame = (r->sync.current_frame + 1) % r->active_config.max_frames_in_flight;
+
+
+    //printf("%d\n", r->active_config.max_frames_in_flight);
+    //printf("Current Frame: %d\n", r->sync.current_frame);
 }
