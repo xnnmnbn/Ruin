@@ -1,5 +1,6 @@
 #include "ri_platform/ri_platform.h"
 #include "ri_renderer.h"
+#include "ruin.h"
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_oldnames.h>
 #include <SDL3/SDL_video.h>
@@ -68,7 +69,7 @@ uint8_t check_validation_layer_support() {
 }
 
 
-void ri_renderer_create_instance(RI_Renderer *r) {
+void ri_renderer_create_instance(RI_Renderer *r, RI_Platform *p) {
     
     uint32_t extension_count = 0;
     const char * const *sdl_extensions = SDL_Vulkan_GetInstanceExtensions(&extension_count);
@@ -100,7 +101,7 @@ void ri_renderer_create_instance(RI_Renderer *r) {
 
     VkApplicationInfo ai  = {0};
     ai.sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-    ai.pApplicationName   = "Ruin";
+    ai.pApplicationName   = p->active_config.title;
     ai.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
     ai.pEngineName        = "Ruin Engine";
     ai.engineVersion      = VK_MAKE_VERSION(1, 0, 0);
@@ -272,6 +273,24 @@ void ri_renderer_create_logical_device(RI_Renderer *r) {
     di.pEnabledFeatures        = &p_device_features;
     di.ppEnabledExtensionNames = device_extentions;
     di.enabledExtensionCount   = 1;
+
+    VkPhysicalDeviceVulkan12Features f12 = {0};
+    f12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+    f12.descriptorBindingPartiallyBound               = VK_TRUE;
+    f12.descriptorBindingStorageBufferUpdateAfterBind = VK_TRUE;
+    f12.runtimeDescriptorArray                        = VK_TRUE;
+    f12.shaderStorageBufferArrayNonUniformIndexing    = VK_TRUE;
+    f12.bufferDeviceAddress                           = VK_TRUE;
+    f12.shaderSampledImageArrayNonUniformIndexing     = VK_TRUE;
+    f12.descriptorBindingSampledImageUpdateAfterBind  = VK_TRUE;
+
+
+    VkPhysicalDeviceVulkan13Features f13 = {0};
+    f13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
+    f13.pNext = &f12;
+    f13.dynamicRendering = VK_TRUE;
+
+    di.pNext = &f13;
 
     if (vkCreateDevice(r->core.physical_device, &di, NULL, &r->core.device) != VK_SUCCESS) {
         printf("Failed to create logical device.\n");

@@ -3,6 +3,8 @@
 
 #include "ri_platform/ri_platform.h"
 #include "ruin.h"
+#include <cglm/types.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
@@ -14,7 +16,7 @@
 extern "C" {
 #endif
 
-// #define RUIN_ENABLE_DEBUG
+#define RUIN_ENABLE_DEBUG
 
 #ifdef RUIN_ENABLE_DEBUG
     #define enable_validation 1
@@ -23,8 +25,18 @@ extern "C" {
 #endif
 
 
-#define MAX_SWAPCHAIN_IMAGES 8
-#define MAX_FRAMES_IN_FLIGHT 8
+#define MAX_SWAPCHAIN_IMAGES   8
+#define MAX_FRAMES_IN_FLIGHT   8
+#define MAX_DESCRIPTOR_LAYOUTS 8
+
+typedef struct {
+    vec3 pos;
+    vec2 uv;
+} Vertex2D;
+
+typedef struct {
+    VkVertexInputAttributeDescription descs[2];
+} Vertex2D_Attr;
 
 
 typedef struct {
@@ -76,12 +88,14 @@ typedef struct {
 typedef struct {
     VkPipeline            pipeline;
     VkPipelineLayout      layout;
-    VkDescriptorSetLayout descriptor;
     VkPipelineBindPoint   bind_point;
+    VkDescriptorSetLayout d_set_layouts[MAX_DESCRIPTOR_LAYOUTS];
+    uint32_t              d_set_count;
 } RI_Renderer_Pipeline;
 
 typedef struct {
     RI_Renderer_Pipeline test_pipeline;
+    RI_Renderer_Pipeline bindless_pipeline_2d;
 } RI_Renderer_Pipelines;
 
 typedef struct {
@@ -120,11 +134,11 @@ void create_memory_allocator(RI_Renderer *r);
 
 Text read_file(const char *path);
 
-VkShaderModule create_shader_module(Text *txt, RI_Renderer *r);
+VkShaderModule create_shader_module(RI_Renderer *r, unsigned char *code, unsigned int len);
 
 
 
-void ri_renderer_create_instance(RI_Renderer *r);
+void ri_renderer_create_instance(RI_Renderer *r, RI_Platform *p);
 void ri_renderer_create_debug_messenger(RI_Renderer *r);
 void ri_renderer_create_surface(RI_Renderer *r, RI_Platform *p);
 void ri_renderer_select_physical_device(RI_Renderer *r);
@@ -162,6 +176,8 @@ void draw_frame(RI_Renderer *r, RI_Platform *p);
 
 
 void ri_renderer_create_pipeline_test(RI_Renderer *r);
+
+void ri_renderer_create_pipeline_bindless_2d(RI_Renderer *r);
 
 void ri_renderer_kill(RI_Renderer *r);
 

@@ -40,6 +40,8 @@ void rnConfigUpdateRenderer() {
 
 RnBool rnSelfInit(RnConfig *c) {
 
+    printf("Size of engine is %zu bytes.\n", sizeof(engine));
+
     engine.platform.active_config  = c->window;
     engine.platform.pending_config = c->window;
     engine.renderer.active_config  = c->renderer;
@@ -53,7 +55,7 @@ RnBool rnSelfInit(RnConfig *c) {
 
     engine.components = (RI_Components){0};
 /*
-    engine.components.transforms.sparse_data      = malloc(RUIN_MAX_ENTITIES * sizeof(RTransform));
+    engine.components.transforms.sparse_data       = malloc(RUIN_MAX_ENTITIES * sizeof(RTransform));
     engine->components.renderer_2ds.sparse_data    = malloc(RUIN_MAX_ENTITIES * sizeof(RSpriteRenderer));
     engine->components.renderer_3ds.sparse_data    = malloc(RUIN_MAX_ENTITIES * sizeof(RMeshRenderer));
     engine->components.sound_players.sparse_data   = malloc(RUIN_MAX_ENTITIES * sizeof(RSoundPlayer));

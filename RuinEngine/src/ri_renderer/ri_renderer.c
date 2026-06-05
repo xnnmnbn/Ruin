@@ -1,5 +1,6 @@
 #include "ri_renderer.h"
 #include "ri_platform/ri_platform.h"
+#include "ruin.h"
 #include <corecrt_wconio.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -100,7 +101,7 @@ Text read_file(const char *path) {
 
 
 void ri_renderer_init(RI_Renderer *r, RI_Platform *p) {
-    ri_renderer_create_instance(r);
+    ri_renderer_create_instance(r, p);
     if (enable_validation) {
         ri_renderer_create_debug_messenger(r);
     }
@@ -114,6 +115,9 @@ void ri_renderer_init(RI_Renderer *r, RI_Platform *p) {
     ri_renderer_get_swapchain_image_views(r);
     ri_renderer_create_renderpass_present(r);
     ri_renderer_create_pipeline_test(r);
+
+    ri_renderer_create_pipeline_bindless_2d(r);
+    
     ri_renderer_create_swapchain_framebuffers(r);
     ri_renderer_create_commands(r);
     ri_renderer_create_sync_objects(r);
@@ -139,9 +143,15 @@ void ri_renderer_kill(RI_Renderer *r) {
     for (size_t i = 0; i < r->swapchain.swapchain_image_count; i++) {
         vkDestroyFramebuffer(r->core.device, r->swapchain.swapchain_framebuffers[i], NULL);
     }
-    
+
+    vkDestroyPipeline(r->core.device, r->pipelines.bindless_pipeline_2d.pipeline, NULL);
+    for (size_t i = 0; i < r->pipelines.bindless_pipeline_2d.d_set_count; i++) {
+        vkDestroyDescriptorSetLayout(r->core.device, r->pipelines.bindless_pipeline_2d.d_set_layouts[i], NULL);
+    }
+    vkDestroyPipelineLayout(r->core.device, r->pipelines.bindless_pipeline_2d.layout, NULL);
     vkDestroyPipeline(r->core.device, r->pipelines.test_pipeline.pipeline, NULL);
     vkDestroyPipelineLayout(r->core.device, r->pipelines.test_pipeline.layout, NULL);
+    
     vkDestroyRenderPass(r->core.device, r->renderpasses.present_pass, NULL);
     for (size_t i = 0; i < r->swapchain.swapchain_image_count; i++) {
         vkDestroyImageView(r->core.device, r->swapchain.swapchain_image_views[i], NULL);
