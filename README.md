@@ -3,7 +3,7 @@
 This is a game development library written in C.
 I use SDL3, Vulkan and OpenAL Soft in three main internal layers in this library.
 
-Platform (window, input and time) layers are mostly done.
+Platform (window, input and time) layer is mostly done.
 Renderer layer is still on development.
 I aim to use bindless-rendering method for performance and probably easier development.
 
