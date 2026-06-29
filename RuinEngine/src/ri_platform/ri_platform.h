@@ -52,9 +52,9 @@ typedef struct RI_Platform {
 } RI_Platform;
 
 
-void    ri_platform_window_init(RI_Platform *p);
-uint8_t ri_platform_window_running(RI_Platform *p);
-void    ri_platform_window_kill(RI_Platform *p);
+void   ri_platform_window_init(RI_Platform *p);
+RnBool ri_platform_window_running(RI_Platform *p);
+void   ri_platform_window_kill(RI_Platform *p);
 
 void ri_platform_input_init(RI_Platform *p);
 void ri_platform_input_update(RI_Platform *p);

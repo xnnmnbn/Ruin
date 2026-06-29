@@ -1,6 +1,54 @@
 [
 {
   "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\draw_frame.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\draw_frame.c",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/draw_frame.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/draw_frame.c.obj"
+},
+{
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\record_command.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\record_command.c",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/record_command.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/record_command.c.obj"
+},
+{
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_assets\\ri_assets.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_assets\\ri_assets.c",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_assets/ri_assets.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_assets/ri_assets.c.obj"
+},
+{
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_assets\\ri_assets_material.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_assets\\ri_assets_material.c",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_assets/ri_assets_material.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_assets/ri_assets_material.c.obj"
+},
+{
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_assets\\ri_assets_texture.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_assets\\ri_assets_texture.c",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_assets/ri_assets_texture.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_assets/ri_assets_texture.c.obj"
+},
+{
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_components\\ri_components.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_components\\ri_components.c",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_components/ri_components.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_components/ri_components.c.obj"
+},
+{
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_components\\ri_components_camera.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_components\\ri_components_camera.c",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_components/ri_components_camera.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_components/ri_components_camera.c.obj"
+},
+{
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_components\\ri_components_transform.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_components\\ri_components_transform.c",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_components/ri_components_transform.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_components/ri_components_transform.c.obj"
+},
+{
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
   "command": "C:\\msys64\\mingw64\\bin\\cc.exe -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_platform\\ri_platform.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_platform\\ri_platform.c",
   "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_platform/ri_platform.c",
   "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_platform/ri_platform.c.obj"
@@ -25,18 +73,6 @@
 },
 {
   "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\draw_frame.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_renderer\\draw_frame.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/draw_frame.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_renderer/draw_frame.c.obj"
-},
-{
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\record_command.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_renderer\\record_command.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/record_command.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_renderer/record_command.c.obj"
-},
-{
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
   "command": "C:\\msys64\\mingw64\\bin\\cc.exe -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_renderer\\ri_renderer.c",
   "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer.c",
   "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer.c.obj"
@@ -58,6 +94,12 @@
   "command": "C:\\msys64\\mingw64\\bin\\cc.exe -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_framebuffer.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_renderer\\ri_renderer_framebuffer.c",
   "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer_framebuffer.c",
   "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_framebuffer.c.obj"
+},
+{
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_gpu_buffers.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_renderer\\ri_renderer_gpu_buffers.c",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer_gpu_buffers.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_gpu_buffers.c.obj"
 },
 {
   "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
@@ -94,12 +136,6 @@
   "command": "C:\\msys64\\mingw64\\bin\\cc.exe -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ruin.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ruin.c",
   "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ruin.c",
   "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ruin.c.obj"
-},
-{
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ruin_comp_transform.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ruin_comp_transform.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ruin_comp_transform.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ruin_comp_transform.c.obj"
 },
 {
   "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",

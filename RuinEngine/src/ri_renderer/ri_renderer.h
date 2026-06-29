@@ -16,8 +16,6 @@
 extern "C" {
 #endif
 
-#define RUIN_ENABLE_DEBUG
-
 #ifdef RUIN_ENABLE_DEBUG
     #define enable_validation 1
 #else
@@ -28,15 +26,13 @@ extern "C" {
 #define MAX_SWAPCHAIN_IMAGES   8
 #define MAX_FRAMES_IN_FLIGHT   8
 #define MAX_DESCRIPTOR_LAYOUTS 8
+#define MAX_DESCRIPTOR_SETS    3
 
 typedef struct {
     vec3 pos;
+    vec3 nor;
     vec2 uv;
-} Vertex2D;
-
-typedef struct {
-    VkVertexInputAttributeDescription descs[2];
-} Vertex2D_Attr;
+} Vertex3D;
 
 
 typedef struct {
@@ -90,10 +86,12 @@ typedef struct {
     VkPipelineLayout      layout;
     VkPipelineBindPoint   bind_point;
     VkDescriptorSetLayout d_set_layouts[MAX_DESCRIPTOR_LAYOUTS];
+    VkDescriptorSet       d_sets[MAX_DESCRIPTOR_SETS];
     uint32_t              d_set_count;
 } RI_Renderer_Pipeline;
 
 typedef struct {
+    VkDescriptorPool descriptor_pool;
     RI_Renderer_Pipeline test_pipeline;
     RI_Renderer_Pipeline bindless_pipeline_2d;
 } RI_Renderer_Pipelines;
@@ -111,6 +109,24 @@ typedef struct {
     uint8_t     skip_wait;
 } RI_Renderer_Sync;
 
+
+
+typedef struct {
+    VkBuffer          buffer;
+    VmaAllocation     allocation;
+    VmaAllocationInfo info;
+    VkDeviceSize      size;
+    void             *mapped;
+} RI_Renderer_GPU_Buffer;
+
+typedef struct {
+    RI_Renderer_GPU_Buffer camera_ubo;
+    RI_Renderer_GPU_Buffer entity_ssbo;
+    RI_Renderer_GPU_Buffer matrix_ssbo;
+    RI_Renderer_GPU_Buffer material_ssbo;
+} RI_Renderer_GPU_Buffers2D;
+
+
 typedef struct {
     RnConfigRenderer         active_config;
     RnConfigRenderer         pending_config;
@@ -120,6 +136,8 @@ typedef struct {
     RI_Renderer_Pipelines    pipelines;
     RI_Renderer_Commands     commands;
     RI_Renderer_Sync         sync;
+
+    RI_Renderer_GPU_Buffers2D gpu_buffers_2d;
 } RI_Renderer;
 
 
@@ -128,7 +146,7 @@ QueueFamilyIndices find_queue_family_indices(RI_Renderer_Core *c);
 SwapchainSupportDetails query_swapchain_support(RI_Renderer *r);
 VkSurfaceFormatKHR choose_swap_surface_format(VkSurfaceFormatKHR *formats, uint32_t count);
 VkPresentModeKHR choose_swap_present_mode(VkPresentModeKHR *mods, uint32_t count);
-VkExtent2D choose_swap_extent(VkSurfaceCapabilitiesKHR *caps, RI_Renderer *r);
+VkExtent2D choose_swap_extent(VkSurfaceCapabilitiesKHR *caps, RI_Platform *p);
 
 void create_memory_allocator(RI_Renderer *r);
 
@@ -152,17 +170,20 @@ void ri_renderer_kill_vma(RI_Renderer *r);
 void ri_renderer_init(RI_Renderer *r, RI_Platform *p);
 
 
-void ri_renderer_create_swapchain(RI_Renderer *r);
+void ri_renderer_create_swapchain(RI_Renderer *r, RI_Platform *p);
 void ri_renderer_get_swapchain_image_views(RI_Renderer *r);
 
 
 void ri_renderer_create_renderpass_present(RI_Renderer *r);
 
 
-void ri_renderer_create_swapchain_framebuffers(RI_Renderer *r);
+void ri_renderer_create_swapchain_framebuffers(RI_Renderer *r, RI_Platform *p);
 
 
 void ri_renderer_create_commands(RI_Renderer *r);
+
+VkCommandBuffer ri_renderer_single_cmd_begin(RI_Renderer *r);
+void            ri_renderer_single_cmd_end(RI_Renderer *r, VkCommandBuffer cmd);
 
 
 void ri_renderer_create_sync_objects(RI_Renderer *r);
@@ -171,13 +192,18 @@ void ri_renderer_create_sync_objects(RI_Renderer *r);
 void ri_renderer_recreate_swapchain(RI_Renderer *r, RI_Platform *p);
 
 
-void record_command(RI_Renderer *r, VkCommandBuffer cmd, uint32_t img_idx);
-void draw_frame(RI_Renderer *r, RI_Platform *p);
 
+void ri_renderer_create_descriptor_pool(RI_Renderer *r);
 
 void ri_renderer_create_pipeline_test(RI_Renderer *r);
-
 void ri_renderer_create_pipeline_bindless_2d(RI_Renderer *r);
+
+
+
+
+
+void ri_renderer_init_gpu_buffers_2d(RI_Renderer *r);
+void ri_renderer_kill_gpu_buffers_2d(RI_Renderer *r);
 
 void ri_renderer_kill(RI_Renderer *r);
 

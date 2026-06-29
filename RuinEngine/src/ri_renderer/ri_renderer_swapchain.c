@@ -37,15 +37,15 @@ VkPresentModeKHR choose_swap_present_mode(VkPresentModeKHR *mods, uint32_t count
     return VK_PRESENT_MODE_FIFO_KHR;
 }
 
-VkExtent2D choose_swap_extent(VkSurfaceCapabilitiesKHR *caps, RI_Renderer *r) {
+VkExtent2D choose_swap_extent(VkSurfaceCapabilitiesKHR *caps, RI_Platform *p) {
 
     if (caps->currentExtent.width != (uint32_t)-1) {
         return caps->currentExtent;
     }
 
     VkExtent2D extent = {
-        r->active_config.resolution_x,
-        r->active_config.resolution_y
+        p->active_config.width,
+        p->active_config.height
     };
 
     extent.width  = u_clamp(extent.width, caps->minImageExtent.width, caps->maxImageExtent.width);
@@ -55,13 +55,13 @@ VkExtent2D choose_swap_extent(VkSurfaceCapabilitiesKHR *caps, RI_Renderer *r) {
 }
 
 
-void ri_renderer_create_swapchain(RI_Renderer *r) {
+void ri_renderer_create_swapchain(RI_Renderer *r, RI_Platform *p) {
     SwapchainSupportDetails details = query_swapchain_support(r);
     QueueFamilyIndices indices      = find_queue_family_indices(&r->core);
     
     VkSurfaceFormatKHR surface_format = choose_swap_surface_format(details.formats, details.format_count);
     VkPresentModeKHR   present_mode   = choose_swap_present_mode(details.present_modes, details.present_mode_count);
-    VkExtent2D         extent         = choose_swap_extent(&details.capabilities, r);
+    VkExtent2D         extent         = choose_swap_extent(&details.capabilities, p);
     uint32_t           image_count    = details.capabilities.minImageCount + 1;
 
     if ((details.capabilities.maxImageCount > 0) && (image_count > details.capabilities.maxImageCount)) {
@@ -87,7 +87,9 @@ void ri_renderer_create_swapchain(RI_Renderer *r) {
     si.compositeAlpha   = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     si.presentMode      = present_mode;
     si.clipped          = VK_TRUE;
-    si.oldSwapchain     = VK_NULL_HANDLE;
+    si.oldSwapchain     = r->swapchain.swapchain;
+
+    
 
     
     if (indices.graphics_family != indices.present_family) {
@@ -100,6 +102,9 @@ void ri_renderer_create_swapchain(RI_Renderer *r) {
 
     if (vkCreateSwapchainKHR(r->core.device, &si, NULL, &r->swapchain.swapchain) != VK_SUCCESS) {
         printf("Failed to create swapchain.\n");
+        free(details.formats);
+        free(details.present_modes);
+        return;
     }
 
     vkGetSwapchainImagesKHR(r->core.device, r->swapchain.swapchain, &r->swapchain.swapchain_image_count, NULL);
@@ -107,6 +112,8 @@ void ri_renderer_create_swapchain(RI_Renderer *r) {
 
     r->swapchain.swapchain_image_format = surface_format.format;
     r->swapchain.swapchain_extent       = extent;
+
+    vkDestroySwapchainKHR(r->core.device, si.oldSwapchain, NULL);
 
     printf("Swapchain created.\n");
     printf("You have %d swapchain images.\n", r->swapchain.swapchain_image_count);
@@ -156,14 +163,14 @@ void ri_renderer_recreate_swapchain(RI_Renderer *r, RI_Platform *p) {
         vkDestroyImageView(r->core.device, r->swapchain.swapchain_image_views[i], NULL);
     }
 
-    vkDestroySwapchainKHR(r->core.device, r->swapchain.swapchain, NULL);
+    // vkDestroySwapchainKHR(r->core.device, r->swapchain.swapchain, NULL);
 
     
 if (p->active_config.width == 0 || p->active_config.height == 0) return;
     
-    ri_renderer_create_swapchain(r);
+    ri_renderer_create_swapchain(r, p);
     ri_renderer_get_swapchain_image_views(r);
-    ri_renderer_create_swapchain_framebuffers(r);
+    ri_renderer_create_swapchain_framebuffers(r, p);
 
     printf("Swapchain recreated.\n");
 }

@@ -1,6 +1,7 @@
 #include "ri_platform.h"
 #include "ruin.h"
 #include <SDL3/SDL_error.h>
+#include <SDL3/SDL_events.h>
 #include <SDL3/SDL_gpu.h>
 #include <SDL3/SDL_init.h>
 #include <SDL3/SDL_oldnames.h>
@@ -60,6 +61,10 @@ uint8_t ri_platform_window_running(RI_Platform *p) {
                 p->window.resized = 1;
                 p->active_config.width  = event.window.data1;
                 p->active_config.height = event.window.data2;
+
+            case SDL_EVENT_MOUSE_MOTION:
+                p->input.mouse_dx = event.motion.xrel;
+                p->input.mouse_dy = event.motion.yrel;
         }
     }
 

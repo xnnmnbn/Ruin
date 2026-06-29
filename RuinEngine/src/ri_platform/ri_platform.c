@@ -1,4 +1,5 @@
 #include "ri_platform.h"
+#include "ruin.h"
 
 #include <stdio.h>
 

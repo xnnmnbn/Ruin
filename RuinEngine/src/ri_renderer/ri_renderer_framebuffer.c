@@ -1,10 +1,11 @@
+#include "ri_platform/ri_platform.h"
 #include "ri_renderer.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_core.h>
 
-void ri_renderer_create_swapchain_framebuffers(RI_Renderer *r) {
+void ri_renderer_create_swapchain_framebuffers(RI_Renderer *r, RI_Platform *p) {
     
     for (size_t i = 0; i < r->swapchain.swapchain_image_count; i++) {
 
@@ -17,8 +18,8 @@ void ri_renderer_create_swapchain_framebuffers(RI_Renderer *r) {
         fi.pAttachments    = attachments;
         fi.attachmentCount = 1;
         fi.layers          = 1;
-        fi.width           = r->active_config.resolution_x;
-        fi.height          = r->active_config.resolution_y;
+        fi.width           = r->swapchain.swapchain_extent.width;
+        fi.height          = r->swapchain.swapchain_extent.height;
         fi.renderPass      = r->renderpasses.present_pass;
 
         if (vkCreateFramebuffer(r->core.device, &fi, NULL, &(r->swapchain.swapchain_framebuffers[i])) != VK_SUCCESS) {

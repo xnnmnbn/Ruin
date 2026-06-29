@@ -13,7 +13,7 @@ typedef uint8_t RnBool;
 #define RN_TRUE  1
 #define RN_FALSE 0
 
-// #define RN_ENABLE_DEBUG
+// #define RUIN_ENABLE_DEBUG
 
 #define RUIN_DEBUG(fmt, ...) printf("[ruin] " fmt "\n", ##__VA_ARGS__)
 
@@ -29,12 +29,13 @@ typedef uint8_t RnBool;
 #define RUIN_MAX_ENTITIES        20000
 
 typedef uint32_t RnEntity;
-typedef uint16_t RnTexture;
-typedef uint16_t RnMaterial;
-typedef uint16_t RnSound;
-typedef uint16_t RnMusic;
-typedef uint16_t RnMesh;
-typedef uint8_t  RnRenderTarget;
+typedef uint32_t RnTexture;
+typedef uint32_t RnMaterial2D;
+typedef uint32_t RnMaterial3D;
+typedef uint32_t RnSound;
+typedef uint32_t RnMusic;
+typedef uint32_t RnMesh;
+typedef uint32_t RnRenderTarget;
 
 typedef enum {
     RUIN_KEY_0 = 39,
@@ -114,29 +115,6 @@ typedef enum {
     RUIN_MOUSE_X1     = 4,
     RUIN_MOUSE_X2     = 5
 } RnMouseButton;
-
-typedef enum {
-    RUIN_MAT3D_MASK_ALBEDO        = 1 << 0,
-    RUIN_MAT3D_MASK_NORMAL        = 1 << 1,
-    RUIN_MAT3D_MASK_ROUGHNESS     = 1 << 2,
-    RUIN_MAT3D_MASK_METALLIC      = 1 << 3,
-    RUIN_MAT3D_MASK_TINT          = 1 << 4,
-    RUIN_MAT3D_MASK_ALPHA         = 1 << 5,
-    RUIN_MAT3D_MASK_ROUGHNESS_VAL = 1 << 6,
-    RUIN_MAT3D_MASK_METALLIC_VAL  = 1 << 7,
-    RUIN_MAT3D_MASK_TILING_X      = 1 << 8,
-    RUIN_MAT3D_MASK_TILING_Y      = 1 << 9,
-    RUIN_MAT3D_MASK_ALL           = RUIN_MAT3D_MASK_ALBEDO    | RUIN_MAT3D_MASK_NORMAL        |
-                                    RUIN_MAT3D_MASK_METALLIC  | RUIN_MAT3D_MASK_METALLIC_VAL  |
-                                    RUIN_MAT3D_MASK_ROUGHNESS | RUIN_MAT3D_MASK_ROUGHNESS_VAL |
-                                    RUIN_MAT3D_MASK_TINT      | RUIN_MAT3D_MASK_ALPHA         |
-                                    RUIN_MAT3D_MASK_TILING_X  | RUIN_MAT3D_MASK_TILING_Y
-} RnMaterialMask;
-
-typedef enum {
-    RUIN_PROJECTION_ORTHOGRAPHIC,
-    RUIN_PROJECTION_PERSPECTIVE
-} RnProjection;
 
 typedef enum {
     RUIN_RIGIDBODY_TYPE_DYNAMIC,
@@ -264,9 +242,14 @@ typedef struct {
     float   volume;
 } RnMusicPlayer;
 
+typedef struct {
+    RnColor   tint;
+    RnTexture texture;
+    uint32_t  _pad[3];
+} RnMaterial2DInfo;
+
 
 typedef struct {
-    RnMaterialMask masks;
     RnTexture      albedo;
     RnTexture      normal;
     RnTexture      roughness;
@@ -277,7 +260,7 @@ typedef struct {
     float          metallic_val;
     float          tiling_x;
     float          tiling_y;
-} RnMaterialInfo;
+} RnMaterial3DInfo;
 
 typedef struct {
     int32_t width;
@@ -303,9 +286,8 @@ typedef struct {
 } RnCamera3D;
 
 typedef struct {
-    RnTexture texture;
-    RnColor   tint;
-    float     opacity;
+    RnMaterial2D material;
+    RnBool       alive;
 } RnSpriteRenderer;
 
 typedef struct {
@@ -374,13 +356,17 @@ RnBool rnMouseDown(RnMouseButton b);
 RnBool rnMouseHold(RnMouseButton b);
 RnBool rnMouseUp(RnMouseButton b);
 float  rnMouseScroll(void);
+RnVec2 rnMouseMove(void);
 
 RnRenderTarget rnRenderTargetCreate(RnRenderTargetInfo *i);
 void           rnRenderTargetKill(RnRenderTarget t);
 
-RnTexture rnTextureLoad(const char *path);
+RnTexture rnTextureCreate(const char *path);
 RnTexture rnTextureFromRenderTarget(RnRenderTarget t);
 void      rnTextureKill(RnTexture t);
+void      rnTextureCreateGPUResources();
+void      rnTextureLoadToGPU(RnTexture *textures, uint32_t count);
+void      rnTextureLoadAllToGPU();
 
 RnMesh rnMeshLoad(const char *path);
 void   rnMeshKill(RnMesh m);
@@ -391,9 +377,15 @@ void    rnSoundKill(RnSound s);
 RnMusic rnMusicLoad(const char *path);
 void    rnMusicKill(RnMusic m);
 
-RnMaterial rnMaterialCreate(const RnMaterialInfo *i);
-void       rnMaterialUpdate(RnMaterial m, const RnMaterialInfo *i);
-void       rnMaterialKill(RnMaterial m);
+RnMaterial2DInfo  rnDefaultMaterial2DInfo();
+RnMaterial2D      rnMaterial2DCreate(RnMaterial2DInfo i);
+RnMaterial2DInfo *rnMaterial2DGet(RnMaterial2D m);
+void              rnMaterial2DKill(RnMaterial2D m);
+
+RnMaterial3DInfo  rnDefaultMaterial3DInfo();
+RnMaterial3D      rnMaterial3DCreate(RnMaterial3DInfo i);
+RnMaterial3DInfo *rnMaterial3DGet(RnMaterial3D m);
+void              rnMaterial3DKill(RnMaterial3D m);
 
 RnTransform  rnDefaultTransform(void);
 RnTransform *rnEntityTransformGet(RnEntity e);
@@ -430,23 +422,29 @@ void           rnEntityMusicPlayerStop(RnEntity e);
 
 
 
-RnCamera2D *rnEntityCamera2dGet(RnEntity e);
-void        rnEntityCamera2dAdd(RnEntity e, RnCamera2D c);
-void        rnEntityCamera2dKill(RnEntity e);
-void        rnEntityCamera2dSetRenderTarget(RnEntity e, RnRenderTarget t);
+RnCamera2D *rnEntityCamera2DGet(RnEntity e);
+void        rnEntityCamera2DAdd(RnEntity e, RnCamera2D c);
+void        rnEntityCamera2DKill(RnEntity e);
+void        rnEntityCamera2DSetRenderTarget(RnEntity e, RnRenderTarget t);
+void        rnEntityCamera2DUse(RnEntity e);
 
-RnCamera3D *rnEntityCamera3dGet(RnEntity e);
-void        rnEntityCamera3dAdd(RnEntity e, RnCamera3D c);
-void        rnEntityCamera3dKill(RnEntity e);
-void        rnEntityCamera3dSetRenderTarget(RnEntity e, RnRenderTarget t);
+RnCamera3D *rnEntityCamera3DGet(RnEntity e);
+void        rnEntityCamera3DAdd(RnEntity e, RnCamera3D c);
+void        rnEntityCamera3DKill(RnEntity e);
+void        rnEntityCamera3DSetRenderTarget(RnEntity e, RnRenderTarget t);
+void        rnEntityCamera3DUse(RnEntity e);
 
-void rnEntityCameraUse(RnEntity e, RnProjection p);
 
-void rnEntitySpriteRendererAdd(RnEntity e, RnSpriteRenderer r);
-void rnEntitySpriteRendererKill(RnEntity e);
 
-void rnEntityMeshRendererAdd(RnEntity e, RnMeshRenderer r);
-void rnEntityMeshRendererKill(RnEntity e);
+RnSpriteRenderer  rnDefaultSpriteRenderer();
+RnSpriteRenderer *rnEntitySpriteRendererGet(RnEntity e);
+void              rnEntitySpriteRendererAdd(RnEntity e, RnSpriteRenderer r);
+void              rnEntitySpriteRendererKill(RnEntity e);
+
+RnMeshRenderer  rnDefaultMeshRenderer();
+RnMeshRenderer *rnEntityMeshRendererGet(RnEntity e);
+void            rnEntityMeshRendererAdd(RnEntity e, RnMeshRenderer r);
+void            rnEntityMeshRendererKill(RnEntity e);
 
 
 

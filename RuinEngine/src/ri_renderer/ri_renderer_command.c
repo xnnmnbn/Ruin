@@ -34,6 +34,55 @@ void ri_renderer_create_commands(RI_Renderer *r) {
     }
 }
 
+VkCommandBuffer ri_renderer_single_cmd_begin(RI_Renderer *r) {
+    VkCommandBufferAllocateInfo ci = {0};
+    ci.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    ci.commandBufferCount = 1;
+    ci.commandPool = r->commands.command_pool;
+    ci.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+
+    VkCommandBuffer cmd;
+
+    if (vkAllocateCommandBuffers(r->core.device, &ci, &cmd) != VK_SUCCESS) {
+        printf("Failed to allocate single-use command buffer.\n");
+        return VK_NULL_HANDLE;
+    }
+
+    VkCommandBufferBeginInfo bi = {0};
+    bi.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    bi.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+    if (vkBeginCommandBuffer(cmd, &bi) != VK_SUCCESS) {
+        printf("Failed to begin single-use command buffer.\n");
+        return VK_NULL_HANDLE;
+    }
+
+    return cmd;
+}
+
+void ri_renderer_single_cmd_end(RI_Renderer *r, VkCommandBuffer cmd) {
+    if (vkEndCommandBuffer(cmd) != VK_SUCCESS) {
+        printf("Failed to end single-use command buffer.\n");
+        return;
+    }
+
+    VkSubmitInfo si = {0};
+    si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    si.pCommandBuffers = &cmd;
+    si.commandBufferCount = 1;
+
+
+    if (vkQueueSubmit(r->core.graphics_queue, 1, &si, VK_NULL_HANDLE) != VK_SUCCESS) {
+        printf("Failed to submit single-use command.\n");
+        return;
+    }
+
+    
+    vkQueueWaitIdle(r->core.graphics_queue);
+
+    vkFreeCommandBuffers(r->core.device, r->commands.command_pool, 1, &cmd);
+}
+
 
 
 

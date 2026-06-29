@@ -111,26 +111,36 @@ void ri_renderer_init(RI_Renderer *r, RI_Platform *p) {
 
     ri_renderer_create_vma(r);
 
-    ri_renderer_create_swapchain(r);
+    ri_renderer_create_swapchain(r, p);
     ri_renderer_get_swapchain_image_views(r);
     ri_renderer_create_renderpass_present(r);
     ri_renderer_create_pipeline_test(r);
 
+    ri_renderer_create_descriptor_pool(r);
+
     ri_renderer_create_pipeline_bindless_2d(r);
     
-    ri_renderer_create_swapchain_framebuffers(r);
+    ri_renderer_create_swapchain_framebuffers(r, p);
     ri_renderer_create_commands(r);
     ri_renderer_create_sync_objects(r);
+
+    ri_renderer_init_gpu_buffers_2d(r);
 }
 
 
 
 void ri_renderer_kill(RI_Renderer *r) {
+    
     if (r->core.device == VK_NULL_HANDLE) {
         printf("Renderer was not killed since it has never been created.\n");
         return;
     }
     vkDeviceWaitIdle(r->core.device);
+
+    ri_renderer_kill_gpu_buffers_2d(r);
+
+    ri_renderer_kill_vma(r);
+    
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         vkDestroySemaphore(r->core.device, r->sync.image_available_semaphores[i], NULL);
         vkDestroyFence(r->core.device, r->sync.in_flight_fences[i], NULL);
@@ -143,6 +153,8 @@ void ri_renderer_kill(RI_Renderer *r) {
     for (size_t i = 0; i < r->swapchain.swapchain_image_count; i++) {
         vkDestroyFramebuffer(r->core.device, r->swapchain.swapchain_framebuffers[i], NULL);
     }
+
+    vkDestroyDescriptorPool(r->core.device, r->pipelines.descriptor_pool, NULL);
 
     vkDestroyPipeline(r->core.device, r->pipelines.bindless_pipeline_2d.pipeline, NULL);
     for (size_t i = 0; i < r->pipelines.bindless_pipeline_2d.d_set_count; i++) {
@@ -157,8 +169,7 @@ void ri_renderer_kill(RI_Renderer *r) {
         vkDestroyImageView(r->core.device, r->swapchain.swapchain_image_views[i], NULL);
     }
     vkDestroySwapchainKHR(r->core.device, r->swapchain.swapchain, NULL);
-
-    ri_renderer_kill_vma(r);
+ 
     
     vkDestroyDevice(r->core.device, NULL);
 

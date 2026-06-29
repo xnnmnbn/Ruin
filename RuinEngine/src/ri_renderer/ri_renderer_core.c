@@ -240,7 +240,7 @@ void ri_renderer_select_physical_device(RI_Renderer *r) {
     printf("Selected physical device: %s\n", props.deviceName);
 }
 
-
+/*
 void ri_renderer_create_logical_device(RI_Renderer *r) {
     QueueFamilyIndices indices = find_queue_family_indices(&r->core);
 
@@ -313,7 +313,80 @@ void ri_renderer_create_logical_device(RI_Renderer *r) {
     printf("You don't have presentation queue.\n");
     printf("Graphics queue will be used for presentation.\n");
 }
+*/
 
+void ri_renderer_create_logical_device(RI_Renderer *r) {
+    QueueFamilyIndices indices = find_queue_family_indices(&r->core);
+
+    uint32_t q_count = (indices.graphics_family == indices.present_family) ? 1 : 2;
+    float queue_priority = 1.0f;
+
+    VkDeviceQueueCreateInfo qis[2]; // Use concrete allocation size to avoid variable-length stack arrays
+    uint32_t qfs[2] = { indices.graphics_family, indices.present_family };
+
+    for (size_t i = 0; i < q_count; i++) {
+        qis[i].sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        qis[i].queueFamilyIndex = qfs[i];
+        qis[i].queueCount       = 1;
+        qis[i].pQueuePriorities = &queue_priority;
+        qis[i].pNext            = NULL;
+        qis[i].flags            = 0;
+    }
+
+    // 1. Define Vulkan 1.2 Bindless Features
+    VkPhysicalDeviceVulkan12Features f12 = {0};
+    f12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+    f12.descriptorBindingPartiallyBound               = VK_TRUE;
+    f12.descriptorBindingStorageBufferUpdateAfterBind = VK_TRUE;
+    f12.runtimeDescriptorArray                        = VK_TRUE;
+    f12.shaderStorageBufferArrayNonUniformIndexing    = VK_TRUE;
+    f12.bufferDeviceAddress                           = VK_TRUE;
+    f12.shaderSampledImageArrayNonUniformIndexing     = VK_TRUE;
+    f12.descriptorBindingSampledImageUpdateAfterBind  = VK_TRUE;
+    // Added missing bindless requirements:
+    f12.descriptorBindingVariableDescriptorCount      = VK_TRUE;
+    //f12.descriptorBindingUniformBufferUpdateAfterBind = VK_TRUE;
+
+    // 2. Define Vulkan 1.3 Dynamic Rendering Features
+    VkPhysicalDeviceVulkan13Features f13 = {0};
+    f13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
+    f13.pNext = &f12; // f13 points to f12
+    f13.dynamicRendering = VK_TRUE;
+
+    // 3. Anchor the entire chain using VkPhysicalDeviceFeatures2
+    VkPhysicalDeviceFeatures2 features2 = {0};
+    features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+    features2.pNext = &f13; // features2 points to f13
+    // Any core Vulkan 1.0 features (like samplerAnisotropy) would be enabled inside features2.features
+
+    VkDeviceCreateInfo di = {0};
+    di.sType                   = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    di.pQueueCreateInfos       = qis;
+    di.queueCreateInfoCount    = q_count;
+    di.pEnabledFeatures        = NULL; // MUST be NULL when using structural pNext features!
+    di.ppEnabledExtensionNames = device_extentions;
+    di.enabledExtensionCount   = 1; // Double check if you increase the number of strings in device_extensions!
+    di.pNext                   = &features2; // Point directly to the top of our unified chain
+
+    if (vkCreateDevice(r->core.physical_device, &di, NULL, &r->core.device) != VK_SUCCESS) {
+        printf("Failed to create logical device.\n");
+        return;
+    }
+
+    printf("Logical device created.\n");
+
+    vkGetDeviceQueue(r->core.device, indices.graphics_family, 0, &r->core.graphics_queue);
+    printf("Graphics queue acquired.\n");
+
+    if (q_count == 2) {
+        vkGetDeviceQueue(r->core.device, indices.present_family, 0, &r->core.present_queue);
+        printf("Presentation queue acquired.\n");
+        return;
+    }
+
+    r->core.present_queue = r->core.graphics_queue;
+    printf("Graphics queue will be used for presentation.\n");
+}
 
 
 

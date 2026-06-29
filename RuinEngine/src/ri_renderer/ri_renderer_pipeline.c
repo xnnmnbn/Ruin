@@ -4,8 +4,39 @@
 #include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_core.h>
 
-#include "ri_assets.h"
+#include "ri_default_assets.h"
 #include "ruin.h"
+
+
+
+
+void ri_renderer_create_descriptor_pool(RI_Renderer *r) {
+    VkDescriptorPoolSize pool_sizes[3] = {0};
+
+    pool_sizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    pool_sizes[0].descriptorCount = 1;
+
+    pool_sizes[1].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    pool_sizes[1].descriptorCount = 4;
+
+    pool_sizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    pool_sizes[2].descriptorCount = RUIN_MAX_TEXTURES;
+
+    VkDescriptorPoolCreateInfo pi = {0};
+    pi.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    pi.pPoolSizes = pool_sizes;
+    pi.poolSizeCount = 3;
+    pi.maxSets = 2,
+    pi.flags = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT;
+
+    if (vkCreateDescriptorPool(r->core.device, &pi, NULL, &r->pipelines.descriptor_pool) != VK_SUCCESS) {
+        printf("Failed to create descriptor pool.\n");
+        return;
+    }
+
+    printf("Descriptor Pool created.\n");
+}
+
 
 
 VkShaderModule create_shader_module(RI_Renderer *r, unsigned char *code, unsigned int len) {
@@ -167,6 +198,9 @@ void ri_renderer_create_pipeline_test(RI_Renderer *r) {
 
     vkDestroyShaderModule(r->core.device, vert_module, NULL);
     vkDestroyShaderModule(r->core.device, frag_module, NULL);
+
+
+    
 }
 
 
@@ -177,38 +211,11 @@ void ri_renderer_create_pipeline_test(RI_Renderer *r) {
 
 
 
-
-VkVertexInputBindingDescription vertex2d_binding_desc() {
-    return (VkVertexInputBindingDescription){
-        .binding   = 0,
-        .stride    = sizeof(Vertex2D),
-        .inputRate = VK_VERTEX_INPUT_RATE_VERTEX
-    };
-}
-
-Vertex2D_Attr vertex2d_attr_desc() {
-    return (Vertex2D_Attr){
-        .descs = {
-            (VkVertexInputAttributeDescription) {
-                .location = 0,
-                .binding  = 0,
-                .format   = VK_FORMAT_R32G32B32_SFLOAT,
-                .offset   = offsetof(Vertex2D, pos)
-            },
-            (VkVertexInputAttributeDescription) {
-                .location = 1,
-                .binding  = 0,
-                .format   = VK_FORMAT_R32G32_SFLOAT,
-                .offset   = offsetof(Vertex2D, uv)
-            }
-        }
-    };
-}
 
 void ri_renderer_create_pipeline_bindless_2d(RI_Renderer *r) {
 
-    VkShaderModule vert_module = create_shader_module(r, bindless_2d_plain_vert_spv, bindless_2d_plain_vert_spv_len);
-    VkShaderModule frag_module = create_shader_module(r, bindless_2d_plain_frag_spv, bindless_2d_plain_frag_spv_len);
+    VkShaderModule vert_module = create_shader_module(r, bindless_2d_vert_spv, bindless_2d_vert_spv_len);
+    VkShaderModule frag_module = create_shader_module(r, bindless_2d_frag_spv, bindless_2d_frag_spv_len);
 
     VkPipelineShaderStageCreateInfo v_shader = {0};
     VkPipelineShaderStageCreateInfo f_shader = {0};
@@ -237,17 +244,12 @@ void ri_renderer_create_pipeline_bindless_2d(RI_Renderer *r) {
 
     
 
-    VkVertexInputBindingDescription binding_descs[] = {
-        vertex2d_binding_desc()
-    };
-
-    Vertex2D_Attr attr = vertex2d_attr_desc();
     VkPipelineVertexInputStateCreateInfo input_state = {0};
     input_state.sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    input_state.pVertexBindingDescriptions      = binding_descs;
-    input_state.vertexBindingDescriptionCount   = 1;
-    input_state.pVertexAttributeDescriptions    = attr.descs;
-    input_state.vertexAttributeDescriptionCount = 2;
+    input_state.pVertexBindingDescriptions      = NULL;
+    input_state.vertexBindingDescriptionCount   = 0;
+    input_state.pVertexAttributeDescriptions    = NULL;
+    input_state.vertexAttributeDescriptionCount = 0;
 
     VkPipelineInputAssemblyStateCreateInfo input_assembly = {0};
     input_assembly.sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -279,8 +281,8 @@ void ri_renderer_create_pipeline_bindless_2d(RI_Renderer *r) {
     rasterizer.depthClampEnable        = VK_FALSE;              // Enable it for shadow map.
     rasterizer.rasterizerDiscardEnable = VK_FALSE;              // Never enable it.
     rasterizer.polygonMode             = VK_POLYGON_MODE_FILL;  // Completely paint the objects.
-    rasterizer.cullMode                = VK_CULL_MODE_BACK_BIT; // Disable rendering back faces.
-    rasterizer.frontFace               = VK_FRONT_FACE_CLOCKWISE;
+    rasterizer.cullMode                = VK_CULL_MODE_NONE; // Disable rendering back faces.
+    rasterizer.frontFace               = VK_FRONT_FACE_COUNTER_CLOCKWISE;
     rasterizer.depthBiasEnable         = VK_FALSE;
     rasterizer.depthBiasConstantFactor = 0.0f;
     rasterizer.depthBiasClamp          = 0.0f;
@@ -316,10 +318,10 @@ void ri_renderer_create_pipeline_bindless_2d(RI_Renderer *r) {
     color_blending.pAttachments    = &color_blend_attachment;
     color_blending.attachmentCount = 1;
 
-    const uint8_t set0_binding_count = 3;
+    const uint8_t set0_binding_count = 4;
     const uint8_t set1_binding_count = 1;
 
-    VkDescriptorSetLayoutBinding set0_bindings[3] = {0};
+    VkDescriptorSetLayoutBinding set0_bindings[4] = {0};
     VkDescriptorSetLayoutBinding set1_bindings[1] = {0};
 
     for (uint8_t i = 0; i < set0_binding_count; i++) {
@@ -332,6 +334,7 @@ void ri_renderer_create_pipeline_bindless_2d(RI_Renderer *r) {
     set0_bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     set0_bindings[1].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     set0_bindings[2].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    set0_bindings[3].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
 
     set1_bindings->binding            = 0;
     set1_bindings->descriptorCount    = RUIN_MAX_TEXTURES;
@@ -353,13 +356,18 @@ void ri_renderer_create_pipeline_bindless_2d(RI_Renderer *r) {
     dslbfci.pBindingFlags = &flags;
 
     VkDescriptorSetLayoutCreateInfo dslis[2] = {0};
+
+    dslis[0].sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     dslis[0].pBindings    = set0_bindings;
     dslis[0].bindingCount = set0_binding_count;
+    dslis[0].flags        = 0;
+    dslis[0].pNext        = NULL;
+
+    dslis[1].sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     dslis[1].pBindings    = set1_bindings;
     dslis[1].bindingCount = set1_binding_count;
     dslis[1].pNext        = &dslbfci;
     dslis[1].flags        = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT;
-
 
     for (uint8_t i = 0; i < set_count; i++) {
         dslis[i].sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -398,16 +406,30 @@ void ri_renderer_create_pipeline_bindless_2d(RI_Renderer *r) {
     pi.basePipelineHandle = VK_NULL_HANDLE;
 
     if (vkCreateGraphicsPipelines(r->core.device, VK_NULL_HANDLE, 1, &pi, NULL, &r->pipelines.bindless_pipeline_2d.pipeline) != VK_SUCCESS) {
-        printf("Failed to create test graphics pipeline.\n");
+        printf("Failed to create Bindless Pipeline 2D.\n");
         return;
     }
 
     r->pipelines.bindless_pipeline_2d.bind_point = VK_PIPELINE_BIND_POINT_GRAPHICS;
 
-    printf("Bindless graphics pipeline created.\n");
+    printf("Bindless Pipeline 2D created.\n");
 
     vkDestroyShaderModule(r->core.device, vert_module, NULL);
     vkDestroyShaderModule(r->core.device, frag_module, NULL);
+
+    VkDescriptorSetAllocateInfo dsai = {0};
+    dsai.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    dsai.descriptorPool = r->pipelines.descriptor_pool;
+    dsai.pSetLayouts = r->pipelines.bindless_pipeline_2d.d_set_layouts;
+    dsai.descriptorSetCount = 2;
+
+    if (vkAllocateDescriptorSets(r->core.device, &dsai, r->pipelines.bindless_pipeline_2d.d_sets) != VK_SUCCESS) {
+        printf("Failed to allocate Descriptor Sets for Bindless Pipeline 2D.\n");
+        return;
+    }
+
+    printf("Descriptor Sets allocated for Bindless Pipeline 2D.\n");
+
 }
 
 
