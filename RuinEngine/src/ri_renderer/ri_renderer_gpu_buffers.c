@@ -2,6 +2,7 @@
 #include "ri_renderer/ri_renderer.h"
 #include "ruin.h"
 #include <cglm/types.h>
+#include <iso646.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <vulkan/vulkan_core.h>
@@ -48,7 +49,7 @@ void ri_renderer_init_gpu_buffers_2d(RI_Renderer *r) {
     if (vmaCreateBuffer(r->core.allocator, &ssbos[1], &ai, &r->gpu_buffers_2d.matrix_ssbo.buffer, &r->gpu_buffers_2d.matrix_ssbo.allocation, &r->gpu_buffers_2d.matrix_ssbo.info) != VK_SUCCESS) goto error;
     if (vmaCreateBuffer(r->core.allocator, &ssbos[2], &ai, &r->gpu_buffers_2d.material_ssbo.buffer, &r->gpu_buffers_2d.material_ssbo.allocation, &r->gpu_buffers_2d.material_ssbo.info) != VK_SUCCESS) goto error;
 
-    printf("GPU Buffers for 2D created.\n");
+    printf("GPU Buffers for Bindless Pipeline 2D created.\n");
 
     
     r->gpu_buffers_2d.camera_ubo.mapped    = r->gpu_buffers_2d.camera_ubo.info.pMappedData;
@@ -73,7 +74,7 @@ void ri_renderer_init_gpu_buffers_2d(RI_Renderer *r) {
 
     for (uint32_t i = 0; i < 4; i++) {
         writes[i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        writes[i].dstSet = r->pipelines.bindless_pipeline_2d.d_sets[0];
+        writes[i].dstSet = r->pipelines.bindless_offscreen_2d.d_sets[0];
         writes[i].dstBinding = i;
         writes[i].dstArrayElement = 0;
         writes[i].descriptorCount = 1;
@@ -118,6 +119,8 @@ void ri_renderer_kill_gpu_buffers_2d(RI_Renderer *r) {
         r->gpu_buffers_2d.material_ssbo.buffer = VK_NULL_HANDLE;
     }
 }
+
+
 
 
 

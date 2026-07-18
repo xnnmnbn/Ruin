@@ -2,6 +2,7 @@
 #define RI_PLATFORM_H
 
 #include "ruin.h"
+#include <SDL3/SDL_events.h>
 
 
 #ifdef __cplusplus
@@ -13,6 +14,7 @@ extern "C" {
 
 
 typedef struct RI_Window {
+    SDL_Event   event;
     SDL_Window *window;
     uint8_t     running;
     uint8_t     resized;

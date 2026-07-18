@@ -113,18 +113,31 @@ void ri_renderer_init(RI_Renderer *r, RI_Platform *p) {
 
     ri_renderer_create_swapchain(r, p);
     ri_renderer_get_swapchain_image_views(r);
-    ri_renderer_create_renderpass_present(r);
-    ri_renderer_create_pipeline_test(r);
 
+
+    ri_renderer_create_renderpass_offscreen(r);
+    ri_renderer_create_renderpass_present(r);
+
+    ri_renderer_create_framebuffer_offscreen(r);
+
+    // ri_renderer_create_pipeline_test(r);
     ri_renderer_create_descriptor_pool(r);
 
-    ri_renderer_create_pipeline_bindless_2d(r);
+    // ri_renderer_create_pipeline_bindless_2d(r);
+    ri_renderer_create_pipeline_bindless_offscreen_2d(r);
+    ri_renderer_create_post_process_pipeline(r);
     
     ri_renderer_create_swapchain_framebuffers(r, p);
     ri_renderer_create_commands(r);
     ri_renderer_create_sync_objects(r);
 
     ri_renderer_init_gpu_buffers_2d(r);
+
+    r->post_process.brightness = 1.0f;
+    r->post_process.saturation = 1.0f;
+    r->post_process.contrast = 1.0f;
+    r->post_process.invert = 0.0f;
+    r->post_process.tint = (RnColor){ 1.0f, 1.0f, 1.0f, 1.0f };
 }
 
 
@@ -138,6 +151,10 @@ void ri_renderer_kill(RI_Renderer *r) {
     vkDeviceWaitIdle(r->core.device);
 
     ri_renderer_kill_gpu_buffers_2d(r);
+
+    vmaDestroyImage(r->core.allocator, r->framebuffers.offscreen.color_image, r->framebuffers.offscreen.color_alloc);
+    vkDestroyImageView(r->core.device, r->framebuffers.offscreen.color_view, NULL);
+    vkDestroyFramebuffer(r->core.device, r->framebuffers.offscreen.framebuffer, NULL);
 
     ri_renderer_kill_vma(r);
     
@@ -156,14 +173,15 @@ void ri_renderer_kill(RI_Renderer *r) {
 
     vkDestroyDescriptorPool(r->core.device, r->pipelines.descriptor_pool, NULL);
 
-    vkDestroyPipeline(r->core.device, r->pipelines.bindless_pipeline_2d.pipeline, NULL);
-    for (size_t i = 0; i < r->pipelines.bindless_pipeline_2d.d_set_count; i++) {
-        vkDestroyDescriptorSetLayout(r->core.device, r->pipelines.bindless_pipeline_2d.d_set_layouts[i], NULL);
+    vkDestroyPipeline(r->core.device, r->pipelines.bindless_offscreen_2d.pipeline, NULL);
+    for (size_t i = 0; i < r->pipelines.bindless_offscreen_2d.d_set_count; i++) {
+        vkDestroyDescriptorSetLayout(r->core.device, r->pipelines.bindless_offscreen_2d.d_set_layouts[i], NULL);
     }
-    vkDestroyPipelineLayout(r->core.device, r->pipelines.bindless_pipeline_2d.layout, NULL);
+    vkDestroyPipelineLayout(r->core.device, r->pipelines.bindless_offscreen_2d.layout, NULL);
     vkDestroyPipeline(r->core.device, r->pipelines.test_pipeline.pipeline, NULL);
     vkDestroyPipelineLayout(r->core.device, r->pipelines.test_pipeline.layout, NULL);
-    
+
+    vkDestroyRenderPass(r->core.device, r->renderpasses.offscreen_pass, NULL);
     vkDestroyRenderPass(r->core.device, r->renderpasses.present_pass, NULL);
     for (size_t i = 0; i < r->swapchain.swapchain_image_count; i++) {
         vkDestroyImageView(r->core.device, r->swapchain.swapchain_image_views[i], NULL);

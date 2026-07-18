@@ -26,7 +26,7 @@ typedef uint8_t RnBool;
 #define RUIN_MAX_SOUNDS          512
 #define RUIN_MAX_MUSICS          32
 #define RUIN_MAX_SOUND_LISTENERS 1
-#define RUIN_MAX_ENTITIES        20000
+#define RUIN_MAX_ENTITIES        1024
 
 typedef uint32_t RnEntity;
 typedef uint32_t RnTexture;
@@ -185,13 +185,21 @@ typedef struct {
     RnConfigAudio    audio;
 } RnConfig;
 
+typedef struct {
+    float brightness;
+    float saturation;
+    float contrast;
+    float invert;
+    RnColor tint;
+} RnPostProcess;
+
 
 typedef struct {
-    RnVec3      position;
-    RnVec3      rotation;
-    RnVec3      scale;
-    RnEntity    parent;
-    RnBool      dirty;
+    RnVec3   position;
+    RnVec3   rotation;
+    RnVec3   scale;
+    RnEntity parent;
+    RnBool   dead;
 } RnTransform;
 
 typedef struct {
@@ -287,7 +295,8 @@ typedef struct {
 
 typedef struct {
     RnMaterial2D material;
-    RnBool       alive;
+    int32_t      layer;
+    RnBool       dead;
 } RnSpriteRenderer;
 
 typedef struct {
@@ -333,6 +342,9 @@ void      rnConfigUpdateAudio(void);
 void      rnConfigUpdateAll(void);
 void      rnConfigReset(void);
 
+RnPostProcess  rnDefaultPostProcess(void);
+RnPostProcess *rnPostProcessGet(void);
+
 void rnFrameBegin(void);
 void rnFrameEnd(void);
 
@@ -357,6 +369,7 @@ RnBool rnMouseHold(RnMouseButton b);
 RnBool rnMouseUp(RnMouseButton b);
 float  rnMouseScroll(void);
 RnVec2 rnMouseMove(void);
+void   rnMouseHideCursor(RnBool b);
 
 RnRenderTarget rnRenderTargetCreate(RnRenderTargetInfo *i);
 void           rnRenderTargetKill(RnRenderTarget t);
@@ -388,63 +401,62 @@ RnMaterial3DInfo *rnMaterial3DGet(RnMaterial3D m);
 void              rnMaterial3DKill(RnMaterial3D m);
 
 RnTransform  rnDefaultTransform(void);
-RnTransform *rnEntityTransformGet(RnEntity e);
-void         rnEntityTransformAdd(RnEntity e, RnTransform t);
-void         rnEntityTransformKill(RnEntity e);
-void         rnEntityTransformSetDirty(RnEntity e, RnBool d);
-RnVec3       rnEntityTransformGetWorldPosition(RnEntity e);
-RnVec3       rnEntityTransformGetWorldRotation(RnEntity e);
-RnVec3       rnEntityTransformGetWorldScale(RnEntity e);
+RnTransform *rnTransformGet(RnEntity e);
+void         rnTransformAdd(RnEntity e, RnTransform t);
+void         rnTransformKill(RnEntity e);
+void         rnTransformSetDirty(RnEntity e, RnBool d);
+RnVec3       rnTransformGetWorldPosition(RnEntity e);
+RnVec3       rnTransformGetWorldRotation(RnEntity e);
+RnVec3       rnTransformGetWorldScale(RnEntity e);
 
-RnRigidBody2D *rnEntityRigidBody2dGet(RnEntity e);
-void           rnEntityRigidBody2dAdd(RnEntity e, RnRigidBody2D b);
-void           rnEntityRigidBody2dKill(RnEntity e);
+RnRigidBody2D *rnRigidBody2dGet(RnEntity e);
+void           rnRigidBody2dAdd(RnEntity e, RnRigidBody2D b);
+void           rnRigidBody2dKill(RnEntity e);
 
-RnRigidBody3D *rnEntityRigidBody3dGet(RnEntity e);
-void           rnEntityRigidBody3dAdd(RnEntity e, RnRigidBody3D b);
-void           rnEntityRigidBody3dKill(RnEntity e);
+RnRigidBody3D *rnRigidBody3dGet(RnEntity e);
+void           rnRigidBody3dAdd(RnEntity e, RnRigidBody3D b);
+void           rnRigidBody3dKill(RnEntity e);
 
-RnSoundListener *rnEntitySoundListenerGet(RnEntity e);
-void             rnEntitySoundListenerAdd(RnEntity e, RnSoundListener l);
-void             rnEntitySoundListenerKill(RnEntity e);
+RnSoundListener *rnSoundListenerGet(RnEntity e);
+void             rnSoundListenerAdd(RnEntity e, RnSoundListener l);
+void             rnSoundListenerKill(RnEntity e);
 
-RnSoundPlayer *rnEntitySoundPlayerGet(RnEntity e);
-void           rnEntitySoundPlayerAdd(RnEntity e, RnSoundPlayer p);
-void           rnEntitySoundPlayerKill(RnEntity e);
-void           rnEntitySoundPlayerPlay(RnEntity e);
-void           rnEntitySoundPlayerStop(RnEntity e);
+RnSoundPlayer *rnSoundPlayerGet(RnEntity e);
+void           rnSoundPlayerAdd(RnEntity e, RnSoundPlayer p);
+void           rnSoundPlayerKill(RnEntity e);
+void           rnSoundPlayerPlay(RnEntity e);
+void           rnSoundPlayerStop(RnEntity e);
 
-RnMusicPlayer *rnEntityMusicPlayerGet(RnEntity e);
-void           rnEntityMusicPlayerAdd(RnEntity e, RnMusicPlayer p);
-void           rnEntityMusicPlayerKill(RnEntity e);
-void           rnEntityMusicPlayerPlay(RnEntity e);
-void           rnEntityMusicPlayerStop(RnEntity e);
+RnMusicPlayer *rnMusicPlayerGet(RnEntity e);
+void           rnMusicPlayerAdd(RnEntity e, RnMusicPlayer p);
+void           rnMusicPlayerKill(RnEntity e);
+void           rnMusicPlayerPlay(RnEntity e);
+void           rnMusicPlayerStop(RnEntity e);
 
 
 
-RnCamera2D *rnEntityCamera2DGet(RnEntity e);
-void        rnEntityCamera2DAdd(RnEntity e, RnCamera2D c);
-void        rnEntityCamera2DKill(RnEntity e);
-void        rnEntityCamera2DSetRenderTarget(RnEntity e, RnRenderTarget t);
-void        rnEntityCamera2DUse(RnEntity e);
+RnCamera2D *rnCamera2DGet(RnEntity e);
+void        rnCamera2DAdd(RnEntity e, RnCamera2D c);
+void        rnCamera2DKill(RnEntity e);
+void        rnCamera2DUse(RnEntity e);
 
-RnCamera3D *rnEntityCamera3DGet(RnEntity e);
-void        rnEntityCamera3DAdd(RnEntity e, RnCamera3D c);
-void        rnEntityCamera3DKill(RnEntity e);
-void        rnEntityCamera3DSetRenderTarget(RnEntity e, RnRenderTarget t);
-void        rnEntityCamera3DUse(RnEntity e);
+RnCamera3D *rnCamera3DGet(RnEntity e);
+void        rnCamera3DAdd(RnEntity e, RnCamera3D c);
+void        rnCamera3DKill(RnEntity e);
+void        rnCamera3DUse(RnEntity e);
 
 
 
 RnSpriteRenderer  rnDefaultSpriteRenderer();
-RnSpriteRenderer *rnEntitySpriteRendererGet(RnEntity e);
-void              rnEntitySpriteRendererAdd(RnEntity e, RnSpriteRenderer r);
-void              rnEntitySpriteRendererKill(RnEntity e);
+RnSpriteRenderer *rnSpriteRendererGet(RnEntity e);
+void              rnSpriteRendererAdd(RnEntity e, RnSpriteRenderer r);
+void              rnSpriteRendererKill(RnEntity e);
+void              rnSpriteRendererSortByLayer();
 
 RnMeshRenderer  rnDefaultMeshRenderer();
-RnMeshRenderer *rnEntityMeshRendererGet(RnEntity e);
-void            rnEntityMeshRendererAdd(RnEntity e, RnMeshRenderer r);
-void            rnEntityMeshRendererKill(RnEntity e);
+RnMeshRenderer *rnMeshRendererGet(RnEntity e);
+void            rnMeshRendererAdd(RnEntity e, RnMeshRenderer r);
+void            rnMeshRendererKill(RnEntity e);
 
 
 

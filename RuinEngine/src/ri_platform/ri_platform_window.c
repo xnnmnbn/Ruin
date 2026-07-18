@@ -5,6 +5,7 @@
 #include <SDL3/SDL_gpu.h>
 #include <SDL3/SDL_init.h>
 #include <SDL3/SDL_oldnames.h>
+#include <SDL3/SDL_timer.h>
 #include <SDL3/SDL_video.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -43,31 +44,33 @@ uint8_t ri_platform_window_running(RI_Platform *p) {
     p->input.mouse_dx     = 0.0;
     p->input.mouse_dy     = 0.0;
     p->input.mouse_scroll = 0.0;
-    
-    SDL_Event event;
 
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
+    while (SDL_PollEvent(&p->window.event)) {
+        switch (p->window.event.type) {
             case SDL_EVENT_QUIT:
                 p->window.running = 0;
                 break;
-
+                
             case SDL_EVENT_MOUSE_WHEEL:
-                p->input.mouse_scroll = event.wheel.y;
+                p->input.mouse_scroll = p->window.event.wheel.y;
                 break;
 
             case SDL_EVENT_WINDOW_RESIZED:
                 printf("RESIZED\n");
                 p->window.resized = 1;
-                p->active_config.width  = event.window.data1;
-                p->active_config.height = event.window.data2;
+                p->active_config.width  = p->window.event.window.data1;
+                p->active_config.height = p->window.event.window.data2;
+                break;
 
             case SDL_EVENT_MOUSE_MOTION:
-                p->input.mouse_dx = event.motion.xrel;
-                p->input.mouse_dy = event.motion.yrel;
+                p->input.mouse_dx = p->window.event.motion.xrel;
+                p->input.mouse_dy = p->window.event.motion.yrel;
+                break;
+            default:
+                break;
         }
     }
-
+    
     const bool *keys = SDL_GetKeyboardState(NULL);
     SDL_MouseButtonFlags flags = SDL_GetMouseState(&p->input.mouse_x, &p->input.mouse_y);
 
@@ -80,7 +83,6 @@ uint8_t ri_platform_window_running(RI_Platform *p) {
         p->input.mouse_was[i] = p->input.mouse_now[i];
         p->input.mouse_now[i] = (uint8_t)((flags >> i) & 1);
     }
-
     
 
     return p->window.running;

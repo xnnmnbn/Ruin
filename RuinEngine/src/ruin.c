@@ -1,6 +1,9 @@
 #include "ruin.h"
 #include "cvec.h"
 #include "ri_assets/ri_assets.h"
+#include <SDL3/SDL_mouse.h>
+#include <SDL3/SDL_pixels.h>
+#include <stdlib.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "ri_components/ri_components.h"
@@ -96,33 +99,43 @@ RnBool rnSelfRunning() {
 
 
 
+RnPostProcess rnDefaultPostProcess() {
+    return (RnPostProcess) {
+        .brightness = 1.0f,
+        .saturation = 1.0f,
+        .contrast   = 1.0f,
+        .invert     = 0,
+        .tint       = (RnColor) {
+            1.0, 1.0, 1.0, 1.0
+        }
+    };
+}
+
+RnPostProcess *rnPostProcessGet() {
+    return &engine.renderer.post_process;
+}
+
+
+
+
+
+
+
+
+
+
 void rnFrameBegin() {
     ri_platform_time_update(&engine.platform);
-/*
-RnEntity e0 = from_void(engine.components.entities.data, RnEntity)[0];
-RnEntity e1 = from_void(engine.components.entities.data, RnEntity)[1];
-printf("entities[0]=%u entities[1]=%u\n", e0, e1);
-
-RnMaterial2D mid = from_void(engine.renderer.gpu_buffers_2d.material_idx_ssbo.mapped, RnMaterial2D)[1];
-printf("material_ids[1]=%u\n", mid);
-
-RnMaterial2DInfo *mat = &(from_void(engine.renderer.gpu_buffers_2d.material_ssbo.mapped, RnMaterial2DInfo)[1]);
-printf("tint=%.2f,%.2f,%.2f,%.2f tex_id=%u\n", mat->tint.r, mat->tint.g, mat->tint.b, mat->tint.a, mat->texture);
-
-RnTexture tex_id = from_void(engine.renderer.gpu_buffers_2d.material_idx_ssbo.mapped, RnMaterial2D)[mid];
-printf("tex_id from material=%u\n", mat->texture);
-*/
 }
 
 void rnFrameEnd() {
-/*
     double remaining = engine.platform.time.target_delta - engine.platform.time.fixed_delta;
-    uint64_t del = (uint64_t)(remaining * 100000000);
+    uint64_t del = (uint64_t)(remaining * 2000000000);
 
     if (remaining > 0) {
         SDL_DelayPrecise(del);
     }
-*/
+
 
     if (engine.platform.window.resized) {
 
@@ -189,6 +202,16 @@ RnVec2 rnMouseMove() {
         .x = engine.platform.input.mouse_dx,
         .y = engine.platform.input.mouse_dy
     };
+}
+
+void rnMouseHideCursor(RnBool b) {
+    SDL_SetWindowRelativeMouseMode(engine.platform.window.window, b);
+
+    if (b) {
+        SDL_HideCursor();
+    } else {
+        SDL_ShowCursor();
+    }
 }
 
 
@@ -372,6 +395,8 @@ void rnTextureLoadAllToGPU() {
 
     VkWriteDescriptorSet writes[t_count];
     VkDescriptorImageInfo img_infos[t_count];
+
+
     
     for (uint32_t i = 0; i < t_count; i++) {
 
@@ -385,20 +410,37 @@ void rnTextureLoadAllToGPU() {
         
         writes[i] = (VkWriteDescriptorSet){0};
         writes[i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        writes[i].dstSet = engine.renderer.pipelines.bindless_pipeline_2d.d_sets[1];
+        writes[i].dstSet = engine.renderer.pipelines.bindless_offscreen_2d.d_sets[1];
         writes[i].dstBinding = 0;
         writes[i].dstArrayElement = t;
         writes[i].descriptorCount = 1;
         writes[i].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
         writes[i].pImageInfo = &img_infos[i];
 
-printf("updating %u texture descriptors, t=%u, view=%p, sampler=%p\n",
-    t_count, t,
-    img_infos[0].imageView,
-    img_infos[0].sampler);
+        printf("updating %u texture descriptors, t=%u, view=%p, sampler=%p\n",
+            t_count, t,
+            img_infos[0].imageView,
+            img_infos[0].sampler);
     }
 
     vkUpdateDescriptorSets(engine.renderer.core.device, t_count, writes, 0, NULL);
+
+    VkWriteDescriptorSet write = {0};
+    VkDescriptorImageInfo img_info = {0};
+
+    img_info.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    img_info.imageView = engine.renderer.framebuffers.offscreen.color_view;
+    img_info.sampler = engine.renderer.framebuffers.offscreen.color_sampler;
+
+    write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    write.dstSet = engine.renderer.pipelines.post_process_pipeline.d_sets[0];
+    write.dstBinding = 0;
+    write.dstArrayElement = 0;
+    write.descriptorCount = 1;
+    write.pImageInfo = &img_info;
+
+    vkUpdateDescriptorSets(engine.renderer.core.device, 1, &write, 0, NULL);
 }
 
 
@@ -417,32 +459,43 @@ RnTransform rnDefaultTransform() {
         .rotation = {0},
         .scale    = { 1.0f, 1.0f, 1.0f },
         .parent   = 0,
-        .dirty    = 0
+        .dead     = 0
     };
 }
 
-void rnEntityTransformAdd(RnEntity e, RnTransform t) {
-   ((RnTransform*)engine.components.transforms.sparse_data)[e] = t;
-   cvec_push(engine.components.transforms.dense_indices, e, RnEntity);
-}
-void rnEntityTransformKill(RnEntity e) {
-    cvec_remove(engine.components.transforms.dense_indices, e, RnEntity);
-}
-RnTransform *rnEntityTransformGet(RnEntity e) {
-#ifdef RUIN_ENABLE_DEBUG
-    RnEntity id = (RnEntity)-1;
-    cvec_index(engine.components.entities, e, RnEntity, id);
+void rnTransformAdd(RnEntity e, RnTransform t) {
+   from_void(engine.components.transforms.begin_points[0], RnTransform)[e] = t;
+   RnEntity *entities  = engine.components.transforms.begin_points[2];
+   uint32_t elem_count = engine.components.transforms.elem_counts;
 
-    if (id == (RnEntity)-1) {
-        RUIN_DEBUG("Failed to get RTansform of Entity #%d", e);
-        return NULL;
-    }
-#endif
-    
-    return &(void_t(engine.components.transforms.sparse_data, RnTransform)[e]);
+   for (uint32_t i = 0; i < elem_count; i++) {
+       if (entities[i] == e) return;
+   }
+
+   entities[elem_count] = e;
+   engine.components.transforms.elem_counts += 1;
 }
-RnVec3 rnEntityTransformGetWorldPosition(RnEntity e) {
-    mat4 *m = &(engine.components.i_transforms.world_matrices[e]);
+void rnTransformKill(RnEntity e) {
+    RnEntity *entities  = engine.components.transforms.begin_points[2];
+    uint32_t elem_count = engine.components.transforms.elem_counts;
+
+    for (uint32_t i = 0; i < elem_count; i++) {
+        if (entities[i] == e) {
+            entities[i] = entities[elem_count - 1];
+            engine.components.transforms.elem_counts -= 1;
+            break;
+        }
+    }
+    
+    engine.components.transforms.elem_counts -= 1;
+}
+
+RnTransform *rnTransformGet(RnEntity e) {
+    return &(from_void(engine.components.transforms.begin_points[0], RnTransform)[e]);
+}
+
+RnVec3 rnTransformGetWorldPosition(RnEntity e) {
+    mat4 *m = &(from_void(engine.components.transforms.begin_points[1], RI_Component_Transform)[e].world_matrix);
     vec3 v;
 
     float *mm = (float*)*m;
@@ -454,8 +507,8 @@ RnVec3 rnEntityTransformGetWorldPosition(RnEntity e) {
     };
 }
 
-RnVec3 rnEntityTransformGetWorldRotation(RnEntity e) {
-    mat4 *m = &(engine.components.i_transforms.world_matrices[e]);
+RnVec3 rnTransformGetWorldRotation(RnEntity e) {
+    mat4 *m = &(from_void(engine.components.transforms.begin_points[1], RI_Component_Transform)[e].world_matrix);
     vec3 v;
 
     glm_euler_angles(*m, v);
@@ -467,8 +520,8 @@ RnVec3 rnEntityTransformGetWorldRotation(RnEntity e) {
     };
 }
 
-RnVec3 rnEntityTransformGetWorldScale(RnEntity e) {
-    vec3 *v = &(engine.components.i_transforms.world_scales[e]);
+RnVec3 rnTransformGetWorldScale(RnEntity e) {
+    vec3 *v = &(from_void(engine.components.transforms.begin_points[1], RI_Component_Transform)[e].world_scale);
 
     return (RnVec3){
         .x = (*v)[0],
@@ -486,40 +539,74 @@ RnVec3 rnEntityTransformGetWorldScale(RnEntity e) {
 
 
 
-void rnEntityCamera2DAdd(RnEntity e, RnCamera2D c) {
-    from_void(engine.components.camera2ds.sparse_data, RnCamera2D)[e] = c;
-    cvec_push(engine.components.camera2ds.dense_indices, e, RnEntity);
+void rnCamera2DAdd(RnEntity e, RnCamera2D c) {
+    from_void(engine.components.camera2ds.begin_points[0], RnCamera2D)[e] = c;
+    RnEntity *entities  = engine.components.camera2ds.begin_points[2];
+    uint32_t elem_count = engine.components.camera2ds.elem_counts;
+
+    for (uint32_t i = 0; i < elem_count; i++) {
+        if (entities[i] == e) return;
+    }
+
+    entities[elem_count] = e;
+    engine.components.camera2ds.elem_counts += 1;
 }
 
-void rnEntityCamera2DKill(RnEntity e) {
-    cvec_remove(engine.components.camera2ds.dense_indices, e, RnEntity);
+void rnCamera2DKill(RnEntity e) {
+    RnEntity *entities  = engine.components.camera2ds.begin_points[2];
+    uint32_t elem_count = engine.components.camera2ds.elem_counts;
+
+    for (uint32_t i = 0; i < elem_count; i++) {
+        if (entities[i] == e) {
+            entities[i] = entities[elem_count - 1];
+            engine.components.camera2ds.elem_counts -= 1;
+            break;
+        }
+    }
 }
 
-void rnEntityCamera2DUse(RnEntity e) {
+void rnCamera2DUse(RnEntity e) {
     engine.components.camera_in_use = e;
     engine.components.camera_mode = 2;
 }
 
-RnCamera2D *rnEntityCamera2DGet(RnEntity e) {
-    return &(from_void(engine.components.camera2ds.sparse_data, RnCamera2D)[e]);
+RnCamera2D *rnCamera2DGet(RnEntity e) {
+    return &(from_void(engine.components.camera2ds.begin_points[0], RnCamera2D)[e]);
 }
 
-void rnEntityCamera3DAdd(RnEntity e, RnCamera3D c) {
-    from_void(engine.components.camera3ds.sparse_data, RnCamera3D)[e] = c;
-    cvec_push(engine.components.camera3ds.dense_indices, e, RnEntity);
+void rnCamera3DAdd(RnEntity e, RnCamera3D c) {
+    from_void(engine.components.camera3ds.begin_points[0], RnCamera3D)[e] = c;
+    RnEntity *entities  = engine.components.camera3ds.begin_points[2];
+    uint32_t elem_count = engine.components.camera3ds.elem_counts;
+
+    for (uint32_t i = 0; i < elem_count; i++) {
+        if (entities[i] == e) return;
+    }
+
+    entities[elem_count] = e;
+    engine.components.camera3ds.elem_counts += 1;
 }
 
-void rnEntityCamera3DKill(RnEntity e) {
-    cvec_remove(engine.components.camera3ds.dense_indices, e, RnEntity);
+void rnCamera3DKill(RnEntity e) {
+    RnEntity *entities  = engine.components.camera3ds.begin_points[2];
+    uint32_t elem_count = engine.components.camera3ds.elem_counts;
+
+    for (uint32_t i = 0; i < elem_count; i++) {
+        if (entities[i] == e) {
+            entities[i] = entities[elem_count - 1];
+            engine.components.camera3ds.elem_counts -= 1;
+            break;
+        }
+    }
 }
 
-void rnEntityCamera3DUse(RnEntity e) {
+void rnCamera3DUse(RnEntity e) {
     engine.components.camera_in_use = e;
     engine.components.camera_mode = 3;
 }
 
-RnCamera3D *rnEntityCamera3DGet(RnEntity e) {
-    return &(from_void(engine.components.camera3ds.sparse_data, RnCamera3D)[e]);
+RnCamera3D *rnCamera3DGet(RnEntity e) {
+    return &(from_void(engine.components.camera3ds.begin_points[0], RnCamera3D)[e]);
 }
 
 
@@ -531,17 +618,58 @@ RnCamera3D *rnEntityCamera3DGet(RnEntity e) {
 
 
 
-RnSpriteRenderer *rnEntitySpriteRendererGet(RnEntity e) {
-    return &(from_void(engine.components.sprite_renderers.sparse_data, RnSpriteRenderer)[e]);
+RnSpriteRenderer rnDefaultSpriteRenderer() {
+    return (RnSpriteRenderer){
+        .dead = 0,
+        .material = 0,
+    };
 }
 
-void rnEntitySpriteRendererAdd(RnEntity e, RnSpriteRenderer r) {
-    from_void(engine.components.sprite_renderers.sparse_data, RnSpriteRenderer)[e] = r;
-    cvec_push(engine.components.sprite_renderers.dense_indices, e, RnEntity);
+RnSpriteRenderer *rnSpriteRendererGet(RnEntity e) {
+    return &(from_void(engine.components.sprite_renderers.begin_points[0], RnSpriteRenderer)[e]);
 }
 
-void rnEntitySpriteRendererKill(RnEntity e) {
-    cvec_remove(engine.components.sprite_renderers.dense_indices, e, RnEntity);
+void rnSpriteRendererAdd(RnEntity e, RnSpriteRenderer r) {
+    from_void(engine.components.sprite_renderers.begin_points[0], RnSpriteRenderer)[e] = r;
+    RnEntity *entities  = engine.components.sprite_renderers.begin_points[1];
+    uint32_t elem_count = engine.components.sprite_renderers.elem_counts;
+
+    for (uint32_t i = 0; i < elem_count; i++) {
+        if (entities[i] == e) return;
+    }
+
+    entities[elem_count] = e;
+    engine.components.sprite_renderers.elem_counts += 1;
+}
+
+void rnSpriteRendererKill(RnEntity e) {
+    RnEntity *entities  = engine.components.sprite_renderers.begin_points[1];
+    uint32_t elem_count = engine.components.sprite_renderers.elem_counts;
+
+    for (uint32_t i = 0; i < elem_count; i++) {
+        if (entities[i] == e) {
+            for (uint32_t j = i; j < elem_count - 1; j++) {
+                entities[j] = entities[j + 1];
+            }
+            break;
+        }
+    }
+
+    engine.components.sprite_renderers.elem_counts -= 1;
+}
+
+int sort_by_layer(const void *a, const void *b) {
+    RnEntity e1 = *(RnEntity*)a;
+    RnEntity e2 = *(RnEntity*)b;
+
+    RnSpriteRenderer *r1 = &(from_void(engine.components.sprite_renderers.begin_points[0], RnSpriteRenderer)[e1]);
+    RnSpriteRenderer *r2 = &(from_void(engine.components.sprite_renderers.begin_points[0], RnSpriteRenderer)[e2]);
+
+    return (r2->layer < r1->layer) - (r1->layer < r2->layer);
+}
+
+void rnSpriteRendererSortByLayer() {
+    qsort(engine.components.sprite_renderers.begin_points[1], engine.components.sprite_renderers.elem_counts, sizeof(RnEntity), sort_by_layer);
 }
 
 

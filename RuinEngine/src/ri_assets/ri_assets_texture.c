@@ -190,6 +190,7 @@ void ri_assets_texture_create_gpu_data(RI_Assets *a, RI_Renderer *r) {
         si.magFilter = VK_FILTER_NEAREST;
         si.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
         si.maxLod = 0.0f;
+        si.maxAnisotropy = r->active_config.max_anisotropy;
 
         if (vkCreateSampler(r->core.device, &si, NULL, &gpu_texs[t].sampler) != VK_SUCCESS) {
             printf("Failed to create sampler for Texture #%d\n", t);

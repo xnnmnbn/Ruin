@@ -18,7 +18,7 @@ uint32_t u_clamp(uint32_t v, uint32_t min, uint32_t max) {
 
 VkSurfaceFormatKHR choose_swap_surface_format(VkSurfaceFormatKHR *formats, uint32_t count) {
     for (size_t i = 0; i < count; i++) {
-        if (formats[i].format == VK_FORMAT_B8G8R8A8_SRGB && formats[i].colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+        if (formats[i].format == VK_FORMAT_B8G8R8A8_UNORM && formats[i].colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
             return formats[i];
         }
     }
@@ -28,13 +28,14 @@ VkSurfaceFormatKHR choose_swap_surface_format(VkSurfaceFormatKHR *formats, uint3
 
 
 VkPresentModeKHR choose_swap_present_mode(VkPresentModeKHR *mods, uint32_t count) {
+/*
     for (size_t i = 0; i < count; i++) {
         if (mods[i] == VK_PRESENT_MODE_MAILBOX_KHR) {
             return mods[i];
         }
     }
-
-    return VK_PRESENT_MODE_FIFO_KHR;
+*/
+    return VK_PRESENT_MODE_IMMEDIATE_KHR;
 }
 
 VkExtent2D choose_swap_extent(VkSurfaceCapabilitiesKHR *caps, RI_Platform *p) {
@@ -82,14 +83,12 @@ void ri_renderer_create_swapchain(RI_Renderer *r, RI_Platform *p) {
     si.imageColorSpace  = surface_format.colorSpace;
     si.imageExtent      = extent;
     si.imageArrayLayers = 1;
-    si.imageUsage       = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+    si.imageUsage       = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
     si.preTransform     = details.capabilities.currentTransform;
     si.compositeAlpha   = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     si.presentMode      = present_mode;
     si.clipped          = VK_TRUE;
     si.oldSwapchain     = r->swapchain.swapchain;
-
-    
 
     
     if (indices.graphics_family != indices.present_family) {
@@ -99,6 +98,8 @@ void ri_renderer_create_swapchain(RI_Renderer *r, RI_Platform *p) {
     } else {
         si.imageSharingMode      = VK_SHARING_MODE_EXCLUSIVE;
     }
+
+    printf("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa %d\n", si.imageUsage);
 
     if (vkCreateSwapchainKHR(r->core.device, &si, NULL, &r->swapchain.swapchain) != VK_SUCCESS) {
         printf("Failed to create swapchain.\n");

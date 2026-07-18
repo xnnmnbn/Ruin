@@ -50,15 +50,10 @@ void draw_frame(RuinInternal *engine) {
     uint8_t c_mode = engine->components.camera_mode;
 
     if (c_mode == 2) {
-        cmr = &(from_void(engine->components.i_camera2ds, RI_Component_Camera)[c_ent]);
+        cmr = &(from_void(engine->components.camera2ds.begin_points[1], RI_Component_Camera)[c_ent]);
     } else if (c_mode == 3) {
-        cmr = &(from_void(engine->components.i_camera3ds, RI_Component_Camera)[c_ent]);
+        cmr = &(from_void(engine->components.camera3ds.begin_points[1], RI_Component_Camera)[c_ent]);
     }
-
-
-    // cmr = &(engine->components.i_camera3ds[c_ent]);
-
-    // printf("ccccccccconst char * _Nonnull format, ....\n");
 
     memcpy(
         engine->renderer.gpu_buffers_2d.camera_ubo.mapped,
@@ -66,33 +61,31 @@ void draw_frame(RuinInternal *engine) {
         sizeof(RI_Component_Camera)
     );
 
-    // printf("aaaaaaaaa\n");
+    const uint32_t INSTANCE_COUNT = engine->components.sprite_renderers.elem_counts;
 
     memcpy(
         engine->renderer.gpu_buffers_2d.entity_ssbo.mapped,
-        engine->components.sprite_renderers.dense_indices.data,
-        sizeof(RnEntity) * engine->components.sprite_renderers.dense_indices.len
+        engine->components.sprite_renderers.begin_points[1],
+        sizeof(RnEntity) * INSTANCE_COUNT
     );
 
-    for (uint32_t i = 0; i < engine->components.sprite_renderers.dense_indices.len; i++) {
-        RnEntity e = from_void(engine->components.sprite_renderers.dense_indices.data, RnEntity)[i];
+    for (uint32_t i = 0; i < INSTANCE_COUNT; i++) {
+        RnEntity e = from_void(engine->components.sprite_renderers.begin_points[1], RnEntity)[i];
 
-        mat4 *src = &engine->components.i_transforms.world_matrices[e];
+        mat4 *src = &(from_void(engine->components.transforms.begin_points[1], RI_Component_Transform)[e].world_matrix);
         mat4 *dst = &(from_void(engine->renderer.gpu_buffers_2d.matrix_ssbo.mapped, mat4)[e]);
 
         memcpy(dst, src, sizeof(mat4));
     }
 
-    for (uint32_t i = 0; i < engine->components.sprite_renderers.dense_indices.len; i++) {
-        RnEntity e     = from_void(engine->components.sprite_renderers.dense_indices.data, RnEntity)[i];
-        RnMaterial2D m = from_void(engine->components.sprite_renderers.sparse_data, RnSpriteRenderer)[e].material;
+    for (uint32_t i = 0; i < INSTANCE_COUNT; i++) {
+        RnEntity e     = from_void(engine->components.sprite_renderers.begin_points[1], RnEntity)[i];
+        RnMaterial2D m = from_void(engine->components.sprite_renderers.begin_points[0], RnSpriteRenderer)[e].material;
 
         from_void(engine->renderer.gpu_buffers_2d.material_ssbo.mapped, RnMaterial2DInfo)[e] =
             from_void(engine->assets.material2Ds.data, RnMaterial2DInfo)[m];
     }
 
-
-    
 
     record_command_2d(&engine->renderer, &engine->platform, &engine->components, engine->renderer.commands.command_buffers[current_frame], image_index);
 

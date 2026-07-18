@@ -3,11 +3,13 @@
 #include "ruin.h"
 #include <cglm/cglm.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 
 
-RnTransform *ts = NULL;
+/*
+ RnTransform *ts = NULL;
 
 int sort_by_parent(const void *p1, const void *p2) {
     RnEntity e1 = *((RnEntity*)p1);
@@ -17,8 +19,9 @@ int sort_by_parent(const void *p1, const void *p2) {
 
     return 0;
 }
+*/
 
-
+/*
 void ri_components_transform_init(RI_Components *c) {
     c->transforms.sparse_data      = malloc(RUIN_MAX_ENTITIES * sizeof(RnTransform));
     c->i_transforms.local_matrices = malloc(RUIN_MAX_ENTITIES * sizeof(mat4));
@@ -27,7 +30,7 @@ void ri_components_transform_init(RI_Components *c) {
 
     cvec_init(c->transforms.dense_indices);
 
-    ts = c->transforms.sparse_data;
+    // ts = c->transforms.sparse_data;
 }
 
 void ri_components_transform_kill(RI_Components *c) {
@@ -37,35 +40,37 @@ void ri_components_transform_kill(RI_Components *c) {
     free(c->transforms.sparse_data);
     cvec_kill(c->transforms.dense_indices);
 }
-
-
+*/
 
 void ri_components_transform_update(RI_Components *c) {
 
-    RnEntity    *entities   = c->transforms.dense_indices.data;
-    RnTransform *transforms = c->transforms.sparse_data;
+    RnTransform *transforms = c->transforms.begin_points[0];
+    RI_Component_Transform *i_transforms = c->transforms.begin_points[1];
+    RnEntity    *entities   = c->transforms.begin_points[2];
+    uint32_t     elem_count = c->transforms.elem_counts;
 
     // qsort(c->transforms.dense_indices.data, c->transforms.dense_indices.len, sizeof(RnEntity), sort_by_parent);
 
-    for (size_t i = 0; i < c->transforms.dense_indices.len; i++) {
+    for (size_t i = 0; i < elem_count; i++) {
         RnEntity e = entities[i];
+        RnTransform *transform = &transforms[e];
 
-        // if (transforms[e].dirty) continue;
+        if (transform->dead) continue;
 
-        mat4 *l_mat = &(c->i_transforms.local_matrices[e]);
-        mat4 *w_mat = &(c->i_transforms.world_matrices[e]);
+        mat4 *l_mat = &i_transforms[e].local_matrix;
+        mat4 *w_mat = &i_transforms[e].world_matrix;
 
         glm_mat4_identity(*l_mat);
         glm_translate(*l_mat, (float[3]){
-            transforms[e].position.x,
-            transforms[e].position.y,
-            -transforms[e].position.z
+            transform->position.x,
+            transform->position.y,
+            -transform->position.z
         });
 
         float
-            rad_x = glm_rad(transforms[e].rotation.x),
-            rad_y = glm_rad(transforms[e].rotation.y),
-            rad_z = glm_rad(transforms[e].rotation.z);
+            rad_x = glm_rad(transform->rotation.x),
+            rad_y = glm_rad(transform->rotation.y),
+            rad_z = glm_rad(transform->rotation.z);
 
         glm_rotate(*l_mat, rad_x, (float[3]){
             1.0f, 0.0f, 0.0f
@@ -78,30 +83,31 @@ void ri_components_transform_update(RI_Components *c) {
         });
 
         glm_scale(*l_mat, (float[3]){
-            transforms[e].scale.x,
-            transforms[e].scale.y,
-            transforms[e].scale.z
+            transform->scale.x,
+            transform->scale.y,
+            transform->scale.z
         });
 
-        if (transforms[e].parent == 0) {
+        if (transform->parent == 0) {
             glm_mat4_copy(*l_mat, *w_mat);
             glm_vec3_copy((vec3){
-                transforms[e].scale.x,
-                transforms[e].scale.y,
-                transforms[e].scale.z
-            }, c->i_transforms.world_scales[e]);
+                transform->scale.x,
+                transform->scale.y,
+                transform->scale.z
+            }, i_transforms[e].world_scale);
             continue;
         }
 
         RnEntity p = transforms[e].parent;
-
-        mat4 *p_mat = &(c->i_transforms.world_matrices[p]);
+        RnTransform *p_transform = &transforms[p];
+        RI_Component_Transform *i_p_transform = &i_transforms[p];
+        mat4 *p_mat = &i_p_transform->world_matrix;
 
         glm_mat4_mul(*p_mat, *l_mat, *w_mat);
 
-        c->i_transforms.world_scales[e][0] = transforms[e].scale.x * c->i_transforms.world_scales[p][0];
-        c->i_transforms.world_scales[e][1] = transforms[e].scale.y * c->i_transforms.world_scales[p][1];
-        c->i_transforms.world_scales[e][2] = transforms[e].scale.z * c->i_transforms.world_scales[p][2];
+        i_transforms[e].world_scale[0] = transform->scale.x * i_p_transform->world_scale[0];
+        i_transforms[e].world_scale[1] = transform->scale.y * i_p_transform->world_scale[1];
+        i_transforms[e].world_scale[2] = transform->scale.z * i_p_transform->world_scale[2];
     }
 }
 

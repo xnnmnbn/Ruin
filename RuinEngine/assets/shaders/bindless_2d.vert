@@ -1,5 +1,10 @@
 #version 450
 
+#define MAX_TEXTURES 1024
+        
+#extension GL_EXT_nonuniform_qualifier : enable
+
+
 layout(location = 0) out vec4 out_tint;
 layout(location = 1) out vec2 out_uv;
 layout(location = 2) flat out uint out_tex_id;
@@ -17,21 +22,22 @@ uniform CameraBuffer {
 
 layout(std430, set = 0, binding = 1)
 readonly buffer EntityBuffer {
-    // Acquire by gl_InstanceIndex;
     uint entity_ids[];
 };
 
 layout(std430, set = 0, binding = 2)
 readonly buffer MatrixBuffer {
-    // Acquire by entity id.
     mat4 matrices[];
 };
 
 layout(std430, set = 0, binding = 3)
 readonly buffer MaterialBuffer {
-    // Acquire by entity id.
     Material materials[];
 };
+
+
+layout (set = 1, binding = 0) uniform sampler2D textures[MAX_TEXTURES];
+
 
 // Procedural positioning arrays for 2 Triangles forming a full Quad
 const vec2 positions[6] = vec2[](
@@ -62,14 +68,16 @@ void main() {
 
     mat4 t = matrices[e];
 
-    // Grab current vertex properties based on gl_VertexIndex (0 through 5)
+    ivec2 tex_dims = textureSize(textures[nonuniformEXT(m.tex_id)], 0);
+    vec2 tex_scale = vec2(float(tex_dims.x), float(tex_dims.y));
+
     vec2 vertex_pos = positions[gl_VertexIndex];
+    vertex_pos = vertex_pos * tex_scale;
+    
     out_uv          = uvs[gl_VertexIndex];
 
-    // Vulkan Clip Space Calculation
     gl_Position = proj * view * t * vec4(vertex_pos, 0.0, 1.0);
 
-    // Forward descriptors to Fragment stage
     out_tint   = m.tint;
     out_tex_id = m.tex_id;
 }
