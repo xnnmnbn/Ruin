@@ -10,36 +10,4 @@ I aim to use bindless-rendering method for performance and probably easier devel
 It has a partial ECS support only for provided components such as RnTransform, RnSpriteRenderer, etc...
 They are automatically updated on rnFrameEnd().
 
-We are still using the test pipeline which only draws a triangle.
-
-```C
-#include "ruin.h"
-
-int main() {
-
-    RnConfig *cfg = rnConfigGet();
-    // configure through cfg
-
-    rnSelfInit(cfg); // Cannot init if NULL.
-
-    RnEntity player = rnEntityCreate();
-
-    rnEntityTransformAdd(player, rnDefaultTransform());
-
-    RnTransform *trn = rnEntityTransformGet(player);
-
-    while (rnSelfRunning) {
-    rnFrameBegin();
-
-        if (rnKeyHold(RUIN_KEY_D)) {
-            trn->position.x += 10 * rnTimeDelta();
-        }
-
-    rnFrameEnd();
-    }
-
-    rnSelfKill();
-
-    return 0;
-}
-```
+You can see examples on test/main.c file.
