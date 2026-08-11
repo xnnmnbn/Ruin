@@ -88,10 +88,13 @@ typedef struct {
     VkImage       depth_image;
     VkImageView   depth_view;
     VkSampler     depth_sampler;
+
+    uint32_t gpu_index;
 } RI_Renderer_Framebuffer;
 
 typedef struct {
     RI_Renderer_Framebuffer offscreen;
+    
 } RI_Renderer_Framebuffers;
 
 typedef struct {

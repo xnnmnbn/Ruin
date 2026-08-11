@@ -61,7 +61,7 @@ void ri_renderer_create_swapchain(RI_Renderer *r, RI_Platform *p) {
     QueueFamilyIndices indices      = find_queue_family_indices(&r->core);
     
     VkSurfaceFormatKHR surface_format = choose_swap_surface_format(details.formats, details.format_count);
-    VkPresentModeKHR   present_mode   = choose_swap_present_mode(details.present_modes, details.present_mode_count);
+    VkPresentModeKHR   present_mode   ; // = choose_swap_present_mode(details.present_modes, details.present_mode_count);
     VkExtent2D         extent         = choose_swap_extent(&details.capabilities, p);
     uint32_t           image_count    = details.capabilities.minImageCount + 1;
 
@@ -73,6 +73,12 @@ void ri_renderer_create_swapchain(RI_Renderer *r, RI_Platform *p) {
         indices.graphics_family,
         indices.present_family
     };
+
+    if (r->active_config.vsync) {
+        present_mode = VK_PRESENT_MODE_FIFO_KHR;
+    } else {
+        present_mode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+    }
 
     VkSwapchainCreateInfoKHR si = {0};
     
@@ -91,6 +97,8 @@ void ri_renderer_create_swapchain(RI_Renderer *r, RI_Platform *p) {
     si.oldSwapchain     = r->swapchain.swapchain;
 
     
+
+    
     if (indices.graphics_family != indices.present_family) {
         si.imageSharingMode      = VK_SHARING_MODE_CONCURRENT;
         si.queueFamilyIndexCount = 2;
@@ -98,6 +106,8 @@ void ri_renderer_create_swapchain(RI_Renderer *r, RI_Platform *p) {
     } else {
         si.imageSharingMode      = VK_SHARING_MODE_EXCLUSIVE;
     }
+
+
 
     printf("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa %d\n", si.imageUsage);
 
@@ -167,7 +177,7 @@ void ri_renderer_recreate_swapchain(RI_Renderer *r, RI_Platform *p) {
     // vkDestroySwapchainKHR(r->core.device, r->swapchain.swapchain, NULL);
 
     
-if (p->active_config.width == 0 || p->active_config.height == 0) return;
+    if (p->active_config.width == 0 || p->active_config.height == 0) return;
     
     ri_renderer_create_swapchain(r, p);
     ri_renderer_get_swapchain_image_views(r);

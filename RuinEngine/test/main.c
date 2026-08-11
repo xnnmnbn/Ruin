@@ -1,154 +1,139 @@
 #include "ruin.h"
+#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 
 
 typedef struct {
-    RnEntity cam;
-    RnEntity e1;
-    RnEntity e2;
-} MyGameEntities;
+    RnEntity          id;
+    RnTransform      *transform;
+    RnSpriteRenderer *renderer;
+} MyGameObject;
 
 typedef struct {
-    RnTransform *t_cam;
-    RnTransform *t_e1;
-    RnTransform *t_e2;
-} MyGameTransforms;
+    RnTexture troll;
+    RnTexture monster;
+    RnTexture bomb;
+} MyGameTextures;
 
 typedef struct {
-    RnMaterial2D mat1;
-    RnMaterial2D mat2;
+    RnMaterial2D troll;
+    RnMaterial2D monster;
+    RnMaterial2D bomb;
+} MyGameMaterials;
 
-    RnMaterial2DInfo *mi1;
-    RnMaterial2DInfo *mi2;
-} MyGameMaterial2Ds;
 
-typedef struct {
-    RnSpriteRenderer *r_e1;
-    RnSpriteRenderer *r_e2;
-} MyGameSpriteRenderers;
 
 
 typedef struct {
-    RnPostProcess        *post_process;
-    MyGameEntities        entities;
-    MyGameTransforms      transforms;
-    MyGameMaterial2Ds     material2Ds;
-    MyGameSpriteRenderers renderers;
+    RnPostProcess   *post_process;
+
+    MyGameTextures  textures;
+    MyGameMaterials material2Ds;
+    
+
+    
+    MyGameObject troll;
+    MyGameObject monster;
+    MyGameObject camera;
+
+    MyGameObject bomb_pool[10];
+    uint32_t     next_bomb_idx;
+    uint32_t     bomb_count;   
 
     uint8_t c_mod;
 } MyGame;
 
+MyGameObject myGameObjectCreate(RnMaterial2D m) {
+    MyGameObject o = {0};
+    o.id = rnEntityCreate();
+    rnTransformAdd(o.id, rnDefaultTransform());
+    o.transform = rnTransformGet(o.id);
 
-RnTransform *ts[RUIN_MAX_ENTITIES];
+    if (m) {
+        rnSpriteRendererAdd(o.id, (RnSpriteRenderer){
+            .dead = 0,
+            .layer = 0,
+            .material = m
+        });
 
+        o.renderer = rnSpriteRendererGet(o.id);
+    }
 
-float *data;
+    return o;
+}
+
+#define PPU 64
 
 
 void myGameInit(MyGame *g) {
 
-    data = (float[3]){
-        31, 31, 31
-    };
+    g->textures.troll = rnTextureCreate("assets/images/trollface_suit.jpg");
+    g->textures.monster = rnTextureCreate("assets/images/trollge_monster.jpg");
+    g->textures.bomb = rnTextureCreate("assets/images/bomb.jpg");
+    printf("All textures are loaded.\n");
+
+    RnMaterial2DInfo d_mat = rnDefaultMaterial2DInfo();
     
-    g->entities.cam = rnEntityCreate();
-    g->entities.e1 = rnEntityCreate();
-    g->entities.e2 = rnEntityCreate();
-
-    g->post_process = rnPostProcessGet();
-   *g->post_process = rnDefaultPostProcess();
-    // g->post_process->tint.g = 0.25f;
-    // g->post_process->tint.b = 0.25f;
-
-
-    RnTransform deft = rnDefaultTransform();
-
-
+    d_mat.texture = g->textures.troll;
+    g->material2Ds.troll = rnMaterial2DCreate(d_mat);
     
+    d_mat.texture = g->textures.monster;
+    g->material2Ds.monster = rnMaterial2DCreate(d_mat);
 
-    
+    d_mat.texture = g->textures.bomb;
+    g->material2Ds.bomb = rnMaterial2DCreate(d_mat);
 
-
-
-    RnMaterial2DInfo m = rnDefaultMaterial2DInfo();
-    
-    m.texture = rnTextureCreate("assets/trollface.png");
-    g->material2Ds.mat1 = rnMaterial2DCreate(m);    
-    m.texture = rnTextureCreate("assets/perfect_blue.jpg");
-    g->material2Ds.mat2 = rnMaterial2DCreate(m);
-
-    rnTransformAdd(g->entities.cam, rnDefaultTransform());
-    rnTransformAdd(g->entities.e1, rnDefaultTransform());
-    rnTransformAdd(g->entities.e2, rnDefaultTransform());
-    
-    g->material2Ds.mi1 = rnMaterial2DGet(g->material2Ds.mat1);
-    g->material2Ds.mi2 = rnMaterial2DGet(g->material2Ds.mat2);
-
-    g->transforms.t_cam = rnTransformGet(g->entities.cam);
-    g->transforms.t_e1 = rnTransformGet(g->entities.e1);
-    g->transforms.t_e2 = rnTransformGet(g->entities.e2);
-
-    rnSpriteRendererAdd(g->entities.e2, (RnSpriteRenderer){
-        .dead = 0,
-        .material = g->material2Ds.mat2
-    });
+    g->camera = myGameObjectCreate(0);
+    g->troll = myGameObjectCreate(g->material2Ds.troll);
+    g->monster = myGameObjectCreate(g->material2Ds.monster);
 
 
-    rnSpriteRendererAdd(g->entities.e1, (RnSpriteRenderer){
-        .dead = 0,
-        .material = g->material2Ds.mat1,
-        .layer = 10
-    });
 
+    RnMaterial2DInfo *mi = rnMaterial2DGet(g->material2Ds.troll);
 
-    for (uint32_t i = 0; i < 5; i++) {
-        RnSpriteRenderer sr = {0};
-        sr.material = g->material2Ds.mat1;
-        sr.layer = i;
-        RnEntity e = rnEntityCreate();
-        deft.position.x += 200;
-        deft.position.z = 1;
-        deft.scale.x += 0.2;
-        deft.scale.y += 0.2;
-        rnTransformAdd(e, deft);
-        rnSpriteRendererAdd(e, sr);
+    g->bomb_count = 10;
+
+    for (uint32_t i = 0; i < g->bomb_count; i++) {
+        g->bomb_pool[i] = myGameObjectCreate(g->material2Ds.bomb);
+        g->bomb_pool[i].renderer->layer = 1;
+
+        g->bomb_pool[i].transform->position.z = 0.2;
+
+        g->bomb_pool[i].transform->scale = (RnVec3) {
+            0.5, 0.5, 1.0
+        };
+
+        g->bomb_pool[i].transform->position.x = -1000;
     }
-
-
-    g->renderers.r_e1 = rnSpriteRendererGet(g->entities.e1);
-    g->renderers.r_e2 = rnSpriteRendererGet(g->entities.e2);
-
-    rnCamera2DAdd(g->entities.cam, (RnCamera2D){
+    
+    
+    rnCamera2DAdd(g->camera.id, (RnCamera2D){
         .width = 1280,
         .height = 720,
         .far = 10,
-        .near = 0.1,
-        .target = 0
-    });
-
-    rnCamera3DAdd(g->entities.cam, (RnCamera3D){
-        .width = 1280,
-        .height = 720,
-        .far = 1000.0,
-        .near = 0.1,
-        .fov = 45,
-        .target = 0
+        .near = 0.1
     });
     
-    rnCamera2DUse(g->entities.cam);
-
+    rnCamera2DUse(g->camera.id);
+    
     rnTextureCreateGPUResources();
     rnTextureLoadAllToGPU();
-
-    g->transforms.t_cam->position.z = -1;
-    g->transforms.t_e1->position.z = 1;
-    g->transforms.t_e2->position.z = 1;
-    // g->transforms.t_e1->scale.x = 0.3;
-    // g->transforms.t_e1->scale.y = 0.3;
-    // g->transforms.t_e2->position.x = 0;
-
     rnSpriteRendererSortByLayer();
+
+    // rnTimeSetTargetFPS(60);
+
+    g->troll.transform->position.x = -8 * PPU;
+    g->troll.transform->scale.x = 0.5;
+    g->troll.transform->scale.y = 0.5;
+
+
+    g->monster.transform->position.x = 8 * PPU;
+    g->monster.transform->scale.x = 0.4;
+    g->monster.transform->scale.y = 0.4;
+
+    
+    rnTimeSetTargetFPS(60);
 }
 
 
@@ -170,8 +155,8 @@ int main(void) {
     cfg->audio.music_volume = 1.0f;
 
     cfg->renderer.max_frames_in_flight = 2;
-    cfg->renderer.resolution_x         = 1280;
-    cfg->renderer.resolution_y         = 720;
+    cfg->renderer.resolution_x         = 1920;
+    cfg->renderer.resolution_y         = 1080;
     cfg->renderer.max_anisotropy       = 1;
     cfg->renderer.multisampling        = 1;
     cfg->renderer.vsync                = RN_FALSE;
@@ -179,66 +164,81 @@ int main(void) {
 
     rnSelfInit(cfg);
 
-    rnTimeSetTargetFPS(30);
+    MyGame g = {0};
 
-    MyGame game = {0};
+    myGameInit(&g);
 
-    myGameInit(&game);
+    MyGameObject *bombs = g.bomb_pool;
+    RnTransform *t_trn = g.troll.transform;
+    RnTransform *m_trn = g.monster.transform;
 
-    printf("%f, %f, %f\n", data[0], data[1], data[2]);
+    RnBool thrown = 0;
+    RnBool win = 0;
 
     while (rnSelfRunning()) {
     rnFrameBegin();
 
-    if (rnKeyHold(RUIN_KEY_SPACE)) {
-        printf("FPS: %d\n", rnTimeFPS());
-    }
+        if (rnKeyDown(RUIN_KEY_F12)) {
+            cfg->window.fullscreen = !cfg->window.fullscreen;
+            rnConfigUpdatePlatform();
+        }
 
-    if (rnKeyUp(RUIN_KEY_ESCAPE)) {
-        cursor_hidden = !cursor_hidden;
-        rnMouseHideCursor(cursor_hidden);
-    }
 
-    if (rnKeyDown(RUIN_KEY_LEFT_CTRL)) {
-        cfg->window.fullscreen = !cfg->window.fullscreen;
-        cfg->window.borderless = !cfg->window.borderless;
-        rnConfigUpdatePlatform();
-        rnConfigUpdateRenderer();
-        printf("ok\n");
+        rnTimeSetSpeed(1);
+        if (rnKeyHold(RUIN_KEY_SPACE)) {
+            rnTimeSetSpeed(0.5);
+        }
 
-        game.renderers.r_e1->material = game.material2Ds.mat1;
-    }
+        if (rnKeyDown(RUIN_KEY_V)) {
+            cfg->renderer.vsync = !cfg->renderer.vsync;
+            rnConfigUpdateRenderer();
+        }
 
-    // printf("FPS: %d\n", rnTimeFPS());
+        RnVec2 mv = rnMouseMove();
 
-    
-    if (rnKeyHold(RUIN_KEY_W)) {
+        if (rnMouseHold(RUIN_MOUSE_RIGHT) && !thrown) {
+            bombs[g.next_bomb_idx].transform->position = (RnVec3) {
+                .x = t_trn->position.x + 2 * PPU,
+                .y = bombs[g.next_bomb_idx].transform->position.y + mv.y * 30 * rnTimeDelta(),
+                0
+            };
 
-        // rnEntityCamera2DGet(game.entities.cam)->height -= rnTimeDelta() * 40;
-        game.post_process->contrast -= rnTimeDelta() * 0.5;
+            if (rnMouseDown(RUIN_MOUSE_LEFT)) {
+                thrown = 1;
+            }
+        }
 
-        // game.transforms.t_cam->position.x += 200 * rnTimeDelta();
-        // game.transforms.t_e1->scale.x += rnTimeDelta();
-        game.transforms.t_cam->position.z += rnTimeDelta();
-    }
+        if (thrown) {
+            g.bomb_pool[g.next_bomb_idx].transform->position.x += 1000 * rnTimeDelta();
+            g.bomb_pool[g.next_bomb_idx].transform->rotation.z += 60  * rnTimeDelta();
 
-    if (rnKeyHold(RUIN_KEY_S)) {
+            RnVec3 dist = rnVec3Sub(&g.bomb_pool[g.next_bomb_idx].transform->position, &g.monster.transform->position);
 
-        game.transforms.t_e1->rotation.z -= 10 * rnTimeDelta();
+            if (rnVec3Mag(&dist) <= 100) {
+                win = 1;
+                g.next_bomb_idx += 1;
+                thrown = 0;
+            }
 
-        game.post_process->contrast += rnTimeDelta() * 0.5;
-    }
+            if (g.bomb_pool[g.next_bomb_idx].transform->position.x >= 10 * PPU) {
+                rnTransformKill(g.bomb_pool[g.next_bomb_idx].id);
+                rnSpriteRendererKill(g.bomb_pool[g.next_bomb_idx].id);
+                g.next_bomb_idx += 1;
+                thrown = 0;
+            }
 
-    RnVec2 mv = rnMouseMove();
+            if (rnKeyDown(RUIN_KEY_P)) {
+                g.troll.transform->parent = g.bomb_pool[g.next_bomb_idx].id;
 
-    float m_speed = 50;
-    // game.transforms.t_cam->rotation.x += mv.y * rnTimeDelta() * m_speed;
-    // game.transforms.t_cam->rotation.y -= mv.x * rnTimeDelta() * m_speed;
+            }
+        }
 
-    if (rnKeyDown(RUIN_KEY_SPACE)) {
-        game.material2Ds.mi1->tint.a -= rnTimeDelta() * 0.2;
-        rnCamera2DUse(game.entities.cam);
-    }
+        if (!win) {
+            m_trn->position.y += cosf(rnTimeElapsed()) * rnTimeDelta() * 300;
+        } else {
+            m_trn->rotation.z += 360 * rnTimeDelta();
+            // thrown = 0;
+        }
 
     rnFrameEnd();
     

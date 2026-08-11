@@ -67,7 +67,7 @@ void ri_renderer_create_renderpass_offscreen(RI_Renderer *r) {
     color_attachment_ref.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
     VkSubpassDescription subpass = {0};
-    subpass.pipelineBindPoint    = r->pipelines.test_pipeline.bind_point;
+    subpass.pipelineBindPoint    = r->pipelines.bindless_offscreen_2d.bind_point;
     subpass.colorAttachmentCount = 1;
     subpass.pColorAttachments    = &color_attachment_ref;
 

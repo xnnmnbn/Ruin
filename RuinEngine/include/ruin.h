@@ -8,12 +8,27 @@ extern "C" {
 #include <stdint.h>
 #include <stddef.h>
 
+/* --- DLL Export/Import Definitions --- */
+#if defined(_WIN32) || defined(__CYGWIN__)
+    #ifdef RUIN_BUILD_DLL
+        #define RUIN_API __declspec(dllexport)
+    #else
+        #define RUIN_API __declspec(dllimport)
+    #endif
+#else
+    #if defined(__GNUC__) && __GNUC__ >= 4
+        #define RUIN_API __attribute__((visibility("default")))
+    #else
+        #define RUIN_API
+    #endif
+#endif
+
 typedef uint8_t RnBool;
 
 #define RN_TRUE  1
 #define RN_FALSE 0
 
-// #define RUIN_ENABLE_DEBUG
+#define RUIN_ENABLE_DEBUG
 
 #define RUIN_DEBUG(fmt, ...) printf("[ruin] " fmt "\n", ##__VA_ARGS__)
 
@@ -22,7 +37,7 @@ typedef uint8_t RnBool;
 #define RUIN_MAX_MATERIALS       512
 #define RUIN_MAX_MESHES          1024
 #define RUIN_MAX_CAMERAS         16
-#define RUIN_MAX_RENDER_TARGETS  32
+#define RUIN_MAX_RENDER_TARGETS  16
 #define RUIN_MAX_SOUNDS          512
 #define RUIN_MAX_MUSICS          32
 #define RUIN_MAX_SOUND_LISTENERS 1
@@ -133,10 +148,6 @@ typedef enum {
     RUIN_RIGIDBODY3D_SHAPE_CYLINDER
 } RnRigidBody3DShape;
 
-
-
-
-
 typedef struct {
     float x, y;
 } RnVec2;
@@ -152,8 +163,6 @@ typedef struct {
 typedef struct {
     float r, g, b, a;
 } RnColor;
-
-
 
 typedef struct {
     const char *title;
@@ -178,7 +187,6 @@ typedef struct {
     float music_volume;
 } RnConfigAudio;
 
-
 typedef struct {
     RnConfigWindow   window;
     RnConfigRenderer renderer;
@@ -192,7 +200,6 @@ typedef struct {
     float invert;
     RnColor tint;
 } RnPostProcess;
-
 
 typedef struct {
     RnVec3   position;
@@ -256,41 +263,34 @@ typedef struct {
     uint32_t  _pad[3];
 } RnMaterial2DInfo;
 
-
 typedef struct {
-    RnTexture      albedo;
-    RnTexture      normal;
-    RnTexture      roughness;
-    RnTexture      metallic;
-    RnColor        tint;
-    float          alpha;
-    float          roughness_val;
-    float          metallic_val;
-    float          tiling_x;
-    float          tiling_y;
+    RnTexture  albedo;
+    RnTexture  normal;
+    RnTexture  roughness;
+    RnTexture  metallic;
+    RnColor    tint;
+    float      alpha;
+    float      roughness_val;
+    float      metallic_val;
+    float      tiling_x;
+    float      tiling_y;
 } RnMaterial3DInfo;
 
 typedef struct {
-    int32_t width;
-    int32_t height;
-    RnBool  depth;
-} RnRenderTargetInfo;
-
-typedef struct {
-    RnRenderTarget target;
-    float          width;
-    float          height;
-    float          far;
-    float          near;
+    RnRenderTarget rendertarget;
+    float width;
+    float height;
+    float far;
+    float near;
 } RnCamera2D;
 
 typedef struct {
-    RnRenderTarget target;
-    float          width;
-    float          height;
-    float          far;
-    float          near;
-    float          fov;
+    RnRenderTarget rendertarget;
+    float width;
+    float height;
+    float far;
+    float near;
+    float fov;
 } RnCamera3D;
 
 typedef struct {
@@ -303,166 +303,168 @@ typedef struct {
     RnMesh mesh;
 } RnMeshRenderer;
 
-RnVec2 rnVec2(float x, float y);
-RnVec3 rnVec3(float x, float y, float z);
-RnVec4 rnVec4(float x, float y, float z, float w);
 
-RnVec2 rnVec2Sum(const RnVec2 *a, const RnVec2 *b);
-RnVec2 rnVec2Sub(const RnVec2 *a, const RnVec2 *b);
-RnVec2 rnVec2Mul(const RnVec2 *a, float f);
-RnVec2 rnVec2Div(const RnVec2 *a, float f);
+RUIN_API RnVec2 rnVec2(float x, float y);
+RUIN_API RnVec3 rnVec3(float x, float y, float z);
+RUIN_API RnVec4 rnVec4(float x, float y, float z, float w);
 
-float  rnVec2Mag(const RnVec2 *v);
-RnVec2 rnVec2Nor(const RnVec2 *v);
+RUIN_API RnVec2 rnVec2Sum(const RnVec2 *a, const RnVec2 *b);
+RUIN_API RnVec2 rnVec2Sub(const RnVec2 *a, const RnVec2 *b);
+RUIN_API RnVec2 rnVec2Mul(const RnVec2 *a, float f);
+RUIN_API RnVec2 rnVec2Div(const RnVec2 *a, float f);
 
-RnVec3 rnVec3Sum(const RnVec3 *a, const RnVec3 *b);
-RnVec3 rnVec3Sub(const RnVec3 *a, const RnVec3 *b);
-RnVec3 rnVec3Mul(const RnVec3 *a, float f);
-RnVec3 rnVec3Div(const RnVec3 *a, float f);
+RUIN_API float  rnVec2Mag(const RnVec2 *v);
+RUIN_API RnVec2 rnVec2Nor(const RnVec2 *v);
 
-float  rnVec3Mag(const RnVec3 *v);
-RnVec3 rnVec3Nor(const RnVec3 *v);
+RUIN_API RnVec3 rnVec3Sum(const RnVec3 *a, const RnVec3 *b);
+RUIN_API RnVec3 rnVec3Sub(const RnVec3 *a, const RnVec3 *b);
+RUIN_API RnVec3 rnVec3Mul(const RnVec3 *a, float f);
+RUIN_API RnVec3 rnVec3Div(const RnVec3 *a, float f);
 
-RnVec4 rnVec4Sum(const RnVec4 *a, const RnVec4 *b);
-RnVec4 rnVec4Sub(const RnVec4 *a, const RnVec4 *b);
-RnVec4 rnVec4Mul(const RnVec4 *a, float f);
-RnVec4 rnVec4Div(const RnVec4 *a, float f);
+RUIN_API float  rnVec3Mag(const RnVec3 *v);
+RUIN_API RnVec3 rnVec3Nor(const RnVec3 *v);
 
-float  rnVec4Mag(const RnVec4 *v);
-RnVec4 rnVec4Nor(const RnVec4 *v);
+RUIN_API RnVec4 rnVec4Sum(const RnVec4 *a, const RnVec4 *b);
+RUIN_API RnVec4 rnVec4Sub(const RnVec4 *a, const RnVec4 *b);
+RUIN_API RnVec4 rnVec4Mul(const RnVec4 *a, float f);
+RUIN_API RnVec4 rnVec4Div(const RnVec4 *a, float f);
 
-RnBool rnSelfInit(RnConfig *c);
-RnBool rnSelfRunning(void);
-void   rnSelfKill(void);
-
-RnConfig *rnConfigGet(void);
-void      rnConfigUpdatePlatform(void);
-void      rnConfigUpdateRenderer(void);
-void      rnConfigUpdateAudio(void);
-void      rnConfigUpdateAll(void);
-void      rnConfigReset(void);
-
-RnPostProcess  rnDefaultPostProcess(void);
-RnPostProcess *rnPostProcessGet(void);
-
-void rnFrameBegin(void);
-void rnFrameEnd(void);
-
-RnEntity rnEntityCreate(void);
-void     rnEntityKill(RnEntity e);
-RnBool   rnEntityValid(RnEntity e);
-
-uint8_t rnTimeFPS(void);
-float   rnTimeDelta(void);
-float   rnTimeElapsed(void);
-float   rnTimeDeltaFixed(void);
-float   rnTimeElapsedFixed(void);
-void    rnTimeSetSpeed(float s);
-void    rnTimeSetTargetFPS(uint8_t t);
-
-RnBool rnKeyDown(RnKey k);
-RnBool rnKeyHold(RnKey k);
-RnBool rnKeyUp(RnKey k);
-
-RnBool rnMouseDown(RnMouseButton b);
-RnBool rnMouseHold(RnMouseButton b);
-RnBool rnMouseUp(RnMouseButton b);
-float  rnMouseScroll(void);
-RnVec2 rnMouseMove(void);
-void   rnMouseHideCursor(RnBool b);
-
-RnRenderTarget rnRenderTargetCreate(RnRenderTargetInfo *i);
-void           rnRenderTargetKill(RnRenderTarget t);
-
-RnTexture rnTextureCreate(const char *path);
-RnTexture rnTextureFromRenderTarget(RnRenderTarget t);
-void      rnTextureKill(RnTexture t);
-void      rnTextureCreateGPUResources();
-void      rnTextureLoadToGPU(RnTexture *textures, uint32_t count);
-void      rnTextureLoadAllToGPU();
-
-RnMesh rnMeshLoad(const char *path);
-void   rnMeshKill(RnMesh m);
-
-RnSound rnSoundLOad(const char *path);
-void    rnSoundKill(RnSound s);
-
-RnMusic rnMusicLoad(const char *path);
-void    rnMusicKill(RnMusic m);
-
-RnMaterial2DInfo  rnDefaultMaterial2DInfo();
-RnMaterial2D      rnMaterial2DCreate(RnMaterial2DInfo i);
-RnMaterial2DInfo *rnMaterial2DGet(RnMaterial2D m);
-void              rnMaterial2DKill(RnMaterial2D m);
-
-RnMaterial3DInfo  rnDefaultMaterial3DInfo();
-RnMaterial3D      rnMaterial3DCreate(RnMaterial3DInfo i);
-RnMaterial3DInfo *rnMaterial3DGet(RnMaterial3D m);
-void              rnMaterial3DKill(RnMaterial3D m);
-
-RnTransform  rnDefaultTransform(void);
-RnTransform *rnTransformGet(RnEntity e);
-void         rnTransformAdd(RnEntity e, RnTransform t);
-void         rnTransformKill(RnEntity e);
-void         rnTransformSetDirty(RnEntity e, RnBool d);
-RnVec3       rnTransformGetWorldPosition(RnEntity e);
-RnVec3       rnTransformGetWorldRotation(RnEntity e);
-RnVec3       rnTransformGetWorldScale(RnEntity e);
-
-RnRigidBody2D *rnRigidBody2dGet(RnEntity e);
-void           rnRigidBody2dAdd(RnEntity e, RnRigidBody2D b);
-void           rnRigidBody2dKill(RnEntity e);
-
-RnRigidBody3D *rnRigidBody3dGet(RnEntity e);
-void           rnRigidBody3dAdd(RnEntity e, RnRigidBody3D b);
-void           rnRigidBody3dKill(RnEntity e);
-
-RnSoundListener *rnSoundListenerGet(RnEntity e);
-void             rnSoundListenerAdd(RnEntity e, RnSoundListener l);
-void             rnSoundListenerKill(RnEntity e);
-
-RnSoundPlayer *rnSoundPlayerGet(RnEntity e);
-void           rnSoundPlayerAdd(RnEntity e, RnSoundPlayer p);
-void           rnSoundPlayerKill(RnEntity e);
-void           rnSoundPlayerPlay(RnEntity e);
-void           rnSoundPlayerStop(RnEntity e);
-
-RnMusicPlayer *rnMusicPlayerGet(RnEntity e);
-void           rnMusicPlayerAdd(RnEntity e, RnMusicPlayer p);
-void           rnMusicPlayerKill(RnEntity e);
-void           rnMusicPlayerPlay(RnEntity e);
-void           rnMusicPlayerStop(RnEntity e);
+RUIN_API float  rnVec4Mag(const RnVec4 *v);
+RUIN_API RnVec4 rnVec4Nor(const RnVec4 *v);
 
 
+RUIN_API RnBool rnSelfInit(RnConfig *c);
+RUIN_API RnBool rnSelfRunning(void);
+RUIN_API void   rnSelfKill(void);
 
-RnCamera2D *rnCamera2DGet(RnEntity e);
-void        rnCamera2DAdd(RnEntity e, RnCamera2D c);
-void        rnCamera2DKill(RnEntity e);
-void        rnCamera2DUse(RnEntity e);
+RUIN_API RnConfig *rnConfigGet(void);
+RUIN_API void      rnConfigUpdatePlatform(void);
+RUIN_API void      rnConfigUpdateRenderer(void);
+RUIN_API void      rnConfigUpdateAudio(void);
+RUIN_API void      rnConfigUpdateAll(void);
+RUIN_API void      rnConfigReset(void);
 
-RnCamera3D *rnCamera3DGet(RnEntity e);
-void        rnCamera3DAdd(RnEntity e, RnCamera3D c);
-void        rnCamera3DKill(RnEntity e);
-void        rnCamera3DUse(RnEntity e);
+RUIN_API RnPostProcess  rnDefaultPostProcess(void);
+RUIN_API RnPostProcess *rnPostProcessGet(void);
 
-
-
-RnSpriteRenderer  rnDefaultSpriteRenderer();
-RnSpriteRenderer *rnSpriteRendererGet(RnEntity e);
-void              rnSpriteRendererAdd(RnEntity e, RnSpriteRenderer r);
-void              rnSpriteRendererKill(RnEntity e);
-void              rnSpriteRendererSortByLayer();
-
-RnMeshRenderer  rnDefaultMeshRenderer();
-RnMeshRenderer *rnMeshRendererGet(RnEntity e);
-void            rnMeshRendererAdd(RnEntity e, RnMeshRenderer r);
-void            rnMeshRendererKill(RnEntity e);
+RUIN_API void rnFrameBegin(void);
+RUIN_API void rnFrameEnd(void);
 
 
+RUIN_API RnEntity rnEntityCreate(void);
+RUIN_API void     rnEntityKill(RnEntity e);
+RUIN_API RnBool   rnEntityValid(RnEntity e);
 
+
+RUIN_API uint8_t rnTimeFPS(void);
+RUIN_API float   rnTimeDelta(void);
+RUIN_API float   rnTimeElapsed(void);
+RUIN_API float   rnTimeDeltaFixed(void);
+RUIN_API float   rnTimeElapsedFixed(void);
+RUIN_API void    rnTimeSetSpeed(float s);
+RUIN_API void    rnTimeSetTargetFPS(uint8_t t);
+
+
+RUIN_API RnBool rnKeyDown(RnKey k);
+RUIN_API RnBool rnKeyHold(RnKey k);
+RUIN_API RnBool rnKeyUp(RnKey k);
+
+RUIN_API RnBool rnMouseDown(RnMouseButton b);
+RUIN_API RnBool rnMouseHold(RnMouseButton b);
+RUIN_API RnBool rnMouseUp(RnMouseButton b);
+RUIN_API float  rnMouseScroll(void);
+RUIN_API RnVec2 rnMouseMove(void);
+RUIN_API void   rnMouseHideCursor(RnBool b);
+
+
+RUIN_API RnRenderTarget rnRenderTargetCreate(uint32_t w, uint32_t h);
+RUIN_API void           rnRenderTargetKill(RnRenderTarget t);
+
+RUIN_API RnTexture rnTextureCreate(const char *path);
+RUIN_API RnTexture rnTextureFromRenderTarget(RnRenderTarget t);
+RUIN_API void      rnTextureKill(RnTexture t);
+RUIN_API void      rnTextureCreateGPUResources(void);
+RUIN_API void      rnTextureLoadToGPU(RnTexture *textures, uint32_t count);
+RUIN_API void      rnTextureLoadAllToGPU(void);
+
+RUIN_API RnMesh rnMeshLoad(const char *path);
+RUIN_API void   rnMeshKill(RnMesh m);
+
+RUIN_API RnSound rnSoundLOad(const char *path);
+RUIN_API void    rnSoundKill(RnSound s);
+
+RUIN_API RnMusic rnMusicLoad(const char *path);
+RUIN_API void    rnMusicKill(RnMusic m);
+
+
+RUIN_API RnMaterial2DInfo  rnDefaultMaterial2DInfo(void);
+RUIN_API RnMaterial2D      rnMaterial2DCreate(RnMaterial2DInfo i);
+RUIN_API RnMaterial2DInfo *rnMaterial2DGet(RnMaterial2D m);
+RUIN_API void              rnMaterial2DKill(RnMaterial2D m);
+
+RUIN_API RnMaterial3DInfo  rnDefaultMaterial3DInfo(void);
+RUIN_API RnMaterial3D      rnMaterial3DCreate(RnMaterial3DInfo i);
+RUIN_API RnMaterial3DInfo *rnMaterial3DGet(RnMaterial3D m);
+RUIN_API void              rnMaterial3DKill(RnMaterial3D m);
+
+
+RUIN_API RnTransform  rnDefaultTransform(void);
+RUIN_API RnTransform *rnTransformGet(RnEntity e);
+RUIN_API void         rnTransformAdd(RnEntity e, RnTransform t);
+RUIN_API void         rnTransformKill(RnEntity e);
+RUIN_API void         rnTransformSetDirty(RnEntity e, RnBool d);
+RUIN_API void         rnTransformSortByParent(void);
+RUIN_API RnVec3       rnTransformGetWorldPosition(RnEntity e);
+RUIN_API RnVec3       rnTransformGetWorldRotation(RnEntity e);
+RUIN_API RnVec3       rnTransformGetWorldScale(RnEntity e);
+
+RUIN_API RnRigidBody2D *rnRigidBody2dGet(RnEntity e);
+RUIN_API void           rnRigidBody2dAdd(RnEntity e, RnRigidBody2D b);
+RUIN_API void           rnRigidBody2dKill(RnEntity e);
+
+RUIN_API RnRigidBody3D *rnRigidBody3dGet(RnEntity e);
+RUIN_API void           rnRigidBody3dAdd(RnEntity e, RnRigidBody3D b);
+RUIN_API void           rnRigidBody3dKill(RnEntity e);
+
+RUIN_API RnSoundListener *rnSoundListenerGet(RnEntity e);
+RUIN_API void             rnSoundListenerAdd(RnEntity e, RnSoundListener l);
+RUIN_API void             rnSoundListenerKill(RnEntity e);
+
+RUIN_API RnSoundPlayer *rnSoundPlayerGet(RnEntity e);
+RUIN_API void           rnSoundPlayerAdd(RnEntity e, RnSoundPlayer p);
+RUIN_API void           rnSoundPlayerKill(RnEntity e);
+RUIN_API void           rnSoundPlayerPlay(RnEntity e);
+RUIN_API void           rnSoundPlayerStop(RnEntity e);
+
+RUIN_API RnMusicPlayer *rnMusicPlayerGet(RnEntity e);
+RUIN_API void           rnMusicPlayerAdd(RnEntity e, RnMusicPlayer p);
+RUIN_API void           rnMusicPlayerKill(RnEntity e);
+RUIN_API void           rnMusicPlayerPlay(RnEntity e);
+RUIN_API void           rnMusicPlayerStop(RnEntity e);
+
+RUIN_API RnCamera2D *rnCamera2DGet(RnEntity e);
+RUIN_API void        rnCamera2DAdd(RnEntity e, RnCamera2D c);
+RUIN_API void        rnCamera2DKill(RnEntity e);
+RUIN_API void        rnCamera2DUse(RnEntity e);
+
+RUIN_API RnCamera3D *rnCamera3DGet(RnEntity e);
+RUIN_API void        rnCamera3DAdd(RnEntity e, RnCamera3D c);
+RUIN_API void        rnCamera3DKill(RnEntity e);
+RUIN_API void        rnCamera3DUse(RnEntity e);
+
+RUIN_API RnSpriteRenderer  rnDefaultSpriteRenderer(void);
+RUIN_API RnSpriteRenderer *rnSpriteRendererGet(RnEntity e);
+RUIN_API void              rnSpriteRendererAdd(RnEntity e, RnSpriteRenderer r);
+RUIN_API void              rnSpriteRendererKill(RnEntity e);
+RUIN_API void              rnSpriteRendererSortByLayer(void);
+
+RUIN_API RnMeshRenderer  rnDefaultMeshRenderer(void);
+RUIN_API RnMeshRenderer *rnMeshRendererGet(RnEntity e);
+RUIN_API void            rnMeshRendererAdd(RnEntity e, RnMeshRenderer r);
+RUIN_API void            rnMeshRendererKill(RnEntity e);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif
+#endif /* RUIN_H */

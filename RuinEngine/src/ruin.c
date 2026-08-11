@@ -42,6 +42,8 @@ void rnConfigUpdateRenderer() {
     engine.renderer.sync.current_frame = 0;
     engine.renderer.sync.skip_wait     = 1;
     engine.renderer.active_config      = engine.pending_config.renderer;
+
+    ri_renderer_recreate_swapchain(&engine.renderer, &engine.platform);
 }
 
 
@@ -71,8 +73,6 @@ RnBool rnSelfInit(RnConfig *c) {
     ri_renderer_init(&engine.renderer, &engine.platform);
     ri_assets_init(&engine.assets);
     ri_components_init(&engine.components);
-
-    printf("%d.\n", engine.components.next_entity_id);
 
     // exit(0);
 
@@ -133,7 +133,7 @@ void rnFrameEnd() {
     uint64_t del = (uint64_t)(remaining * 2000000000);
 
     if (remaining > 0) {
-        SDL_DelayPrecise(del);
+        if (engine.platform.time.target_delta != 0) SDL_DelayPrecise(del);
     }
 
 
@@ -303,15 +303,11 @@ RnMaterial2DInfo rnDefaultMaterial2DInfo() {
 }
 
 RnMaterial2D rnMaterial2DCreate(RnMaterial2DInfo i) {
-    from_void(engine.assets.material2Ds.data, RnMaterial2DInfo)[
-        engine.assets.material2Ds.next_idx
-    ] = i;
+    uint32_t idx = ri_assetstorage_idx(&engine.assets.material2Ds);
+    from_void(engine.assets.material2Ds.data, RnMaterial2DInfo)[idx] = i;
+    ri_assetstorage_update(&engine.assets.material2Ds);
 
-    cvec_push(engine.assets.material2Ds.valid_indices, engine.assets.material2Ds.next_idx, RnMaterial2D);
-
-    engine.assets.material2Ds.next_idx += 1;
-
-    return engine.assets.material2Ds.next_idx - 1;
+    return idx;
 }
 
 RnMaterial2DInfo *rnMaterial2DGet(RnMaterial2D m) {
@@ -319,7 +315,7 @@ RnMaterial2DInfo *rnMaterial2DGet(RnMaterial2D m) {
 }
 
 void rnMaterial2DKill(RnMaterial2D m) {
-    cvec_remove(engine.assets.material2Ds.valid_indices, m, RnMaterial2D);
+    ri_assetstorage_kill(&engine.assets.material2Ds, m);
 }
 
 
@@ -329,15 +325,11 @@ RnMaterial3DInfo rnDefaultMaterial3DInfo() {
 }
 
 RnMaterial3D rnMaterial3DCreate(RnMaterial3DInfo i) {
-    from_void(engine.assets.material3Ds.data, RnMaterial3DInfo)[
-        engine.assets.material3Ds.next_idx
-    ] = i;
+    uint32_t idx = ri_assetstorage_idx(&engine.assets.material3Ds);
+    from_void(engine.assets.material3Ds.data, RnMaterial3DInfo)[idx] = i;
+    ri_assetstorage_update(&engine.assets.material3Ds);
 
-    cvec_push(engine.assets.material3Ds.valid_indices, engine.assets.material3Ds.next_idx, RnMaterial3D);
-
-    engine.assets.material3Ds.next_idx += 1;
-
-    return engine.assets.material3Ds.next_idx - 1;;
+    return idx;
 }
 
 RnMaterial3DInfo *rnMaterial3DGet(RnMaterial3D m) {
@@ -345,7 +337,7 @@ RnMaterial3DInfo *rnMaterial3DGet(RnMaterial3D m) {
 }
 
 void rnMaterial3DKill(RnMaterial3D m) {
-    cvec_remove(engine.assets.material3Ds.valid_indices, m, RnMaterial3D);
+    ri_assetstorage_kill(&engine.assets.material3Ds, m);
 }
 
 
@@ -357,8 +349,13 @@ void rnMaterial3DKill(RnMaterial3D m) {
 
 
 
+RnTexture rnDefaultTexture() {
+    return 0;
+}
+
 RnTexture rnTextureCreate(const char *path) {
-    RnTexture next_idx = engine.assets.cpu_textures.next_idx;
+    RnTexture cpu_next_idx = ri_assetstorage_idx(&engine.assets.cpu_textures);
+    RnTexture gpu_next_idx = ri_assetstorage_idx(&engine.assets.gpu_textures);
 
     int w, h, ch;
 
@@ -369,21 +366,22 @@ RnTexture rnTextureCreate(const char *path) {
         return  0;
     }
     
-    from_void(engine.assets.cpu_textures.data, RI_Asset_Texture_CPU)[next_idx] = (RI_Asset_Texture_CPU){
+    from_void(engine.assets.cpu_textures.data, RI_Asset_Texture_CPU)[cpu_next_idx] = (RI_Asset_Texture_CPU){
         .width = w,
         .height = h,
         .channels = 4,
         .format = VK_FORMAT_R8G8B8A8_SRGB,
-        .pixels = pixels
+        .pixels = pixels,
+        .gpu_idx = gpu_next_idx
     };
 
-    cvec_push(engine.assets.cpu_textures.valid_indices, next_idx, RnTexture);
-
-    engine.assets.cpu_textures.next_idx += 1;
+    ri_assetstorage_update(&engine.assets.cpu_textures);
+    ri_assetstorage_update(&engine.assets.gpu_textures);
 
     printf("Texture loaded to CPU: %s\n", path);
+    printf("CPU idx: %d\n", cpu_next_idx);
 
-    return  next_idx;
+    return gpu_next_idx;
 }
 
 void rnTextureCreateGPUResources() {
@@ -402,10 +400,10 @@ void rnTextureLoadAllToGPU() {
 
         RnTexture t = from_void(engine.assets.gpu_textures.valid_indices.data, RnTexture)[i];
 
-        printf("Tex: %d\n", t);
+        fprintf(stderr, "Tex: %d\n", t);
         
-        img_infos[i].sampler = from_void(engine.assets.gpu_textures.data, RI_Asset_Texture_GPU)[t].sampler;
-        img_infos[i].imageView = from_void(engine.assets.gpu_textures.data, RI_Asset_Texture_GPU)[t].view;
+        img_infos[i].sampler     = from_void(engine.assets.gpu_textures.data, RI_Asset_Texture_GPU)[t].sampler;
+        img_infos[i].imageView   = from_void(engine.assets.gpu_textures.data, RI_Asset_Texture_GPU)[t].view;
         img_infos[i].imageLayout = from_void(engine.assets.gpu_textures.data, RI_Asset_Texture_GPU)[t].layout;
         
         writes[i] = (VkWriteDescriptorSet){0};
@@ -419,8 +417,8 @@ void rnTextureLoadAllToGPU() {
 
         printf("updating %u texture descriptors, t=%u, view=%p, sampler=%p\n",
             t_count, t,
-            img_infos[0].imageView,
-            img_infos[0].sampler);
+            img_infos[i].imageView,
+            img_infos[i].sampler);
     }
 
     vkUpdateDescriptorSets(engine.renderer.core.device, t_count, writes, 0, NULL);
@@ -486,8 +484,6 @@ void rnTransformKill(RnEntity e) {
             break;
         }
     }
-    
-    engine.components.transforms.elem_counts -= 1;
 }
 
 RnTransform *rnTransformGet(RnEntity e) {
@@ -648,14 +644,11 @@ void rnSpriteRendererKill(RnEntity e) {
 
     for (uint32_t i = 0; i < elem_count; i++) {
         if (entities[i] == e) {
-            for (uint32_t j = i; j < elem_count - 1; j++) {
-                entities[j] = entities[j + 1];
-            }
+            engine.components.sprite_renderers.elem_counts -= 1;
+            entities[i] = entities[elem_count - 1];
             break;
         }
     }
-
-    engine.components.sprite_renderers.elem_counts -= 1;
 }
 
 int sort_by_layer(const void *a, const void *b) {

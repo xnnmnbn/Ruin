@@ -824,6 +824,8 @@ void ri_renderer_create_post_process_pipeline(RI_Renderer *r) {
     const uint32_t set_count = 1;
     const uint32_t binding_count = 1;
 
+    r->pipelines.post_process_pipeline.d_set_count = set_count;
+
     VkDescriptorSetLayoutBinding set0_binding0 = {0};
     set0_binding0.binding = 0;
     set0_binding0.descriptorCount = 1;

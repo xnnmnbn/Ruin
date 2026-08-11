@@ -1,6 +1,7 @@
 #include "cvec.h"
 #include "ri_platform/ri_platform.h"
 #include "ri_renderer.h"
+#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <vulkan/vk_platform.h>
@@ -114,9 +115,17 @@ void ri_renderer_create_framebuffer_offscreen(RI_Renderer *r) {
         return;
     }
     
-    printf("OffScreen Framebuffer created.\n");
+    printf("Offscreen Framebuffer created.\n");
     
 }
+
+
+
+
+
+
+
+
 
 
 

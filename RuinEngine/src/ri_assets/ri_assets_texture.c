@@ -14,11 +14,11 @@
 void ri_assets_texture_init(RI_Assets *a) {
     a->cpu_textures.data = malloc(RUIN_MAX_TEXTURES * sizeof(RI_Asset_Texture_CPU));
     a->gpu_textures.data = malloc(RUIN_MAX_TEXTURES * sizeof(RI_Asset_Texture_GPU));
-    a->cpu_textures.next_idx = 1;
-    a->gpu_textures.next_idx = 1;
 
     cvec_init(a->cpu_textures.valid_indices);
+    cvec_init(a->cpu_textures.free_indices);
     cvec_init(a->gpu_textures.valid_indices);
+    cvec_init(a->gpu_textures.free_indices);
 }
 
 void ri_assets_texture_kill(RI_Assets *a, RI_Renderer *r) {
@@ -46,24 +46,22 @@ void ri_assets_texture_kill(RI_Assets *a, RI_Renderer *r) {
 }
 
 void ri_assets_texture_create_gpu_data(RI_Assets *a, RI_Renderer *r) {
-
-    cvec_kill(a->gpu_textures.valid_indices);
-    cvec_init(a->gpu_textures.valid_indices);
-
+    RnTexture *texs = a->cpu_textures.valid_indices.data;
+    RI_Asset_Texture_CPU *cpu_texs = a->cpu_textures.data;
+    RI_Asset_Texture_GPU *gpu_texs = a->gpu_textures.data;
   
     for (uint32_t i = 0; i < a->cpu_textures.valid_indices.len; i++) {
-        RnTexture *texs = a->cpu_textures.valid_indices.data;
-        RI_Asset_Texture_CPU *cpu_texs = a->cpu_textures.data;
-        RI_Asset_Texture_GPU *gpu_texs = a->gpu_textures.data;
 
 
-        RnTexture t = texs[i];
 
-        gpu_texs[t].width  = cpu_texs[t].width;
-        gpu_texs[t].height = cpu_texs[t].height;
-        gpu_texs[t].format = cpu_texs[t].format;
+        RnTexture cpu_idx = texs[i];
+        RnTexture gpu_idx = cpu_texs[cpu_idx].gpu_idx;
 
-        VkDeviceSize image_size = cpu_texs[t].width * cpu_texs[t].height * cpu_texs[t].channels;
+        gpu_texs[gpu_idx].width  = cpu_texs[cpu_idx].width;
+        gpu_texs[gpu_idx].height = cpu_texs[cpu_idx].height;
+        gpu_texs[gpu_idx].format = cpu_texs[cpu_idx].format;
+
+        VkDeviceSize image_size = cpu_texs[cpu_idx].width * cpu_texs[cpu_idx].height * cpu_texs[cpu_idx].channels;
 
         VkBuffer          s_buffer;
         VmaAllocation     s_alloc;
@@ -83,22 +81,30 @@ void ri_assets_texture_create_gpu_data(RI_Assets *a, RI_Renderer *r) {
             r->core.allocator, &s_bi, &s_ai,
             &s_buffer, &s_alloc, &s_info
         ) != VK_SUCCESS) {
-            printf("Failed to create Staging Buffer for Texture #%d.\n", t);
+            printf("Failed to create Staging Buffer for Texture #%d.\n", gpu_idx);
             return;
         }
+        
+        printf("CPU idx: %d\n", cpu_idx);
 
-        memcpy(s_info.pMappedData, cpu_texs[t].pixels, image_size);
+        printf ("%p\n", s_info.pMappedData);
 
-        stbi_image_free(cpu_texs[t].pixels);
+        
+        // SOMETHING REINSERTS CPU IDX 1
+        memcpy(s_info.pMappedData, cpu_texs[cpu_idx].pixels, image_size);
+
+        printf("bbbbb\n");
+
+        stbi_image_free(cpu_texs[cpu_idx].pixels);
 
 
         VkImageCreateInfo ii = {0};
         ii.sType     = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
         ii.usage     = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
         ii.imageType = VK_IMAGE_TYPE_2D;
-        ii.format        = gpu_texs[t].format;
-        ii.extent.width  = gpu_texs[t].width;
-        ii.extent.height = gpu_texs[t].height;
+        ii.format        = gpu_texs[gpu_idx].format;
+        ii.extent.width  = gpu_texs[gpu_idx].width;
+        ii.extent.height = gpu_texs[gpu_idx].height;
         ii.extent.depth  = 1;
         ii.mipLevels     = 1;
         ii.arrayLayers   = 1;
@@ -112,10 +118,10 @@ void ri_assets_texture_create_gpu_data(RI_Assets *a, RI_Renderer *r) {
 
         if(vmaCreateImage(
             r->core.allocator, &ii, &ai,
-            &gpu_texs[t].image, &gpu_texs[t].allocation,
+            &gpu_texs[gpu_idx].image, &gpu_texs[gpu_idx].allocation,
             NULL
         ) != VK_SUCCESS) {
-            printf("Failed to create Image for Texture #%d.\n", t);
+            printf("Failed to create Image for Texture #%d.\n", gpu_idx);
             vmaDestroyBuffer(r->core.allocator, s_buffer, s_alloc);
             return;
         }
@@ -129,7 +135,7 @@ void ri_assets_texture_create_gpu_data(RI_Assets *a, RI_Renderer *r) {
         b.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
         b.srcAccessMask = 0;
         b.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-        b.image         = gpu_texs[t].image;
+        b.image         = gpu_texs[gpu_idx].image;
         b.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         b.subresourceRange.levelCount = 1;
         b.subresourceRange.layerCount = 1;
@@ -143,11 +149,11 @@ void ri_assets_texture_create_gpu_data(RI_Assets *a, RI_Renderer *r) {
         VkBufferImageCopy region = {0};
         region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         region.imageSubresource.layerCount = 1;
-        region.imageExtent.width  = gpu_texs[t].width;
-        region.imageExtent.height = gpu_texs[t].height;
+        region.imageExtent.width  = gpu_texs[gpu_idx].width;
+        region.imageExtent.height = gpu_texs[gpu_idx].height;
         region.imageExtent.depth  = 1;
         
-        vkCmdCopyBufferToImage(cmd, s_buffer, gpu_texs[t].image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+        vkCmdCopyBufferToImage(cmd, s_buffer, gpu_texs[gpu_idx].image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
         b.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
         b.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -162,7 +168,7 @@ void ri_assets_texture_create_gpu_data(RI_Assets *a, RI_Renderer *r) {
 
         ri_renderer_single_cmd_end(r, cmd);
 
-        gpu_texs[t].layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        gpu_texs[gpu_idx].layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
         vmaDestroyBuffer(r->core.allocator, s_buffer, s_alloc);
 
@@ -171,14 +177,14 @@ void ri_assets_texture_create_gpu_data(RI_Assets *a, RI_Renderer *r) {
         VkImageViewCreateInfo vi = {0};
         vi.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         vi.viewType = VK_IMAGE_VIEW_TYPE_2D;
-        vi.image = gpu_texs[t].image;
-        vi.format = gpu_texs[t].format;
+        vi.image = gpu_texs[gpu_idx].image;
+        vi.format = gpu_texs[gpu_idx].format;
         vi.subresourceRange.layerCount = 1;
         vi.subresourceRange.levelCount = 1;
         vi.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
-        if (vkCreateImageView(r->core.device, &vi, NULL, &gpu_texs[t].view) != VK_SUCCESS) {
-            printf("Failed to create Image View for Texture #%d\n", t);
+        if (vkCreateImageView(r->core.device, &vi, NULL, &gpu_texs[gpu_idx].view) != VK_SUCCESS) {
+            printf("Failed to create Image View for Texture #%d\n", gpu_idx);
             return;
         }
 
@@ -192,13 +198,17 @@ void ri_assets_texture_create_gpu_data(RI_Assets *a, RI_Renderer *r) {
         si.maxLod = 0.0f;
         si.maxAnisotropy = r->active_config.max_anisotropy;
 
-        if (vkCreateSampler(r->core.device, &si, NULL, &gpu_texs[t].sampler) != VK_SUCCESS) {
-            printf("Failed to create sampler for Texture #%d\n", t);
+        if (vkCreateSampler(r->core.device, &si, NULL, &gpu_texs[gpu_idx].sampler) != VK_SUCCESS) {
+            printf("Failed to create sampler for Texture #%d\n", gpu_idx);
             return;
         }
 
-        cvec_push(a->gpu_textures.valid_indices, t, RnTexture);
-        printf("GPU Resource for Texture #%d created.\n", t);
+
+
+        // cvec_push(a->gpu_textures.valid_indices, gpu_idx, RnTexture);
+        printf("GPU Resource for Texture #%d created.\n", gpu_idx);
+
+        // ri_assetstorage_update(&a->gpu_textures);
     }
 }
 

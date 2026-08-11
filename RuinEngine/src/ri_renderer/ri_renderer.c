@@ -101,6 +101,7 @@ Text read_file(const char *path) {
 
 
 void ri_renderer_init(RI_Renderer *r, RI_Platform *p) {
+    
     ri_renderer_create_instance(r, p);
     if (enable_validation) {
         ri_renderer_create_debug_messenger(r);
@@ -154,6 +155,7 @@ void ri_renderer_kill(RI_Renderer *r) {
 
     vmaDestroyImage(r->core.allocator, r->framebuffers.offscreen.color_image, r->framebuffers.offscreen.color_alloc);
     vkDestroyImageView(r->core.device, r->framebuffers.offscreen.color_view, NULL);
+    vkDestroySampler(r->core.device, r->framebuffers.offscreen.color_sampler, NULL);
     vkDestroyFramebuffer(r->core.device, r->framebuffers.offscreen.framebuffer, NULL);
 
     ri_renderer_kill_vma(r);
@@ -180,6 +182,12 @@ void ri_renderer_kill(RI_Renderer *r) {
     vkDestroyPipelineLayout(r->core.device, r->pipelines.bindless_offscreen_2d.layout, NULL);
     vkDestroyPipeline(r->core.device, r->pipelines.test_pipeline.pipeline, NULL);
     vkDestroyPipelineLayout(r->core.device, r->pipelines.test_pipeline.layout, NULL);
+
+    vkDestroyPipeline(r->core.device, r->pipelines.post_process_pipeline.pipeline, NULL);
+    vkDestroyPipelineLayout(r->core.device, r->pipelines.post_process_pipeline.layout, NULL);
+    for (size_t i = 0; i < r->pipelines.post_process_pipeline.d_set_count; i++) {
+        vkDestroyDescriptorSetLayout(r->core.device, r->pipelines.post_process_pipeline.d_set_layouts[i], NULL);
+    }
 
     vkDestroyRenderPass(r->core.device, r->renderpasses.offscreen_pass, NULL);
     vkDestroyRenderPass(r->core.device, r->renderpasses.present_pass, NULL);
