@@ -567,6 +567,8 @@ void ri_renderer_create_pipeline_bindless_offscreen_2d(RI_Renderer *r) {
         set0_bindings[i].stageFlags         = VK_SHADER_STAGE_VERTEX_BIT;
     }
 
+    set0_bindings[3].stageFlags |= VK_SHADER_STAGE_FRAGMENT_BIT;
+
     set0_bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     set0_bindings[1].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     set0_bindings[2].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
@@ -645,7 +647,6 @@ void ri_renderer_create_pipeline_bindless_offscreen_2d(RI_Renderer *r) {
         printf("Failed to create Bindless Offscreen Pipeline 2D.\n");
         return;
     }
-
     r->pipelines.bindless_offscreen_2d.bind_point = VK_PIPELINE_BIND_POINT_GRAPHICS;
 
     printf("Bindless Offscreen Pipeline 2D created.\n");
@@ -838,15 +839,12 @@ void ri_renderer_create_post_process_pipeline(RI_Renderer *r) {
     dsli.pBindings = &set0_binding0;
     dsli.bindingCount = 1;
 
-    
     for (uint8_t i = 0; i < set_count; i++) {
-        // dslis[i].sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
         if (vkCreateDescriptorSetLayout(r->core.device, &dsli, NULL, &(r->pipelines.post_process_pipeline.d_set_layouts[i])) != VK_SUCCESS) {
             printf("Failed to create descriptor set layout #%d of Post Process Pipeline.\n", i);
             return;
         }
     }
-
 
     VkPushConstantRange pc_range = {0};
     pc_range.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
@@ -887,7 +885,6 @@ void ri_renderer_create_post_process_pipeline(RI_Renderer *r) {
         printf("Failed to create Post Process Pipeline.\n");
         return;
     }
-
     r->pipelines.post_process_pipeline.bind_point = VK_PIPELINE_BIND_POINT_GRAPHICS;
 
     printf("Post Process Pipeline created.\n");

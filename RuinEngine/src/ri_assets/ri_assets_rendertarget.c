@@ -5,10 +5,9 @@
 #include "ruin.h"
 #include <stdint.h>
 #include <stdio.h>
-#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan.h>
 
 void ri_assets_rendertarget_create(RI_Assets *a, RI_Renderer *r, uint32_t w, uint32_t h) {
-    
     uint32_t gpu_idx = ri_assetstorage_idx(&a->gpu_textures);
     RI_Asset_Texture_GPU *target = &(from_void(a->gpu_textures.data, RI_Asset_Texture_GPU)[gpu_idx]);
 
@@ -17,16 +16,15 @@ void ri_assets_rendertarget_create(RI_Assets *a, RI_Renderer *r, uint32_t w, uin
     ii.extent.width  = w;
     ii.extent.height = h;
     ii.extent.depth  = 1;
-    ii.imageType = VK_IMAGE_TYPE_2D;
-    ii.format    = r->swapchain.swapchain_image_format;
+    ii.imageType     = VK_IMAGE_TYPE_2D;
+    ii.format        = r->swapchain.swapchain_image_format;
     ii.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    ii.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT
-             | VK_IMAGE_USAGE_SAMPLED_BIT;
-    ii.arrayLayers = 1;
-    ii.mipLevels   = 1;
-    ii.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-    ii.samples  = VK_SAMPLE_COUNT_1_BIT;
-    ii.tiling   = VK_IMAGE_TILING_OPTIMAL;
+    ii.usage         = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+    ii.arrayLayers   = 1;
+    ii.mipLevels     = 1;
+    ii.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
+    ii.samples       = VK_SAMPLE_COUNT_1_BIT;
+    ii.tiling        = VK_IMAGE_TILING_OPTIMAL;
 
     VmaAllocationCreateInfo iai = {0};
     iai.usage = VMA_MEMORY_USAGE_AUTO;
@@ -54,7 +52,6 @@ void ri_assets_rendertarget_create(RI_Assets *a, RI_Renderer *r, uint32_t w, uin
         printf("Failed to create Image View for Render Target #%d\n", gpu_idx);
         return;
     }
-
     
     VkFramebufferCreateInfo fi = {0};
     fi.sType        = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -86,7 +83,6 @@ void ri_assets_rendertarget_create(RI_Assets *a, RI_Renderer *r, uint32_t w, uin
     }
     
     printf("RenderTarget #%d created.\n", gpu_idx);
-
     ri_assetstorage_update(&a->gpu_textures);
 }
 

@@ -3,23 +3,23 @@
 layout (location = 0) out vec2 out_uv;
 
 const vec2 quad[6] = vec2[](
-    vec2(-1.0, -1.0), // left, up
-    vec2(-1.0,  1.0), // left, down
-    vec2( 1.0, -1.0), // right, up
+    vec2(-1.0, -1.0),
+    vec2(-1.0,  1.0),
+    vec2( 1.0, -1.0),
 
-    vec2( 1.0, -1.0), // right, up
-    vec2( 1.0,  1.0), // right, down
-    vec2(-1.0,  1.0)  // left, down
+    vec2( 1.0, -1.0),
+    vec2( 1.0,  1.0),
+    vec2(-1.0,  1.0)
 );
 
 const vec2 uvs[6] = vec2[](
-    vec2(0.0, 0.0), // left, up
-    vec2(0.0, 1.0), // left, down
-    vec2(1.0, 0.0), // right, up
+    vec2(0.0, 0.0),
+    vec2(0.0, 1.0),
+    vec2(1.0, 0.0),
 
-    vec2(1.0, 0.0), // right, up
-    vec2(1.0, 1.0), // right, down
-    vec2(0.0, 1.0)  // left, down
+    vec2(1.0, 0.0),
+    vec2(1.0, 1.0),
+    vec2(0.0, 1.0)
 );
 
 void main() {

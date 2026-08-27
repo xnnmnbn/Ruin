@@ -63,7 +63,7 @@ void ri_components_transform_update(RI_Components *c) {
         glm_mat4_identity(*l_mat);
         glm_translate(*l_mat, (float[3]){
             transform->position.x,
-            transform->position.y,
+            -transform->position.y,
             -transform->position.z
         });
 

@@ -97,13 +97,10 @@ void myGameInit(MyGame *g) {
     for (uint32_t i = 0; i < g->bomb_count; i++) {
         g->bomb_pool[i] = myGameObjectCreate(g->material2Ds.bomb);
         g->bomb_pool[i].renderer->layer = 1;
-
         g->bomb_pool[i].transform->position.z = 0.2;
-
         g->bomb_pool[i].transform->scale = (RnVec3) {
             0.5, 0.5, 1.0
         };
-
         g->bomb_pool[i].transform->position.x = -1000;
     }
     
@@ -117,11 +114,9 @@ void myGameInit(MyGame *g) {
     
     rnCamera2DUse(g->camera.id);
     
-    rnTextureCreateGPUResources();
+    rnTextureCreateGpuResources();
     rnTextureLoadAllToGPU();
     rnSpriteRendererSortByLayer();
-
-    // rnTimeSetTargetFPS(60);
 
     g->troll.transform->position.x = -8 * PPU;
     g->troll.transform->scale.x = 0.5;
@@ -157,7 +152,7 @@ int main(void) {
     cfg->renderer.max_frames_in_flight = 2;
     cfg->renderer.resolution_x         = 1920;
     cfg->renderer.resolution_y         = 1080;
-    cfg->renderer.max_anisotropy       = 1;
+    cfg->renderer.max_anisotropy       = 1.0;
     cfg->renderer.multisampling        = 1;
     cfg->renderer.vsync                = RN_FALSE;
     
@@ -175,46 +170,70 @@ int main(void) {
     RnBool thrown = 0;
     RnBool win = 0;
 
+    RnMaterial2DInfo *m_info = rnMaterial2DGet(g.material2Ds.monster);
+
     while (rnSelfRunning()) {
     rnFrameBegin();
 
-        if (rnKeyDown(RUIN_KEY_F12)) {
+
+        if (rnKeyHold(RN_KEY_Q)) {
+            m_info->bloom += rnTimeDelta() * 100;
+        }
+
+        if (rnKeyDown(RN_KEY_F12)) {
             cfg->window.fullscreen = !cfg->window.fullscreen;
             rnConfigUpdatePlatform();
         }
 
+        const float ms = 0.1;
+
+        if (rnKeyHold(RN_KEY_M)) {
+            m_info->glitch += ms * rnTimeDelta();
+        }
+
+        if (rnKeyHold(RN_KEY_N)) {
+            m_info->glitch -= ms * rnTimeDelta();
+        }
+
 
         rnTimeSetSpeed(1);
-        if (rnKeyHold(RUIN_KEY_SPACE)) {
+        if (rnKeyHold(RN_KEY_SPACE)) {
             rnTimeSetSpeed(0.5);
         }
 
-        if (rnKeyDown(RUIN_KEY_V)) {
+        if (rnKeyDown(RN_KEY_V)) {
             cfg->renderer.vsync = !cfg->renderer.vsync;
             rnConfigUpdateRenderer();
         }
 
         RnVec2 mv = rnMouseMove();
 
-        if (rnMouseHold(RUIN_MOUSE_RIGHT) && !thrown) {
+        if (rnMouseHold(RN_MOUSE_RIGHT) && !thrown) {
             bombs[g.next_bomb_idx].transform->position = (RnVec3) {
                 .x = t_trn->position.x + 2 * PPU,
                 .y = bombs[g.next_bomb_idx].transform->position.y + mv.y * 30 * rnTimeDelta(),
                 0
             };
 
-            if (rnMouseDown(RUIN_MOUSE_LEFT)) {
+            // printf("Move Y: %f\n", mv.y);
+
+            if (rnMouseDown(RN_MOUSE_LEFT)) {
                 thrown = 1;
             }
         }
 
+            
         if (thrown) {
             g.bomb_pool[g.next_bomb_idx].transform->position.x += 1000 * rnTimeDelta();
             g.bomb_pool[g.next_bomb_idx].transform->rotation.z += 60  * rnTimeDelta();
 
-            RnVec3 dist = rnVec3Sub(&g.bomb_pool[g.next_bomb_idx].transform->position, &g.monster.transform->position);
+            RnVec3 dist = rnVec3Sub(&g.bomb_pool[g.next_bomb_idx].transform->position, &g.monster.transform->position);        
+            float mag = rnVec3Mag(&dist);
 
-            if (rnVec3Mag(&dist) <= 100) {
+            m_info->chromatic_aberration += mag * rnTimeDelta() * 0.01;
+            m_info->glitch += mag * rnTimeDelta() * 0.002;
+            
+            if (mag <= 100) {
                 win = 1;
                 g.next_bomb_idx += 1;
                 thrown = 0;
@@ -227,17 +246,19 @@ int main(void) {
                 thrown = 0;
             }
 
-            if (rnKeyDown(RUIN_KEY_P)) {
+            if (rnKeyDown(RN_KEY_P)) {
                 g.troll.transform->parent = g.bomb_pool[g.next_bomb_idx].id;
 
             }
+        } else {
+            m_info->chromatic_aberration = 0;
+            m_info->glitch = 0;
         }
 
         if (!win) {
             m_trn->position.y += cosf(rnTimeElapsed()) * rnTimeDelta() * 300;
         } else {
             m_trn->rotation.z += 360 * rnTimeDelta();
-            // thrown = 0;
         }
 
     rnFrameEnd();

@@ -1,7 +1,6 @@
 #include "ri_assets/ri_assets.h"
-#include "cvec.h"
 #include "ri_renderer/ri_renderer.h"
-#include <stdint.h>
+#include "cvec.h"
 #include <stdio.h>
 
 uint32_t ri_assetstorage_idx(RI_AssetStorage *s) {
@@ -29,10 +28,8 @@ void ri_assetstorage_kill(RI_AssetStorage *s, uint32_t idx) {
 void ri_assets_init(RI_Assets *a) {
     ri_assets_material_init(a);
     ri_assets_texture_init(a);
-    
-    // cvec_push(a->gpu_textures.valid_indices, 0, uint32_t);
-    cvec_push(a->material2Ds.valid_indices, 0, uint32_t);
-    cvec_push(a->material3Ds.valid_indices, 0, uint32_t);
+
+    printf("Assets initialized.\n");
 }
 
 void ri_assets_kill(RI_Assets *a, RI_Renderer *r) {

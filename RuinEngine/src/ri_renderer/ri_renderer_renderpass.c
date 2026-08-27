@@ -1,7 +1,6 @@
 #include "ri_renderer.h"
 #include <stdio.h>
-#include <vulkan/vk_platform.h>
-#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan.h>
 
 void ri_renderer_create_renderpass_present(RI_Renderer *r) {
     VkAttachmentDescription color_attachment = {0};
@@ -24,11 +23,11 @@ void ri_renderer_create_renderpass_present(RI_Renderer *r) {
     subpass.pColorAttachments    = &color_attachment_ref;
 
     VkSubpassDependency dependency = {0};
-    dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-    dependency.dstSubpass = 0;
-    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.srcSubpass    = VK_SUBPASS_EXTERNAL;
+    dependency.dstSubpass    = 0;
+    dependency.srcStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     dependency.srcAccessMask = 0;
-    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.dstStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
     VkRenderPassCreateInfo ri = {0};
@@ -39,7 +38,6 @@ void ri_renderer_create_renderpass_present(RI_Renderer *r) {
     ri.attachmentCount = 1;
     ri.pDependencies   = &dependency;
     ri.dependencyCount = 1;
-
 
     if (vkCreateRenderPass(r->core.device, &ri, NULL, &r->renderpasses.present_pass) != VK_SUCCESS) {
         printf("Failed to create presentation renderpass.\n");

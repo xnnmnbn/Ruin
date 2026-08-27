@@ -200,7 +200,7 @@ float rnMouseScroll() {
 RnVec2 rnMouseMove() {
     return (RnVec2){
         .x = engine.platform.input.mouse_dx,
-        .y = engine.platform.input.mouse_dy
+        .y = -engine.platform.input.mouse_dy
     };
 }
 
@@ -223,7 +223,7 @@ void rnMouseHideCursor(RnBool b) {
 
 
 
-uint8_t rnTimeFPS() {
+uint32_t rnTimeFPS() {
     return engine.platform.time.fps;
 }
 float rnTimeDelta() {
@@ -294,8 +294,14 @@ RnBool rnEntityValid(RnEntity e) {
 
 RnMaterial2DInfo rnDefaultMaterial2DInfo() {
     return (RnMaterial2DInfo) {
-        ._pad = {0},
         .texture = 0,
+        .brightness = 0.0,
+        .saturation = 1.0,
+        .contrast   = 1.0,
+        .inverse    = 0.0,
+        .bloom      = 1.0,
+        .glitch     = 0.0,
+        .chromatic_aberration = 0.0,
         .tint = (RnColor) {
             .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f
         }
@@ -384,7 +390,7 @@ RnTexture rnTextureCreate(const char *path) {
     return gpu_next_idx;
 }
 
-void rnTextureCreateGPUResources() {
+void rnTextureCreateGpuResources() {
     ri_assets_texture_create_gpu_data(&engine.assets, &engine.renderer);
 }
 

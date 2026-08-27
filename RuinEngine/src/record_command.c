@@ -97,9 +97,9 @@ void record_command_2d(RI_Renderer *r, RI_Platform *p, RI_Components *c, VkComma
     RI_Renderer_Pipeline *p_post_process          = &r->pipelines.post_process_pipeline;
 
     VkClearValue clear = {0};
-    clear.color.float32[0] = 0.75f;
-    clear.color.float32[1] = 0.0f;
-    clear.color.float32[2] = 0.75f;
+    clear.color.float32[0] = 0.0;
+    clear.color.float32[1] = 1.0f;
+    clear.color.float32[2] = 0.0f;
     clear.color.float32[3] = 1.0f;
 
 

@@ -1,158 +1,158 @@
 [
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\draw_frame.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\draw_frame.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/draw_frame.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/draw_frame.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\draw_frame.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\draw_frame.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/draw_frame.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/draw_frame.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\record_command.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\record_command.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/record_command.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/record_command.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\record_command.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\record_command.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/record_command.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/record_command.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_assets\\ri_assets.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_assets\\ri_assets.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_assets/ri_assets.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_assets/ri_assets.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_assets\\ri_assets.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_assets\\ri_assets.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_assets/ri_assets.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_assets/ri_assets.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_assets\\ri_assets_material.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_assets\\ri_assets_material.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_assets/ri_assets_material.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_assets/ri_assets_material.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_assets\\ri_assets_material.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_assets\\ri_assets_material.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_assets/ri_assets_material.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_assets/ri_assets_material.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_assets\\ri_assets_rendertarget.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_assets\\ri_assets_rendertarget.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_assets/ri_assets_rendertarget.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_assets/ri_assets_rendertarget.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_assets\\ri_assets_rendertarget.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_assets\\ri_assets_rendertarget.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_assets/ri_assets_rendertarget.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_assets/ri_assets_rendertarget.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_assets\\ri_assets_texture.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_assets\\ri_assets_texture.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_assets/ri_assets_texture.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_assets/ri_assets_texture.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_assets\\ri_assets_texture.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_assets\\ri_assets_texture.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_assets/ri_assets_texture.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_assets/ri_assets_texture.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_components\\ri_components.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_components\\ri_components.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_components/ri_components.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_components/ri_components.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_components\\ri_components.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_components\\ri_components.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_components/ri_components.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_components/ri_components.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_components\\ri_components_camera.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_components\\ri_components_camera.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_components/ri_components_camera.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_components/ri_components_camera.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_components\\ri_components_camera.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_components\\ri_components_camera.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_components/ri_components_camera.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_components/ri_components_camera.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_components\\ri_components_transform.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_components\\ri_components_transform.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_components/ri_components_transform.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_components/ri_components_transform.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_components\\ri_components_transform.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_components\\ri_components_transform.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_components/ri_components_transform.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_components/ri_components_transform.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_platform\\ri_platform.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_platform\\ri_platform.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_platform/ri_platform.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_platform/ri_platform.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_platform\\ri_platform.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_platform\\ri_platform.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_platform/ri_platform.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_platform/ri_platform.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_platform\\ri_platform_input.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_platform\\ri_platform_input.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_platform/ri_platform_input.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_platform/ri_platform_input.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_platform\\ri_platform_input.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_platform\\ri_platform_input.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_platform/ri_platform_input.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_platform/ri_platform_input.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_platform\\ri_platform_time.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_platform\\ri_platform_time.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_platform/ri_platform_time.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_platform/ri_platform_time.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_platform\\ri_platform_time.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_platform\\ri_platform_time.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_platform/ri_platform_time.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_platform/ri_platform_time.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_platform\\ri_platform_window.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_platform\\ri_platform_window.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_platform/ri_platform_window.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_platform/ri_platform_window.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_platform\\ri_platform_window.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_platform\\ri_platform_window.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_platform/ri_platform_window.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_platform/ri_platform_window.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_renderer\\ri_renderer.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_renderer\\ri_renderer.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_renderer/ri_renderer.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_command.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_renderer\\ri_renderer_command.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer_command.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_command.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_command.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_renderer\\ri_renderer_command.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_renderer/ri_renderer_command.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_command.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_core.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_renderer\\ri_renderer_core.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer_core.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_core.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_core.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_renderer\\ri_renderer_core.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_renderer/ri_renderer_core.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_core.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_framebuffer.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_renderer\\ri_renderer_framebuffer.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer_framebuffer.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_framebuffer.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_framebuffer.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_renderer\\ri_renderer_framebuffer.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_renderer/ri_renderer_framebuffer.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_framebuffer.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_gpu_buffers.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_renderer\\ri_renderer_gpu_buffers.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer_gpu_buffers.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_gpu_buffers.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_gpu_buffers.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_renderer\\ri_renderer_gpu_buffers.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_renderer/ri_renderer_gpu_buffers.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_gpu_buffers.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_pipeline.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_renderer\\ri_renderer_pipeline.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer_pipeline.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_pipeline.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_pipeline.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_renderer\\ri_renderer_pipeline.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_renderer/ri_renderer_pipeline.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_pipeline.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_renderpass.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_renderer\\ri_renderer_renderpass.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer_renderpass.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_renderpass.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_renderpass.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_renderer\\ri_renderer_renderpass.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_renderer/ri_renderer_renderpass.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_renderpass.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_swapchain.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_renderer\\ri_renderer_swapchain.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer_swapchain.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_swapchain.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_swapchain.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_renderer\\ri_renderer_swapchain.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_renderer/ri_renderer_swapchain.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_swapchain.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_sync.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_renderer\\ri_renderer_sync.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/ri_renderer_sync.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_sync.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\ri_renderer_sync.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_renderer\\ri_renderer_sync.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_renderer/ri_renderer_sync.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_renderer/ri_renderer_sync.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\c++.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu++17 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\vma.cpp.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ri_renderer\\vma.cpp",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ri_renderer/vma.cpp",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ri_renderer/vma.cpp.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\c++.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu++17 -o CMakeFiles\\Ruin.dir\\src\\ri_renderer\\vma.cpp.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ri_renderer\\vma.cpp\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ri_renderer/vma.cpp",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ri_renderer/vma.cpp.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ruin.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ruin.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ruin.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ruin.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ruin.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ruin.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ruin.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ruin.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -IC:/Users/xnnmnbn/Desktop/RuinEngine/src -IC:/Users/xnnmnbn/Desktop/RuinEngine/external -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ruin_math.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\src\\ruin_math.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/src/ruin_math.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/Ruin.dir/src/ruin_math.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -DRUIN_BUILD_DLL -DRuin_EXPORTS -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src\" -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/external\" -isystem C:/VulkanSDK/1.4.350.0/include -std=gnu11 -o CMakeFiles\\Ruin.dir\\src\\ruin_math.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\src\\ruin_math.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/src/ruin_math.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/Ruin.dir/src/ruin_math.c.obj"
 },
 {
-  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine/build",
-  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -IC:/Users/xnnmnbn/Desktop/RuinEngine/include -std=gnu11 -o CMakeFiles\\ruin_test.dir\\test\\main.c.obj -c C:\\Users\\xnnmnbn\\Desktop\\RuinEngine\\test\\main.c",
-  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine/test/main.c",
-  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine/build/CMakeFiles/ruin_test.dir/test/main.c.obj"
+  "directory": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build",
+  "command": "C:\\msys64\\mingw64\\bin\\cc.exe -I\"C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/include\" -std=gnu11 -o CMakeFiles\\ruin_test.dir\\test\\main.c.obj -c \"C:\\Users\\xnnmnbn\\Desktop\\RuinEngine - Copy\\test\\main.c\"",
+  "file": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/test/main.c",
+  "output": "C:/Users/xnnmnbn/Desktop/RuinEngine - Copy/build/CMakeFiles/ruin_test.dir/test/main.c.obj"
 }
 ]
