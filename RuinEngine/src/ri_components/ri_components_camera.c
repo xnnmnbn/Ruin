@@ -56,7 +56,7 @@ void ri_components_camera_update(RI_Components *c) {
             (RI_Component_Transform*)(c->transforms.begin_points[1])
         )[e];
 
-        glm_ortho(-cmr->width / 2, cmr->width / 2, -cmr->height / 2, cmr->height / 2, cmr->near, cmr->far, c2_i->proj);
+        glm_ortho(-cmr->width / 2, cmr->width / 2, -cmr->height / 2, cmr->height / 2, cmr->far, cmr->near, c2_i->proj);
         c2_i->proj[1][1] = -c2_i->proj[1][1];
         glm_mat4_inv(t->world_matrix, c2_i->view);
     }
