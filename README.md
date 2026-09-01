@@ -71,7 +71,7 @@ int main() {
     });
 
     rnTransformAdd(player, rnDefaultTransform());
-    RnTransform player_t = rnTransformGet(player);
+    RnTransform *player_t = rnTransformGet(player);
 
     rnTextureCreateGpuResources();
     rnTextureLoadToGpuOffscreen(NULL, 0);
