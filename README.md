@@ -39,6 +39,8 @@ int main() {
 ---
 ### Walking Simulation
 ```C
+#include "ruin.h"
+
 int main() {
     RnConfig *cfg = rnConfigGet();
 
