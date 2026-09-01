@@ -36,8 +36,7 @@ int main() {
     return 0;
 }
 ```
-
-
+---
 ### Walking Simulation
 ```C
 int main() {
