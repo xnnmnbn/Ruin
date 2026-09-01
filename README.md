@@ -106,6 +106,9 @@ int main() {
             (rnKeyHold(RN_KEY_S) ? -1 : 0) +
             (rnKeyHold(RN_KEY_W) ?  1 : 0)
         ) * rnTimeDelta() * 200;
+
+    // There is no draw function in public API.
+    // If entity has a Sprite/Mesh Renderer and a Transform, it is drawable.
     rnFrameEnd();
     }
 
