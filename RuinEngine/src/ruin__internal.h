@@ -36,7 +36,7 @@ typedef struct {
 
 
 void record_command(RuinInternal *engine, VkCommandBuffer cmd, uint32_t img_idx);
-void record_command_2d(RI_Renderer *r, RI_Platform *p, RI_Components *c, VkCommandBuffer cmd, uint32_t img_idx);
+void record_command_2d(RuinInternal *engine, VkCommandBuffer cmd, uint32_t img_idx);
 
 void draw_frame(RuinInternal *engine);
 

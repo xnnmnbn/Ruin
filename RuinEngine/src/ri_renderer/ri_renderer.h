@@ -94,7 +94,7 @@ typedef struct {
 
 typedef struct {
     RI_Renderer_Framebuffer offscreen;
-    
+    RI_Renderer_Framebuffer post_process;
 } RI_Renderer_Framebuffers;
 
 typedef struct {
@@ -117,10 +117,10 @@ typedef struct {
 typedef struct {
     VkDescriptorPool descriptor_pool;
     RI_Renderer_Pipeline test_pipeline;
-    // RI_Renderer_Pipeline bindless_pipeline_2d;
 
     RI_Renderer_Pipeline bindless_offscreen_2d;
     RI_Renderer_Pipeline post_process_pipeline;
+    RI_Renderer_Pipeline gui_rect_pipeline;
 } RI_Renderer_Pipelines;
 
 typedef struct {
@@ -151,7 +151,13 @@ typedef struct {
     RI_Renderer_GPU_Buffer entity_ssbo;
     RI_Renderer_GPU_Buffer matrix_ssbo;
     RI_Renderer_GPU_Buffer material_ssbo;
-} RI_Renderer_GPU_Buffers2D;
+} RI_Renderer_GPU_Buffers_Bindless_2D;
+
+typedef struct {
+    RI_Renderer_GPU_Buffer rect_ssbo;
+    RI_Renderer_GPU_Buffer index_ssbo;
+    RI_Renderer_GPU_Buffer material_ssbo;
+} RI_Renderer_GPU_Buffers_GuiRect;
 
 
 typedef struct {
@@ -166,8 +172,8 @@ typedef struct {
     RI_Renderer_Commands     commands;
     RI_Renderer_Sync         sync;
 
-    RI_Renderer_GPU_Buffers2D gpu_buffers_2d;
-    RI_Renderer_GPU_Buffer    gpu_buffer_post_process;
+    RI_Renderer_GPU_Buffers_Bindless_2D gpu_buffers_2d;
+    RI_Renderer_GPU_Buffers_GuiRect     gpu_buffers_gui_rect;
 } RI_Renderer;
 
 
@@ -182,7 +188,7 @@ void create_memory_allocator(RI_Renderer *r);
 
 Text read_file(const char *path);
 
-VkShaderModule create_shader_module(RI_Renderer *r, unsigned char *code, unsigned int len);
+VkShaderModule create_shader_module(RI_Renderer *r, unsigned const char *code, unsigned int len);
 
 
 
@@ -210,6 +216,7 @@ void ri_renderer_create_renderpass_offscreen(RI_Renderer *r);
 
 void ri_renderer_create_swapchain_framebuffers(RI_Renderer *r, RI_Platform *p);
 void ri_renderer_create_framebuffer_offscreen(RI_Renderer *r);
+void ri_renderer_create_framebuffer_post_process(RI_Renderer *r, RI_Platform *p);
 
 
 void ri_renderer_create_commands(RI_Renderer *r);
@@ -223,19 +230,17 @@ void ri_renderer_create_sync_objects(RI_Renderer *r);
 
 void ri_renderer_init_gpu_buffers_2d(RI_Renderer *r);
 void ri_renderer_kill_gpu_buffers_2d(RI_Renderer *r);
-void ri_renderer_init_gpu_buffer_post_process(RI_Renderer *r);
-void ri_renderer_kill_gpu_buffer_post_process(RI_Renderer *r);
+void ri_renderer_init_gpu_buffers_gui_rect(RI_Renderer *r);
+void ri_renderer_kill_gpu_buffers_gui_rect(RI_Renderer *r);
 
 
 void ri_renderer_create_descriptor_pool(RI_Renderer *r);
 
 void ri_renderer_create_pipeline_test(RI_Renderer *r);
 
-// void ri_renderer_create_pipeline_bindless_2d(RI_Renderer *r);
-
 void ri_renderer_create_pipeline_bindless_offscreen_2d(RI_Renderer *r);
-void ri_renderer_create_post_process_pipeline(RI_Renderer *r);
-
+void ri_renderer_create_pipeline_post_process(RI_Renderer *r);
+void ri_renderer_create_pipeline_rect_gui(RI_Renderer *r);
 
 
 

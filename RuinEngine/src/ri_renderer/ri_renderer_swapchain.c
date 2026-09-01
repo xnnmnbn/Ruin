@@ -126,7 +126,7 @@ void ri_renderer_create_swapchain(RI_Renderer *r, RI_Platform *p) {
 
     vkDestroySwapchainKHR(r->core.device, si.oldSwapchain, NULL);
 
-    printf("Swapchain created.\n");
+    printf("Swapchain created: %d, %d.\n", p->active_config.width, p->active_config.height);
     printf("You have %d swapchain images.\n", r->swapchain.swapchain_image_count);
 
     free(details.formats);

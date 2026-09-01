@@ -16,11 +16,7 @@ void draw_frame(RuinInternal *engine) {
     uint32_t current_frame = engine->renderer.sync.current_frame;
     uint32_t image_index;
 
-    //if (!r->sync.skip_wait) {
-        vkWaitForFences(device, 1, &(engine->renderer.sync.in_flight_fences[current_frame]), VK_TRUE, UINT64_MAX);
-    //}
-
-    //r->sync.skip_wait = 0;
+    vkWaitForFences(device, 1, &(engine->renderer.sync.in_flight_fences[current_frame]), VK_TRUE, UINT64_MAX);
 
     VkResult res = vkAcquireNextImageKHR(
         device,
@@ -42,9 +38,8 @@ void draw_frame(RuinInternal *engine) {
     vkResetFences(device, 1, &(engine->renderer.sync.in_flight_fences[current_frame]));
 
     vkResetCommandBuffer(engine->renderer.commands.command_buffers[current_frame], 0);
-    // record_command(r, p, r->commands.command_buffers[current_frame], image_index);
 
-
+    // Bindless Offscreen 2D Pipeline
     RI_Component_Camera *cmr;
     RnEntity c_ent = engine->components.camera_in_use;
     uint8_t c_mode = engine->components.camera_mode;
@@ -87,7 +82,30 @@ void draw_frame(RuinInternal *engine) {
     }
 
 
-    record_command_2d(&engine->renderer, &engine->platform, &engine->components, engine->renderer.commands.command_buffers[current_frame], image_index);
+    // GUI Rect Pipeline
+    memcpy(
+        engine->renderer.gpu_buffers_gui_rect.index_ssbo.mapped,
+        engine->assets.gui_rects.valid_indices.data,
+        engine->assets.gui_rects.valid_indices.len * sizeof(RnGuiRect)
+    );
+    
+    for (uint32_t i = 0; i < engine->assets.gui_rects.valid_indices.len; i++) {
+        RnGuiRect r =  from_void(engine->assets.gui_rects.valid_indices.data, RnGuiRect)[i];
+        RnGuiRectInfo r_info = from_void(engine->assets.gui_rects.data, RnGuiRectInfo)[r];
+
+        from_void(engine->renderer.gpu_buffers_gui_rect.rect_ssbo.mapped, RnGuiRectInfo)[r] =
+            from_void(engine->assets.gui_rects.data, RnGuiRectInfo)[r];
+    }
+
+    for (uint32_t i = 0; i < engine->assets.gui_rects.valid_indices.len; i++) {
+        RnGuiRect    r = from_void(engine->assets.gui_rects.valid_indices.data, RnGuiRect)[i];
+        RnMaterial2D m = from_void(engine->assets.gui_rects.data, RnGuiRectInfo)[r].material;
+
+        from_void(engine->renderer.gpu_buffers_gui_rect.material_ssbo.mapped, RnMaterial2DInfo)[m] =
+            from_void(engine->assets.material2Ds.data, RnMaterial2DInfo)[m];
+    }
+
+    record_command_2d(engine, engine->renderer.commands.command_buffers[current_frame], image_index);
 
     
 
@@ -130,8 +148,4 @@ void draw_frame(RuinInternal *engine) {
 
 
     engine->renderer.sync.current_frame = (engine->renderer.sync.current_frame + 1) % engine->renderer.active_config.max_frames_in_flight;
-
-
-    //printf("%d\n", r->active_config.max_frames_in_flight);
-    //printf("Current Frame: %d\n", r->sync.current_frame);
 }

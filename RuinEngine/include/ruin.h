@@ -41,6 +41,7 @@ typedef uint8_t RnBool;
 #define RUIN_MAX_MUSICS          32
 #define RUIN_MAX_SOUND_LISTENERS 1
 #define RUIN_MAX_ENTITIES        1024
+#define RUIN_MAX_GUI_RECTS       512
 
 typedef uint32_t RnEntity;
 typedef uint32_t RnTexture;
@@ -50,6 +51,7 @@ typedef uint32_t RnSound;
 typedef uint32_t RnMusic;
 typedef uint32_t RnMesh;
 typedef uint32_t RnRenderTarget;
+typedef uint32_t RnGuiRect;
 
 typedef enum {
     RN_KEY_0 = 39,
@@ -308,6 +310,16 @@ typedef struct {
     RnMesh mesh;
 } RnMeshRenderer;
 
+typedef struct {
+    RnMaterial2D material;
+    int32_t      layer;
+    float        rotation;
+    uint32_t     _padding;
+    RnVec2       position;
+    RnVec2       scale;
+    RnVec2       pivot;
+} RnGuiRectInfo;
+
 
 RUIN_API RnVec2 rnVec2(float x, float y);
 RUIN_API RnVec3 rnVec3(float x, float y, float z);
@@ -389,8 +401,8 @@ RUIN_API RnTexture rnTextureCreate(const char *path);
 RUIN_API RnTexture rnTextureFromRenderTarget(RnRenderTarget t);
 RUIN_API void      rnTextureKill(RnTexture t);
 RUIN_API void      rnTextureCreateGpuResources(void);
-RUIN_API void      rnTextureLoadAllToGPU(void);
 RUIN_API void      rnTextureLoadToGpuOffscreen(RnTexture *textures, uint32_t count);
+RUIN_API void      rnTextureLoadToGpuGui(RnTexture *textures, uint32_t count);
 
 RUIN_API RnMesh rnMeshLoad(const char *path);
 RUIN_API void   rnMeshKill(RnMesh m);
@@ -467,6 +479,11 @@ RUIN_API RnMeshRenderer  rnDefaultMeshRenderer(void);
 RUIN_API RnMeshRenderer *rnMeshRendererGet(RnEntity e);
 RUIN_API void            rnMeshRendererAdd(RnEntity e, RnMeshRenderer r);
 RUIN_API void            rnMeshRendererKill(RnEntity e);
+
+RUIN_API RnGuiRectInfo rnDefaultGuiRectInfo(void);
+RUIN_API RnGuiRect     rnGuiRectCreate(RnGuiRectInfo r);
+RUIN_API void          rnGuiRectKill(RnGuiRect r);
+RUIN_API void          rnGuiRectSortByLayer(void);
 
 #ifdef __cplusplus
 }

@@ -89,59 +89,60 @@ void record_command(RuinInternal *engine, VkCommandBuffer cmd, uint32_t img_idx)
 
 
 
-void record_command_2d(RI_Renderer *r, RI_Platform *p, RI_Components *c, VkCommandBuffer cmd, uint32_t img_idx) {
+void record_command_2d(RuinInternal *engine, VkCommandBuffer cmd, uint32_t img_idx) {
     VkCommandBufferBeginInfo cbi = {0};
     cbi.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-    RI_Renderer_Pipeline *p_bindless_offscreen_2d = &r->pipelines.bindless_offscreen_2d;
-    RI_Renderer_Pipeline *p_post_process          = &r->pipelines.post_process_pipeline;
+    RI_Renderer_Pipeline *p_bindless_offscreen_2d = &engine->renderer.pipelines.bindless_offscreen_2d;
+    RI_Renderer_Pipeline *p_post_process          = &engine->renderer.pipelines.post_process_pipeline;
+    RI_Renderer_Pipeline *p_gui_rect              = &engine->renderer.pipelines.gui_rect_pipeline;
 
     VkClearValue clear = {0};
-    clear.color.float32[0] = 0.0;
-    clear.color.float32[1] = 1.0f;
-    clear.color.float32[2] = 0.0f;
+    clear.color.float32[0] = 0.75f;
+    clear.color.float32[1] = 0.0f;
+    clear.color.float32[2] = 0.75f;
     clear.color.float32[3] = 1.0f;
 
 
     VkRenderPassBeginInfo rp_offscreen = {0};
     rp_offscreen.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    rp_offscreen.renderPass = r->renderpasses.offscreen_pass;
-    rp_offscreen.framebuffer = r->framebuffers.offscreen.framebuffer;
+    rp_offscreen.renderPass = engine->renderer.renderpasses.offscreen_pass;
+    rp_offscreen.framebuffer = engine->renderer.framebuffers.offscreen.framebuffer;
     rp_offscreen.pClearValues = &clear;
     rp_offscreen.clearValueCount = 1;
     rp_offscreen.renderArea = (VkRect2D){
         .offset = {0},
-        .extent = r->framebuffers.offscreen.extent
+        .extent = engine->renderer.framebuffers.offscreen.extent
     };
 
     VkRenderPassBeginInfo rp_present = {0};
     rp_present.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    rp_present.renderPass = r->renderpasses.present_pass;
-    rp_present.framebuffer = r->swapchain.swapchain_framebuffers[img_idx];
+    rp_present.renderPass = engine->renderer.renderpasses.present_pass;
+    rp_present.framebuffer = engine->renderer.swapchain.swapchain_framebuffers[img_idx];
     rp_present.renderArea = (VkRect2D) {
         .offset = {0},
-        .extent = r->swapchain.swapchain_extent
+        .extent = engine->renderer.swapchain.swapchain_extent
     };
 
     
-    RnEntity c_use = c->camera_in_use;
+    RnEntity c_use = engine->components.camera_in_use;
 
-    RnCamera2D *c2 = &(from_void(c->camera2ds.begin_points[0], RnCamera2D)[c_use]);
-    RnCamera3D *c3 = &(from_void(c->camera3ds.begin_points[0], RnCamera3D)[c_use]);
+    RnCamera2D *c2 = &(from_void(engine->components.camera2ds.begin_points[0], RnCamera2D)[c_use]);
+    RnCamera3D *c3 = &(from_void(engine->components.camera3ds.begin_points[0], RnCamera3D)[c_use]);
 
     uint32_t w = 0;
     uint32_t h = 0;
 
-    if (c->camera_mode == 2) {
+    if (engine->components.camera_mode == 2) {
         w = c2->width; h = c2->height;
-    } else if (c->camera_mode == 3) {
+    } else if (engine->components.camera_mode == 3) {
         w = c3->width; h = c3->height;
     }
     
     VkViewport vw_offscreen = (VkViewport) {
         .x = 0, .y = 0,
-        .width  = r->active_config.resolution_x,
-        .height = r->active_config.resolution_y,
+        .width  = engine->renderer.active_config.resolution_x,
+        .height = engine->renderer.active_config.resolution_y,
         .minDepth = 0.0f,
         .maxDepth = 1.0f
     };
@@ -149,22 +150,27 @@ void record_command_2d(RI_Renderer *r, RI_Platform *p, RI_Components *c, VkComma
     VkRect2D sc_offscreen = (VkRect2D) {
         .offset = {0},
         .extent = (VkExtent2D) {
-            .width = r->active_config.resolution_x,
-            .height = r->active_config.resolution_y
+            .width  = engine->renderer.active_config.resolution_x,
+            .height = engine->renderer.active_config.resolution_y
         }
     };
 
     VkViewport vw_present = (VkViewport) {
         .x = 0, .y = 0,
-        .width = r->swapchain.swapchain_extent.width,
-        .height = r->swapchain.swapchain_extent.height,
+        .width  = engine->renderer.swapchain.swapchain_extent.width,
+        .height = engine->renderer.swapchain.swapchain_extent.height,
         .minDepth = 0.0f,
         .maxDepth = 1.0f
     };
 
     VkRect2D sc_present = (VkRect2D) {
         .offset = {0},
-        .extent = r->swapchain.swapchain_extent
+        .extent = engine->renderer.swapchain.swapchain_extent
+    };
+
+    uint32_t screen_size[2] = {
+        engine->platform.active_config.width,
+        engine->platform.active_config.height
     };
 
     vkResetCommandBuffer(cmd, 0);
@@ -175,29 +181,26 @@ void record_command_2d(RI_Renderer *r, RI_Platform *p, RI_Components *c, VkComma
     }
 
     vkCmdBeginRenderPass(cmd, &rp_offscreen, VK_SUBPASS_CONTENTS_INLINE);
-
         vkCmdSetViewport(cmd, 0, 1, &vw_offscreen);
         vkCmdSetScissor(cmd, 0, 1, &sc_offscreen);
         vkCmdBindPipeline(cmd, p_bindless_offscreen_2d->bind_point, p_bindless_offscreen_2d->pipeline);
         vkCmdBindDescriptorSets(cmd, p_bindless_offscreen_2d->bind_point, p_bindless_offscreen_2d->layout, 0, 2, p_bindless_offscreen_2d->d_sets, 0, NULL);
-
-        uint32_t instance_count = c->sprite_renderers.elem_counts;
-
-        if (instance_count > 0) {
-            vkCmdDraw(cmd, 6, instance_count, 0, 0);
-        }
-
+        vkCmdDraw(cmd, 6, engine->components.sprite_renderers.elem_counts, 0, 0);
     vkCmdEndRenderPass(cmd);
 
     vkCmdBeginRenderPass(cmd, &rp_present, VK_SUBPASS_CONTENTS_INLINE);
-
         vkCmdSetViewport(cmd, 0, 1, &vw_present);
         vkCmdSetScissor(cmd, 0, 1, &sc_present);
         vkCmdBindPipeline(cmd, p_post_process->bind_point, p_post_process->pipeline);
         vkCmdBindDescriptorSets(cmd, p_post_process->bind_point, p_post_process->layout, 0, 1, p_post_process->d_sets, 0, NULL);
-        vkCmdPushConstants(cmd, p_post_process->layout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(RnPostProcess), &r->post_process);
+        vkCmdPushConstants(cmd, p_post_process->layout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(RnPostProcess), &engine->renderer.post_process);
         vkCmdDraw(cmd, 6, 1, 0, 0);
 
+        vkCmdSetViewport(cmd, 0, 1, &vw_present);
+        vkCmdBindPipeline(cmd, p_gui_rect->bind_point, p_gui_rect->pipeline);
+        vkCmdBindDescriptorSets(cmd, p_gui_rect->bind_point, p_gui_rect->layout, 0, 2, p_gui_rect->d_sets, 0, NULL);
+        vkCmdPushConstants(cmd, p_gui_rect->layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(screen_size), screen_size);
+        vkCmdDraw(cmd, 6, engine->assets.gui_rects.valid_indices.len, 0, 0);
     vkCmdEndRenderPass(cmd);
 
     if (vkEndCommandBuffer(cmd) != VK_SUCCESS) {

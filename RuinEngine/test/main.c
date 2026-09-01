@@ -1,4 +1,5 @@
 #include "ruin.h"
+#include <cglm/util.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -82,6 +83,12 @@ void myGameInit(MyGame *g) {
     g->material2Ds.monster = rnMaterial2DCreate(d_mat);
 
     d_mat.texture = g->textures.bomb;
+    /*
+    d_mat.tint = (RnColor) {
+        1.0, 0.0, 0.0, 1.0
+    };
+    */
+    d_mat.chromatic_aberration = 0.5;
     g->material2Ds.bomb = rnMaterial2DCreate(d_mat);
 
     g->camera = myGameObjectCreate(0);
@@ -115,7 +122,12 @@ void myGameInit(MyGame *g) {
     rnCamera2DUse(g->camera.id);
     
     rnTextureCreateGpuResources();
-    rnTextureLoadAllToGPU();
+
+    
+    rnTextureLoadToGpuOffscreen(NULL, 0);
+    rnTextureLoadToGpuGui(NULL, 0);
+
+    
     rnSpriteRendererSortByLayer();
 
     g->troll.transform->position.x = -8 * PPU;
@@ -129,6 +141,16 @@ void myGameInit(MyGame *g) {
 
     
     rnTimeSetTargetFPS(60);
+
+
+    RnGuiRectInfo dri = rnDefaultGuiRectInfo();
+    dri.material = g->material2Ds.bomb;
+    dri.scale = (RnVec2){100, 100};;
+    dri.pivot = (RnVec2){0.0, 0.0};
+
+    RnGuiRect gui = rnGuiRectCreate(dri);
+
+    printf("My Game inited.\n");
 }
 
 
@@ -171,9 +193,22 @@ int main(void) {
     RnBool win = 0;
 
     RnMaterial2DInfo *m_info = rnMaterial2DGet(g.material2Ds.monster);
+    RnMaterial2DInfo *t_info = rnMaterial2DGet(g.material2Ds.troll);
+    RnMaterial2DInfo *b_info = rnMaterial2DGet(g.material2Ds.bomb);
 
     while (rnSelfRunning()) {
     rnFrameBegin();
+
+
+    t_trn->position.x += (
+        (rnKeyHold(RN_KEY_A) ? -1 : 0) +
+        (rnKeyHold(RN_KEY_D) ?  1 : 0)
+    ) * rnTimeDelta() * 200;
+
+    t_trn->position.y += (
+        (rnKeyHold(RN_KEY_S) ? -1 : 0) +
+        (rnKeyHold(RN_KEY_W) ?  1 : 0)
+    ) * rnTimeDelta() * 200;
 
 
         if (rnKeyHold(RN_KEY_Q)) {
@@ -185,14 +220,14 @@ int main(void) {
             rnConfigUpdatePlatform();
         }
 
-        const float ms = 0.1;
+        const float ms = 10;
 
         if (rnKeyHold(RN_KEY_M)) {
-            m_info->glitch += ms * rnTimeDelta();
+            m_info->bloom += rnTimeDelta();
         }
 
         if (rnKeyHold(RN_KEY_N)) {
-            m_info->glitch -= ms * rnTimeDelta();
+            m_info->bloom -=  rnTimeDelta();
         }
 
 
@@ -221,8 +256,9 @@ int main(void) {
                 thrown = 1;
             }
         }
+        
 
-            
+
         if (thrown) {
             g.bomb_pool[g.next_bomb_idx].transform->position.x += 1000 * rnTimeDelta();
             g.bomb_pool[g.next_bomb_idx].transform->rotation.z += 60  * rnTimeDelta();
@@ -231,7 +267,7 @@ int main(void) {
             float mag = rnVec3Mag(&dist);
 
             m_info->chromatic_aberration += mag * rnTimeDelta() * 0.01;
-            m_info->glitch += mag * rnTimeDelta() * 0.002;
+            m_info->glitch += mag * rnTimeDelta() * 0.02;
             
             if (mag <= 100) {
                 win = 1;
@@ -259,6 +295,12 @@ int main(void) {
             m_trn->position.y += cosf(rnTimeElapsed()) * rnTimeDelta() * 300;
         } else {
             m_trn->rotation.z += 360 * rnTimeDelta();
+            m_info->tint = (RnColor){
+                (sinf(rnTimeElapsed()) + 2) / 2, 0, 0, 1
+            };
+            b_info->brightness = (tanf(rnTimeElapsed()) + 1) / 2;
+            t_info->chromatic_aberration += rnTimeDelta() * 10;
+            
         }
 
     rnFrameEnd();

@@ -116,11 +116,91 @@ void ri_renderer_create_framebuffer_offscreen(RI_Renderer *r) {
     }
     
     printf("Offscreen Framebuffer created.\n");
-    
 }
 
 
+void ri_renderer_create_framebuffer_post_process(RI_Renderer *r, RI_Platform *p) {
 
+    VkImageCreateInfo ii = {0};
+    ii.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    ii.extent.width  = p->active_config.width;
+    ii.extent.height = p->active_config.height;
+    ii.extent.depth  = 1;
+    ii.imageType = VK_IMAGE_TYPE_2D;
+    ii.format    = r->swapchain.swapchain_image_format;
+    ii.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    ii.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT
+             | VK_IMAGE_USAGE_SAMPLED_BIT;
+    ii.arrayLayers = 1;
+    ii.mipLevels   = 1;
+    ii.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    ii.samples  = VK_SAMPLE_COUNT_1_BIT;
+    ii.tiling   = VK_IMAGE_TILING_OPTIMAL;
+
+    VmaAllocationCreateInfo iai = {0};
+    iai.usage = VMA_MEMORY_USAGE_AUTO;
+
+    if (vmaCreateImage(
+        r->core.allocator, &ii, &iai,
+        &r->framebuffers.post_process.color_image,
+        &r->framebuffers.post_process.color_alloc,
+        NULL
+    ) != VK_SUCCESS) {
+        printf("Failed to create Image for GUI Rect Pipeline.\n");
+        return;
+    }
+
+    VkImageViewCreateInfo vi = {0};
+    vi.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    vi.image = r->framebuffers.post_process.color_image;
+    vi.format = r->swapchain.swapchain_image_format;
+    vi.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    vi.subresourceRange.layerCount = 1;
+    vi.subresourceRange.levelCount = 1;
+    vi.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+
+    if (vkCreateImageView(r->core.device, &vi, NULL, &r->framebuffers.post_process.color_view) != VK_SUCCESS) {
+        printf("Failed to create Image View for GUI Rect Pipeline.\n");
+        return;
+    }
+
+    
+    VkFramebufferCreateInfo fi = {0};
+    fi.sType        = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+    fi.pAttachments = &r->framebuffers.post_process.color_view;
+    fi.attachmentCount = 1;
+    fi.layers = 1;
+    fi.width  = p->active_config.width;
+    fi.height = p->active_config.height;
+    fi.renderPass = r->renderpasses.offscreen_pass;
+
+    if (vkCreateFramebuffer(r->core.device, &fi, NULL, &r->framebuffers.post_process.framebuffer) != VK_SUCCESS) {
+        printf("Failed to create Framebuffer for GUI Rect Pipeline.\n");
+        return;
+    }
+
+    r->framebuffers.post_process.extent = (VkExtent2D) {
+        .width = p->active_config.width,
+        .height = p->active_config.height
+    };
+
+    VkSamplerCreateInfo si = {0};
+    si.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+    si.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    si.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    si.minFilter = VK_FILTER_NEAREST;
+    si.magFilter = VK_FILTER_NEAREST;
+    si.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
+    si.maxLod = 0.0f;
+    si.maxAnisotropy = r->active_config.max_anisotropy;
+
+    if (vkCreateSampler(r->core.device, &si, NULL, &r->framebuffers.post_process.color_sampler) != VK_SUCCESS) {
+        printf("Failed to create GUI Rect Framebuffer Sampler.\n");
+        return;
+    }
+    
+    printf("GUI Rect Framebuffer created.\n");
+}
 
 
 

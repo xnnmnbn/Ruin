@@ -394,8 +394,18 @@ void rnTextureCreateGpuResources() {
     ri_assets_texture_create_gpu_data(&engine.assets, &engine.renderer);
 }
 
-void rnTextureLoadAllToGPU() {
-    uint32_t t_count = engine.assets.gpu_textures.valid_indices.len;
+void rnTextureLoadToGpuOffscreen(RnTexture *textures, uint32_t count) {
+
+    uint32_t t_count = 0;
+    RnTexture *tex_ids = NULL;
+
+    if (textures == NULL || count == 0) {
+        t_count = engine.assets.gpu_textures.valid_indices.len;
+        tex_ids = engine.assets.gpu_textures.valid_indices.data;
+    } else {
+        t_count = count;
+        tex_ids = textures;
+    }
 
     VkWriteDescriptorSet writes[t_count];
     VkDescriptorImageInfo img_infos[t_count];
@@ -404,7 +414,7 @@ void rnTextureLoadAllToGPU() {
     
     for (uint32_t i = 0; i < t_count; i++) {
 
-        RnTexture t = from_void(engine.assets.gpu_textures.valid_indices.data, RnTexture)[i];
+        RnTexture t = from_void(tex_ids, RnTexture)[i];
 
         fprintf(stderr, "Tex: %d\n", t);
         
@@ -445,10 +455,76 @@ void rnTextureLoadAllToGPU() {
     write.pImageInfo = &img_info;
 
     vkUpdateDescriptorSets(engine.renderer.core.device, 1, &write, 0, NULL);
+
+
+    
+    img_info.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    img_info.imageView = engine.renderer.framebuffers.post_process.color_view;
+    img_info.sampler = engine.renderer.framebuffers.post_process.color_sampler;
+
+    write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    write.dstSet = engine.renderer.pipelines.gui_rect_pipeline.d_sets[1];
+    write.dstBinding = 0;
+    write.dstArrayElement = 0;
+    write.descriptorCount = 1;
+    write.pImageInfo = &img_info;
+
+    vkUpdateDescriptorSets(engine.renderer.core.device, 1, &write, 0, NULL);
+
+    printf("Finished\n");
 }
 
 
 
+
+void rnTextureLoadToGpuGui(RnTexture *textures, uint32_t count) {
+
+    uint32_t t_count = 0;
+    RnTexture *tex_ids = NULL;
+
+    if (textures == NULL || count == 0) {
+        t_count = engine.assets.gpu_textures.valid_indices.len;
+        tex_ids = engine.assets.gpu_textures.valid_indices.data;
+    } else {
+        t_count = count;
+        tex_ids = textures;
+    }
+
+    VkWriteDescriptorSet writes[t_count];
+    VkDescriptorImageInfo img_infos[t_count];
+
+
+    
+    for (uint32_t i = 0; i < t_count; i++) {
+
+        RnTexture t = from_void(tex_ids, RnTexture)[i];
+
+        fprintf(stderr, "Tex: %d\n", t);
+        
+        img_infos[i].sampler     = from_void(engine.assets.gpu_textures.data, RI_Asset_Texture_GPU)[t].sampler;
+        img_infos[i].imageView   = from_void(engine.assets.gpu_textures.data, RI_Asset_Texture_GPU)[t].view;
+        img_infos[i].imageLayout = from_void(engine.assets.gpu_textures.data, RI_Asset_Texture_GPU)[t].layout;
+        
+        writes[i] = (VkWriteDescriptorSet){0};
+        writes[i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        writes[i].dstSet = engine.renderer.pipelines.gui_rect_pipeline.d_sets[1];
+        writes[i].dstBinding = 0;
+        writes[i].dstArrayElement = t;
+        writes[i].descriptorCount = 1;
+        writes[i].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        writes[i].pImageInfo = &img_infos[i];
+
+        printf("updating %u texture descriptors, t=%u, view=%p, sampler=%p\n",
+            t_count, t,
+            img_infos[i].imageView,
+            img_infos[i].sampler);
+    }
+
+    vkUpdateDescriptorSets(engine.renderer.core.device, t_count, writes, 0, NULL);
+
+    printf("Finished\n");
+}
 
 
 
@@ -672,6 +748,40 @@ void rnSpriteRendererSortByLayer() {
 }
 
 
+
+
+
+
+
+
+
+
+RnGuiRectInfo rnDefaultGuiRectInfo(void) {
+    return (RnGuiRectInfo) {
+        ._padding = 0,
+        .layer = 0,
+        .material = 0,
+        .pivot = (RnVec2) {0},
+        .position = (RnVec2) {0},
+        .rotation = 0,
+        .scale = (RnVec2) {
+            .x = 160.0f,
+            .y = 90.0f
+        }
+    };
+}
+
+RnGuiRect rnGuiRectCreate(RnGuiRectInfo r) {
+    uint32_t idx = ri_assetstorage_idx(&engine.assets.gui_rects);
+    from_void(engine.assets.gui_rects.data, RnGuiRectInfo)[idx] = r;
+    ri_assetstorage_update(&engine.assets.gui_rects);
+
+    return idx;
+}
+
+void rnGuiRectKill(RnGuiRect r) {
+    ri_assetstorage_kill(&engine.assets.gui_rects, r);
+}
 
 
 

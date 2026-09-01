@@ -28,6 +28,7 @@ void ri_assetstorage_kill(RI_AssetStorage *s, uint32_t idx) {
 void ri_assets_init(RI_Assets *a) {
     ri_assets_material_init(a);
     ri_assets_texture_init(a);
+    ri_assets_gui_rect_init(a);
 
     printf("Assets initialized.\n");
 }
@@ -35,6 +36,7 @@ void ri_assets_init(RI_Assets *a) {
 void ri_assets_kill(RI_Assets *a, RI_Renderer *r) {
     ri_assets_material_kill(a);
     ri_assets_texture_kill(a, r);
+    ri_assets_gui_rect_kill(a);
 
     printf("Assets killed.\n");
 }

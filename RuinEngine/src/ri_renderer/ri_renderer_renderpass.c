@@ -65,7 +65,7 @@ void ri_renderer_create_renderpass_offscreen(RI_Renderer *r) {
     color_attachment_ref.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
     VkSubpassDescription subpass = {0};
-    subpass.pipelineBindPoint    = r->pipelines.bindless_offscreen_2d.bind_point;
+    subpass.pipelineBindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS;
     subpass.colorAttachmentCount = 1;
     subpass.pColorAttachments    = &color_attachment_ref;
 
@@ -88,9 +88,9 @@ void ri_renderer_create_renderpass_offscreen(RI_Renderer *r) {
 
 
     if (vkCreateRenderPass(r->core.device, &ri, NULL, &r->renderpasses.offscreen_pass) != VK_SUCCESS) {
-        printf("Failed to create offscreen renderpass.\n");
+        printf("Failed to create Offscreen Renderpass.\n");
         return;
     }
 
-    printf("Offscreen renderpass created.\n");
+    printf("Offscreen Renderpass created.\n");
 }

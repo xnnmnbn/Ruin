@@ -53,6 +53,8 @@ typedef struct {
 
     RI_AssetStorage cpu_textures;
     RI_AssetStorage gpu_textures;
+
+    RI_AssetStorage gui_rects;
 } RI_Assets;
 
 
@@ -78,6 +80,9 @@ void ri_assets_rendertarget_kill(RI_Assets *a, RI_Renderer *r);
 
 void ri_assets_texture_create_gpu_data(RI_Assets *a, RI_Renderer *r);
 void ri_assets_texture_send_to_gpu(RI_Assets *a, RI_Renderer *r);
+
+void ri_assets_gui_rect_init(RI_Assets *a);
+void ri_assets_gui_rect_kill(RI_Assets *a);
 
 
 #ifdef __cplusplus
