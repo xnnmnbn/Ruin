@@ -109,6 +109,8 @@ int main() {
 
     // There is no draw function in public API.
     // If entity has a Sprite/Mesh Renderer and a Transform, it is drawable.
+    // Don't forget the camera btw. Give Camera2D and RnTransform to an entity. It will be your camera.
+
     rnFrameEnd();
     }
 
