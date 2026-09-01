@@ -41,6 +41,18 @@ int main() {
 ### Walking Simulation
 ```C
 int main() {
+    RnConfig *cfg = rnConfigGet();
+
+    cfg->platform.title = "Ruin Test";
+    cfg->platform.width = 1280;
+    cfg->platform.height = 720;
+    cfg->platform.fullscreen = 1;
+
+    cfg->renderer.resolution_x = 1920;
+    cfg->renderer.resolution_y = 1080;
+    cfg->renderer.max_frames_in_flight = 2;
+    cfg->renderer.vsync = 0;
+
     rnSelfInit(cfg);
 
     RnEntity camera_e = rnEntityCreate();
