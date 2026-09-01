@@ -20,7 +20,7 @@ int main() {
     cfg->platform.height = 720;
 
     // other options exist
-    cfg->renderer.resolution_x = 1980;
+    cfg->renderer.resolution_x = 1920;
     cfg->renderer.resolution_y = 1080;
 
     rnSelfInit(cfg);
