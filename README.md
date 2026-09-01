@@ -47,16 +47,24 @@ int main() {
     cfg->platform.title = "Ruin Test";
     cfg->platform.width = 1280;
     cfg->platform.height = 720;
-    cfg->platform.fullscreen = 1;
+    cfg->platform.fullscreen = 1; // 0 or not 0
 
     cfg->renderer.resolution_x = 1920;
     cfg->renderer.resolution_y = 1080;
     cfg->renderer.max_frames_in_flight = 2;
-    cfg->renderer.vsync = 0;
+    cfg->renderer.vsync = 1;
 
     rnSelfInit(cfg);
 
+    cfg->vsync = 0;
+
+    // Config is reapplied only after you call this:
+    rnConfigUpdate();
+
+    // It is just a number.
     RnEntity camera_e = rnEntityCreate();
+
+    // Copy value to "camera_e"th point in fixed heap of RnCamera2Ds.
     rnCamera2DAdd(camera_e, (RnCamera2D){
         .width = 1280,
         .height = 720,
@@ -64,17 +72,26 @@ int main() {
         .near = 0.1
     });
 
+    // Same as the camera. Just goes to it's own fixed heap.
     rnTransformAdd(camera_e, rnDefaultTransform());
+
+    // Get pointer from fixed heap.
     RnTransform *camera_t = rnTransformGet(camera_e);
     camera_t->position.z = -5;
 
+    // Explicitly tell.
     rnCamera2DUse(camera_e);
 
+    // It's the number. (index of GPU resource heap)
     RnTexture player_tex = rnTextureLoad("player.png");
     RnEntity player = rnEntityCreate();
 
+    // Get default for simplicity.
     RnMaterial2DInfo def_mat = rnDefaultMaterial2DInfo();
+
     def_mat.texture = player_tex;
+
+    // Get index from another fixed heap.
     RnMaterial2D player_mat = rnMaterial2DCreate(def_mat);
 
     rnSpriteRendererAdd(player, (RnSpriteRenderer){
@@ -84,13 +101,23 @@ int main() {
     });
 
     rnTransformAdd(player, rnDefaultTransform());
+
+    // Get pointer from fixed heap.
     RnTransform *player_t = rnTransformGet(player);
 
+    // Dont even skip this.
     rnTextureCreateGpuResources();
+
+    // You can give an array of textures and their count if you don't wanna send all of them.
+    // It loads all of them if parameters are zero.
     rnTextureLoadToGpuOffscreen(NULL, 0);
 
-    // Just know you can call it whenever you want after initialization.
-    rnSpriteRendererSortByLayer();
+    // Send to VRAM for GUI objects.
+    // Isn't necessary in this example.
+    // rnTextureLoadToGpuGui(NULL, 0);
+
+    // It sorts once. Call it only if you mutate RnSpriteRenderers.
+    // rnSpriteRendererSortByLayer();
 
     // Pretty necessary
     rnTimeTargetFPS(169);
@@ -109,12 +136,14 @@ int main() {
 
     // There is no draw function in public API.
     // If entity has a Sprite/Mesh Renderer and a Transform, it is drawable.
-    // Don't forget the camera btw. Give Camera2D and RnTransform to an entity. It will be your camera.
-
+    // Dont forget the camera btw.
     rnFrameEnd();
     }
 
+    // Clears the engine resources.
     rnSelfKill();
+
+
     return 0;
 }
 ```
