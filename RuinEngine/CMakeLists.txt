@@ -37,8 +37,8 @@ target_include_directories(Ruin
 
 target_link_libraries(Ruin
     PRIVATE
-        SDL3::SDL3-static   # Statically bundles SDL3 into Ruin.dll
-        Vulkan::Vulkan      # Vulkan runtime loader
+        SDL3::SDL3-static
+        Vulkan::Vulkan
 )
 
 target_compile_options(Ruin
