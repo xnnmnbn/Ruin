@@ -15,9 +15,9 @@ int main() {
     RnConfig *cfg = rnConfigGet();
 
     // other options exist
-    cfg->platform.title = "Ruin Test";
-    cfg->platform.width = 1280;
-    cfg->platform.height = 720;
+    cfg->window.title = "Ruin Test";
+    cfg->window.width = 1280;
+    cfg->window.height = 720;
 
     // other options exist
     cfg->renderer.resolution_x = 1920;
@@ -44,10 +44,10 @@ int main() {
 int main() {
     RnConfig *cfg = rnConfigGet();
 
-    cfg->platform.title = "Ruin Test";
-    cfg->platform.width = 1280;
-    cfg->platform.height = 720;
-    cfg->platform.fullscreen = 1; // 0 or not 0
+    cfg->window.title = "Ruin Test";
+    cfg->window.width = 1280;
+    cfg->window.height = 720;
+    cfg->window.fullscreen = 1; // 0 or not 0
 
     cfg->renderer.resolution_x = 1920;
     cfg->renderer.resolution_y = 1080;
