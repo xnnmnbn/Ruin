@@ -1,4 +1,5 @@
 #include "rn_renderer.h"
+#include <cglm/types.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -13,31 +14,30 @@
 
 void rn_renderer_create_descriptor_pool(RN_Renderer *r) {
 
-    const size_t sizes_count = 6;
+    const size_t sizes_count = 3;
 
     
     VkDescriptorPoolSize pool_sizes[sizes_count];
 
     // offscreen pipeline 2d
-    pool_sizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    pool_sizes[0].descriptorCount = 1;
+    pool_sizes[0].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    pool_sizes[0].descriptorCount = 3;
 
-    pool_sizes[1].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-    pool_sizes[1].descriptorCount = 4;
-
-    pool_sizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    pool_sizes[2].descriptorCount = RUIN_MAX_TEXTURES;
+    pool_sizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    pool_sizes[1].descriptorCount = RUIN_MAX_TEXTURES;
 
     // post process pipeline
-    pool_sizes[3].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    pool_sizes[3].descriptorCount = 1;
+    pool_sizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    pool_sizes[2].descriptorCount = 1;
 
+/*
     // gui rect pipeline
     pool_sizes[4].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     pool_sizes[4].descriptorCount = 3;
 
     pool_sizes[5].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     pool_sizes[5].descriptorCount = RUIN_MAX_TEXTURES;
+*/
 
     VkDescriptorPoolCreateInfo pi = {0};
     pi.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -47,11 +47,11 @@ void rn_renderer_create_descriptor_pool(RN_Renderer *r) {
     pi.flags = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT;
 
     if (vkCreateDescriptorPool(r->core.device, &pi, NULL, &r->pipelines.descriptor_pool) != VK_SUCCESS) {
-        printf("Failed to create descriptor pool.\n");
+        RUIN_DEBUG("Failed to create Descriptor Pool.\n");
         return;
     }
 
-    printf("Descriptor Pool created.\n");
+    RUIN_DEBUG("Descriptor Pool created.\n");
 }
 
 
@@ -65,7 +65,7 @@ VkShaderModule create_shader_module(RN_Renderer *r, unsigned const char *code, u
     mi.codeSize = len;
 
     if (vkCreateShaderModule(r->core.device, &mi, NULL, &m) != VK_SUCCESS) {
-        printf("Failed to create shader module.\n");
+        RUIN_DEBUG("Failed to create shader module.\n");
         return m;
     }
 
@@ -78,8 +78,8 @@ VkShaderModule create_shader_module(RN_Renderer *r, unsigned const char *code, u
 
 void rn_renderer_create_pipeline_bindless_offscreen_2d(RN_Renderer *r) {
 
-    VkShaderModule vert_module = create_shader_module(r, bindless_2d_vert_spv, bindless_2d_vert_spv_len);
-    VkShaderModule frag_module = create_shader_module(r, bindless_2d_frag_spv, bindless_2d_frag_spv_len);
+    VkShaderModule vert_module = create_shader_module(r, offscreen2d_vert_spv, offscreen2d_vert_spv_len);
+    VkShaderModule frag_module = create_shader_module(r, offscreen2d_frag_spv, offscreen2d_frag_spv_len);
 
     VkPipelineShaderStageCreateInfo v_shader = {0};
     VkPipelineShaderStageCreateInfo f_shader = {0};
@@ -185,11 +185,11 @@ void rn_renderer_create_pipeline_bindless_offscreen_2d(RN_Renderer *r) {
     color_blending.pAttachments    = &color_blend_attachment;
     color_blending.attachmentCount = 1;
 
-    const uint8_t set0_binding_count = 4;
-    const uint8_t set1_binding_count = 1;
+    constexpr uint8_t set0_binding_count = 3;
+    constexpr uint8_t set1_binding_count = 1;
 
-    VkDescriptorSetLayoutBinding set0_bindings[4] = {0};
-    VkDescriptorSetLayoutBinding set1_bindings[1] = {0};
+    VkDescriptorSetLayoutBinding set0_bindings[set0_binding_count] = {0};
+    VkDescriptorSetLayoutBinding set1_bindings[set1_binding_count] = {0};
 
     for (uint8_t i = 0; i < set0_binding_count; i++) {
         set0_bindings[i].binding            = i;
@@ -198,12 +198,11 @@ void rn_renderer_create_pipeline_bindless_offscreen_2d(RN_Renderer *r) {
         set0_bindings[i].stageFlags         = VK_SHADER_STAGE_VERTEX_BIT;
     }
 
-    set0_bindings[3].stageFlags |= VK_SHADER_STAGE_FRAGMENT_BIT;
+    set0_bindings[2].stageFlags |= VK_SHADER_STAGE_FRAGMENT_BIT;
 
-    set0_bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    set0_bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     set0_bindings[1].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     set0_bindings[2].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-    set0_bindings[3].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
 
     set1_bindings->binding            = 0;
     set1_bindings->descriptorCount    = RUIN_MAX_TEXTURES;
@@ -240,18 +239,25 @@ void rn_renderer_create_pipeline_bindless_offscreen_2d(RN_Renderer *r) {
 
     for (uint8_t i = 0; i < set_count; i++) {
         if (vkCreateDescriptorSetLayout(r->core.device, &(dslis[i]), NULL, &(r->pipelines.bindless_offscreen_2d.d_set_layouts[i])) != VK_SUCCESS) {
-            printf("Failed to create descriptor set layout #%d of bindless pipeline 2D.\n", i);
+            RUIN_DEBUG("Failed to create descriptor set layout #%d of bindless pipeline 2D.\n", i);
             return;
         }
     }
+
+    VkPushConstantRange pc = {0};
+    pc.offset = 0;
+    pc.size = sizeof(mat4) * 2;
+    pc.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 
     VkPipelineLayoutCreateInfo layout = {0};
     layout.sType          = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     layout.pSetLayouts    = r->pipelines.bindless_offscreen_2d.d_set_layouts;
     layout.setLayoutCount = set_count;
+    layout.pPushConstantRanges    = &pc;
+    layout.pushConstantRangeCount = 1;
 
     if (vkCreatePipelineLayout(r->core.device, &layout, NULL, &r->pipelines.bindless_offscreen_2d.layout) != VK_SUCCESS) {
-        printf("Failed to create Bindless Offscreen Pipeline 2D layout.\n");
+        RUIN_DEBUG("Failed to create Bindless Offscreen Pipeline 2D layout.\n");
         return;
     }
 
@@ -274,12 +280,12 @@ void rn_renderer_create_pipeline_bindless_offscreen_2d(RN_Renderer *r) {
     pi.basePipelineHandle = VK_NULL_HANDLE;
 
     if (vkCreateGraphicsPipelines(r->core.device, VK_NULL_HANDLE, 1, &pi, NULL, &r->pipelines.bindless_offscreen_2d.pipeline) != VK_SUCCESS) {
-        printf("Failed to create Bindless Offscreen Pipeline 2D.\n");
+        RUIN_DEBUG("Failed to create Bindless Offscreen Pipeline 2D.\n");
         return;
     }
     r->pipelines.bindless_offscreen_2d.bind_point = VK_PIPELINE_BIND_POINT_GRAPHICS;
 
-    printf("Bindless Offscreen Pipeline 2D created.\n");
+    RUIN_DEBUG("Bindless Offscreen Pipeline 2D created.\n");
 
     vkDestroyShaderModule(r->core.device, vert_module, NULL);
     vkDestroyShaderModule(r->core.device, frag_module, NULL);
@@ -291,11 +297,11 @@ void rn_renderer_create_pipeline_bindless_offscreen_2d(RN_Renderer *r) {
     dsai.descriptorSetCount = 2;
 
     if (vkAllocateDescriptorSets(r->core.device, &dsai, r->pipelines.bindless_offscreen_2d.d_sets) != VK_SUCCESS) {
-        printf("Failed to allocate Descriptor Sets for Bindless Offscreen Pipeline 2D.\n");
+        RUIN_DEBUG("Failed to allocate Descriptor Sets for Bindless Offscreen Pipeline 2D.\n");
         return;
     }
 
-    printf("Descriptor Sets allocated for Bindless Offscreen Pipeline 2D.\n");
+    RUIN_DEBUG("Descriptor Sets allocated for Bindless Offscreen Pipeline 2D.\n");
 
 }
 
@@ -434,7 +440,7 @@ void rn_renderer_create_pipeline_post_process(RN_Renderer *r) {
 
     for (uint8_t i = 0; i < set_count; i++) {
         if (vkCreateDescriptorSetLayout(r->core.device, &dsli, NULL, &(r->pipelines.post_process_pipeline.d_set_layouts[i])) != VK_SUCCESS) {
-            printf("Failed to create descriptor set layout #%d of Post Process Pipeline.\n", i);
+            RUIN_DEBUG("Failed to create Descriptor Set Layout #%d of Post Process Pipeline.\n", i);
             return;
         }
     }
@@ -452,7 +458,7 @@ void rn_renderer_create_pipeline_post_process(RN_Renderer *r) {
     layout.pushConstantRangeCount = 1;
 
     if (vkCreatePipelineLayout(r->core.device, &layout, NULL, &r->pipelines.post_process_pipeline.layout) != VK_SUCCESS) {
-        printf("Failed to create Post Process Pipeline layout.\n");
+        RUIN_DEBUG("Failed to create Post Process Pipeline layout.\n");
         return;
     }
 
@@ -475,12 +481,12 @@ void rn_renderer_create_pipeline_post_process(RN_Renderer *r) {
     pi.basePipelineHandle = VK_NULL_HANDLE;
 
     if (vkCreateGraphicsPipelines(r->core.device, VK_NULL_HANDLE, 1, &pi, NULL, &r->pipelines.post_process_pipeline.pipeline) != VK_SUCCESS) {
-        printf("Failed to create Post Process Pipeline.\n");
+        RUIN_DEBUG("Failed to create Post Process Pipeline.\n");
         return;
     }
     r->pipelines.post_process_pipeline.bind_point = VK_PIPELINE_BIND_POINT_GRAPHICS;
 
-    printf("Post Process Pipeline created.\n");
+    RUIN_DEBUG("Post Process Pipeline created.\n");
 
     vkDestroyShaderModule(r->core.device, vert_module, NULL);
     vkDestroyShaderModule(r->core.device, frag_module, NULL);
@@ -493,11 +499,11 @@ void rn_renderer_create_pipeline_post_process(RN_Renderer *r) {
     VkResult res = vkAllocateDescriptorSets(r->core.device, &dsai, r->pipelines.post_process_pipeline.d_sets);
     
     if (res != VK_SUCCESS) {
-        printf("Failed to allocate Descriptor Set for Post Process Pipeline. %d\n", res);
+        RUIN_DEBUG("Failed to allocate Descriptor Set for Post Process Pipeline. %d\n", res);
         return;
     }
 
-    printf("Descriptor Sets allocated for Post Process Pipeline.\n");
+    RUIN_DEBUG("Descriptor Sets allocated for Post Process Pipeline.\n");
 }
 
 
@@ -509,7 +515,7 @@ void rn_renderer_create_pipeline_post_process(RN_Renderer *r) {
 
 
 
-
+/*
 void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r) {
 
     VkShaderModule vert_module = create_shader_module(r, gui_vert_spv, gui_vert_spv_len);
@@ -678,7 +684,7 @@ void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r) {
 
     for (uint8_t i = 0; i < set_count; i++) {
         if (vkCreateDescriptorSetLayout(r->core.device, &(dslis[i]), NULL, &(r->pipelines.gui_rect_pipeline.d_set_layouts[i])) != VK_SUCCESS) {
-            printf("Failed to create descriptor set layout #%d of GUI Rect Pipeline.\n", i);
+            RUIN_DEBUG("Failed to create descriptor set layout #%d of GUI Rect Pipeline.\n", i);
             return;
         }
     }
@@ -696,7 +702,7 @@ void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r) {
     layout.pushConstantRangeCount = 1;
 
     if (vkCreatePipelineLayout(r->core.device, &layout, NULL, &r->pipelines.gui_rect_pipeline.layout) != VK_SUCCESS) {
-        printf("Failed to create GUI Rect Pipeline Layout.\n");
+        RUIN_DEBUG("Failed to create GUI Rect Pipeline Layout.\n");
         return;
     }
 
@@ -719,12 +725,12 @@ void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r) {
     pi.basePipelineHandle = VK_NULL_HANDLE;
 
     if (vkCreateGraphicsPipelines(r->core.device, VK_NULL_HANDLE, 1, &pi, NULL, &r->pipelines.gui_rect_pipeline.pipeline) != VK_SUCCESS) {
-        printf("Failed to create GUI Rect Pipeline.\n");
+        RUIN_DEBUG("Failed to create GUI Rect Pipeline.\n");
         return;
     }
     r->pipelines.gui_rect_pipeline.bind_point = VK_PIPELINE_BIND_POINT_GRAPHICS;
 
-    printf("GUI Rect Pipeline created.\n");
+    RUIN_DEBUG("GUI Rect Pipeline created.\n");
 
     vkDestroyShaderModule(r->core.device, vert_module, NULL);
     vkDestroyShaderModule(r->core.device, frag_module, NULL);
@@ -737,13 +743,12 @@ void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r) {
 
     VkResult res = vkAllocateDescriptorSets(r->core.device, &dsai, r->pipelines.gui_rect_pipeline.d_sets);
 
-    printf("Res: %i\n", res);
-
     if (res != VK_SUCCESS) {
-        printf("Failed to allocate Descriptor Sets for GUI Rect Pipeline.\n");
+        RUIN_DEBUG("Failed to allocate Descriptor Sets for GUI Rect Pipeline.\n");
         return;
     }
 
-    printf("Descriptor Sets allocated for GUI Rect Pipeline.\n");
+    RUIN_DEBUG("Descriptor Sets allocated for GUI Rect Pipeline.\n");
 
 }
+*/

@@ -80,18 +80,11 @@ void rn_renderer_create_instance(RN_Renderer *r, RN_Platform *p) {
         debug_extension = 1;
     }
 
-
-    //const char* required_extensions[extension_count + 1 + debug_extension];
-
     const char *required_extensions[extension_count + 3];
 
     for (size_t i = 0; i < extension_count; i++) {
         required_extensions[i] = sdl_extensions[i];
     }
-
-    //required_extensions[extension_count + 0] = VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME;
-
-    //extension_count += 1;
 
     if (enable_validation) {
         required_extensions[extension_count] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
@@ -113,12 +106,11 @@ void rn_renderer_create_instance(RN_Renderer *r, RN_Platform *p) {
     ii.pApplicationInfo        = &ai;
     ii.ppEnabledExtensionNames = required_extensions;
     ii.enabledExtensionCount   = extension_count;
-    // ii.flags                   = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
     ii.pNext                   = NULL;
 
     if (enable_validation) {
         if (!check_validation_layer_support()) {
-            printf("Validation layers requested but not available.\n");
+            RUIN_DEBUG("Validation layers requested but not available.\n");
             return;
         }
 
@@ -128,11 +120,11 @@ void rn_renderer_create_instance(RN_Renderer *r, RN_Platform *p) {
     
     VkResult res = vkCreateInstance(&ii, NULL, &r->core.instance);
     if (res != VK_SUCCESS) {
-        printf("Failed to create instance: %d\n", res);
+        RUIN_DEBUG("Failed to create instance: %d\n", res);
         return;
     }
 
-    printf("Instance created.\n");
+    RUIN_DEBUG("Instance created.\n");
 
     
     return;
@@ -146,7 +138,7 @@ void rn_renderer_create_instance(RN_Renderer *r, RN_Platform *p) {
 void rn_renderer_create_debug_messenger(RN_Renderer *r) {
 
     if (!check_validation_layer_support()) {
-        printf("Validation layers not found.\n");
+        RUIN_DEBUG("Validation layers not found.\n");
         return;
     }
     
@@ -168,24 +160,24 @@ void rn_renderer_create_debug_messenger(RN_Renderer *r) {
 
     if (fn != NULL) {
         if (fn(r->core.instance, &mi, NULL, &r->core.messenger) != VK_SUCCESS) {
-            printf("Failed to create debug messenger.\n");
+            RUIN_DEBUG("Failed to create debug messenger.\n");
             return;
         }
     }
 
-    printf("Debug messenger created.\n");
+    RUIN_DEBUG("Debug messenger created.\n");
 }
 
 
 
 void rn_renderer_create_surface(RN_Renderer *r, RN_Platform *p) {
     if (SDL_Vulkan_CreateSurface((SDL_Window*)p->window.window, r->core.instance, NULL, &r->core.surface) == 0) {
-        printf("Failed to create surface KHR.\n");
+        RUIN_DEBUG("Failed to create Surface KHR.\n");
         printf("%s\n", SDL_GetError());
         return;
     }
 
-    printf("Surface KHR created.\n");
+    RUIN_DEBUG("Surface KHR created.\n");
 }
 
 
@@ -196,11 +188,11 @@ void rn_renderer_select_physical_device(RN_Renderer *r) {
     vkEnumeratePhysicalDevices(r->core.instance, &device_count, NULL);
 
     if (device_count == 0) {
-        printf("Your PC is trash.\n");        
+        RUIN_DEBUG("Your PC is trash.\n");        
         return;
     }
 
-    printf("You have %d physical devices.\n", device_count);
+    RUIN_DEBUG("You have %d physical devices.\n", device_count);
 
     VkPhysicalDevice p_devices[device_count];
     vkEnumeratePhysicalDevices(r->core.instance, &device_count, p_devices);
@@ -214,7 +206,7 @@ void rn_renderer_select_physical_device(RN_Renderer *r) {
             
             VkPhysicalDeviceProperties props;
             vkGetPhysicalDeviceProperties(r->core.physical_device, &props);
-            printf("Selected physical device: %s\n", props.deviceName);
+            RUIN_DEBUG("Selected physical device: %s\n", props.deviceName);
             return;
         }
     }
@@ -228,7 +220,7 @@ void rn_renderer_select_physical_device(RN_Renderer *r) {
 
             VkPhysicalDeviceProperties props;
             vkGetPhysicalDeviceProperties(r->core.physical_device, &props);
-            printf("Selected physical device: %s\n", props.deviceName);
+            RUIN_DEBUG("Selected physical device: %s\n", props.deviceName);
             return;
         }
     }
@@ -237,7 +229,7 @@ void rn_renderer_select_physical_device(RN_Renderer *r) {
     VkPhysicalDeviceProperties props;
     vkGetPhysicalDeviceProperties(r->core.physical_device, &props);
 
-    printf("Selected physical device: %s\n", props.deviceName);
+    RUIN_DEBUG("Selected physical device: %s\n", props.deviceName);
 }
 
 void rn_renderer_create_logical_device(RN_Renderer *r) {
@@ -288,23 +280,23 @@ void rn_renderer_create_logical_device(RN_Renderer *r) {
     di.pNext                   = &features2;
 
     if (vkCreateDevice(r->core.physical_device, &di, NULL, &r->core.device) != VK_SUCCESS) {
-        printf("Failed to create logical device.\n");
+        RUIN_DEBUG("Failed to create Logical Device.\n");
         return;
     }
 
-    printf("Logical device created.\n");
+    RUIN_DEBUG("Logical device created.\n");
 
     vkGetDeviceQueue(r->core.device, indices.graphics_family, 0, &r->core.graphics_queue);
-    printf("Graphics queue acquired.\n");
+    RUIN_DEBUG("Graphics queue acquired.\n");
 
     if (q_count == 2) {
         vkGetDeviceQueue(r->core.device, indices.present_family, 0, &r->core.present_queue);
-        printf("Presentation queue acquired.\n");
+        RUIN_DEBUG("Presentation queue acquired.\n");
         return;
     }
 
     r->core.present_queue = r->core.graphics_queue;
-    printf("Graphics queue will be used for presentation.\n");
+    RUIN_DEBUG("Graphics queue will be used for presentation.\n");
 }
 
 

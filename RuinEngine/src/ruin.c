@@ -2,8 +2,13 @@
 #include "cvec.h"
 #include <SDL3/SDL_mouse.h>
 #include <SDL3/SDL_pixels.h>
+#include <SDL3/SDL_stdinc.h>
+#include <assert.h>
 #include <stdlib.h>
+#include "rn_assets/rn_assets.h"
+#include "rn_components/rn_components.h"
 #include "rn_engine.h"
+#include "rn_renderer/rn_renderer.h"
 #include "stb_image.h"
 #include "stb_image_resize2.h"
 #include "rn_engine.h"
@@ -16,6 +21,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <time.h>
 #include <vulkan/vulkan_core.h>
 
 static RuinEngine engine = {0};
@@ -64,10 +70,15 @@ void rnConfigUpdatePlatform() {
 
 void rnConfigUpdateRenderer() {
     engine.renderer.sync.current_frame = 0;
-    engine.renderer.sync.skip_wait     = 1;
     engine.renderer.active_config      = engine.pending_config.renderer;
 
     rn_renderer_recreate_swapchain(&engine.renderer, &engine.platform);
+}
+
+
+void rnConfigUpdateAll() {
+    rnConfigUpdatePlatform();
+    rnConfigUpdateRenderer();
 }
 
 
@@ -86,7 +97,11 @@ RnBool rnSelfInit(RnConfig *c) {
         return 0;
     }
 
-    printf("Size of engine is %zu bytes.\n", sizeof(engine));
+    RUIN_DEBUG("Size of engine is %zu bytes.\n", sizeof(engine));
+
+    static_assert((sizeof(RnRenderer2D) == 64), "fuck");
+
+    srand(time(nullptr));
 
     engine.pending_config = *c;
     engine.active_config = *c;
@@ -131,14 +146,16 @@ RnBool rnSelfRunning() {
 RnSound rnSoundLOad(const char *path) {
     RnSound idx = rn_assetstorage_idx(&engine.assets.sounds);
 
-    if (ma_sound_init_from_file(
-        &engine.audio.engine,
-        path,
-        MA_SOUND_FLAG_DECODE,
-        NULL, 0,
-        &(from_void(engine.assets.sounds.data, ma_sound)[idx]
-    )) != MA_SUCCESS) {
-        return 0;
+    for (uint8_t i = 0; i < MAX_SOUND_REF_COUNT; i++) {
+        if (ma_sound_init_from_file(
+            &engine.audio.engine,
+            path,
+            MA_SOUND_FLAG_DECODE,
+            NULL, NULL,
+            &((from_void(engine.assets.sounds.data, RN_Asset_Sound)[idx].sounds[i])
+        )) != MA_SUCCESS) {
+            return 0;
+        }
     }
 
     rn_assetstorage_update(&engine.assets.sounds);
@@ -167,7 +184,9 @@ RnMusic rnMusicLoad(const char *path) {
 
 
 void rnSoundPlay(RnSound s) {
-    ma_sound_start(&(from_void(engine.assets.sounds.data, ma_sound)[s]));
+    RN_Asset_Sound *sound = &(from_void(engine.assets.sounds.data, RN_Asset_Sound)[s]);
+    ma_sound_start(&(sound->sounds[sound->current_ref]));
+    sound->current_ref = (sound->current_ref + 1) % MAX_SOUND_REF_COUNT;
 }
 
 void rnMusicPlay(RnMusic m) {
@@ -219,7 +238,7 @@ void rnFrameEnd() {
     if (engine.platform.window.resized) {
 
         if (engine.platform.active_config.width == 0 || engine.platform.active_config.height == 0) {
-            printf("%d, %d\n", engine.platform.active_config.width, engine.platform.active_config.height);
+            RUIN_DEBUG("%d, %d\n", engine.platform.active_config.width, engine.platform.active_config.height);
             return;
         }
         rn_renderer_recreate_swapchain(&engine.renderer, &engine.platform);
@@ -370,7 +389,7 @@ RnBool rnEntityValid(RnEntity e) {
 
 
 
-
+/*
 RnMaterial2DInfo rnDefaultMaterial2DInfo() {
     return (RnMaterial2DInfo) {
         .texture = 0,
@@ -402,28 +421,10 @@ RnMaterial2DInfo *rnMaterial2DGet(RnMaterial2D m) {
 void rnMaterial2DKill(RnMaterial2D m) {
     rn_assetstorage_kill(&engine.assets.material2Ds, m);
 }
+*/
 
 
 
-RnMaterial3DInfo rnDefaultMaterial3DInfo() {
-    return (RnMaterial3DInfo) {0};
-}
-
-RnMaterial3D rnMaterial3DCreate(RnMaterial3DInfo i) {
-    uint32_t idx = rn_assetstorage_idx(&engine.assets.material3Ds);
-    from_void(engine.assets.material3Ds.data, RnMaterial3DInfo)[idx] = i;
-    rn_assetstorage_update(&engine.assets.material3Ds);
-
-    return idx;
-}
-
-RnMaterial3DInfo *rnMaterial3DGet(RnMaterial3D m) {
-    return &(from_void(engine.assets.material3Ds.data, RnMaterial3DInfo)[m]);
-}
-
-void rnMaterial3DKill(RnMaterial3D m) {
-    rn_assetstorage_kill(&engine.assets.material3Ds, m);
-}
 
 
 
@@ -446,7 +447,7 @@ RnTexture rnTextureCreate(const char *path, uint32_t w, uint32_t h) {
 
     stbi_uc *pixels = stbi_load(path, &_w, &_h, &_ch, STBI_rgb_alpha);
     if (!pixels) {
-        printf("Failed to load Texture to CPU: %s.\n", path);
+        RUIN_DEBUG("Failed to load Texture to CPU: %s.\n", path);
         return  0;
     }
 
@@ -495,8 +496,8 @@ RnTexture rnTextureCreate(const char *path, uint32_t w, uint32_t h) {
     rn_assetstorage_update(&engine.assets.cpu_textures);
     rn_assetstorage_update(&engine.assets.gpu_textures);
 
-    printf("Texture loaded to CPU: %s\n", path);
-    printf("CPU idx: %d\n", cpu_next_idx);
+    RUIN_DEBUG("Texture loaded to CPU: %s\n", path);
+    RUIN_DEBUG("CPU idx: %d\n", cpu_next_idx);
 
     return gpu_next_idx;
 }
@@ -527,7 +528,7 @@ void rnTextureLoadToGpuOffscreen(RnTexture *textures, uint32_t count) {
 
         RnTexture t = from_void(tex_ids, RnTexture)[i];
 
-        fprintf(stderr, "Tex: %d\n", t);
+        RUIN_DEBUG("Tex: %d\n", t);
         
         img_infos[i].sampler     = from_void(engine.assets.gpu_textures.data, RN_Asset_Texture_GPU)[t].sampler;
         img_infos[i].imageView   = from_void(engine.assets.gpu_textures.data, RN_Asset_Texture_GPU)[t].view;
@@ -542,7 +543,7 @@ void rnTextureLoadToGpuOffscreen(RnTexture *textures, uint32_t count) {
         writes[i].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
         writes[i].pImageInfo = &img_infos[i];
 
-        printf("updating %u texture descriptors, t=%u, view=%p, sampler=%p\n",
+        RUIN_DEBUG("updating %u texture descriptors, t=%u, view=%p, sampler=%p\n",
             t_count, t,
             img_infos[i].imageView,
             img_infos[i].sampler);
@@ -568,7 +569,7 @@ void rnTextureLoadToGpuOffscreen(RnTexture *textures, uint32_t count) {
     vkUpdateDescriptorSets(engine.renderer.core.device, 1, &write, 0, NULL);
 
 
-    
+/*
     img_info.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
     img_info.imageView = engine.renderer.framebuffers.post_process.color_view;
     img_info.sampler = engine.renderer.framebuffers.post_process.color_sampler;
@@ -582,13 +583,13 @@ void rnTextureLoadToGpuOffscreen(RnTexture *textures, uint32_t count) {
     write.pImageInfo = &img_info;
 
     vkUpdateDescriptorSets(engine.renderer.core.device, 1, &write, 0, NULL);
-
-    printf("Finished\n");
+*/
+    RUIN_DEBUG("Descriptor Sets updated.\n");
 }
 
 
 
-
+/*
 void rnTextureLoadToGpuGui(RnTexture *textures, uint32_t count) {
 
     uint32_t t_count = 0;
@@ -611,7 +612,7 @@ void rnTextureLoadToGpuGui(RnTexture *textures, uint32_t count) {
 
         RnTexture t = from_void(tex_ids, RnTexture)[i];
 
-        fprintf(stderr, "Tex: %d\n", t);
+        RUIN_DEBUG("Tex: %d\n", t);
         
         img_infos[i].sampler     = from_void(engine.assets.gpu_textures.data, RN_Asset_Texture_GPU)[t].sampler;
         img_infos[i].imageView   = from_void(engine.assets.gpu_textures.data, RN_Asset_Texture_GPU)[t].view;
@@ -626,7 +627,7 @@ void rnTextureLoadToGpuGui(RnTexture *textures, uint32_t count) {
         writes[i].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
         writes[i].pImageInfo = &img_infos[i];
 
-        printf("updating %u texture descriptors, t=%u, view=%p, sampler=%p\n",
+        RUIN_DEBUG("Updating %u Texture Descriptors, t=%u, view=%p, sampler=%p\n",
             t_count, t,
             img_infos[i].imageView,
             img_infos[i].sampler);
@@ -634,9 +635,9 @@ void rnTextureLoadToGpuGui(RnTexture *textures, uint32_t count) {
 
     vkUpdateDescriptorSets(engine.renderer.core.device, t_count, writes, 0, NULL);
 
-    printf("Finished\n");
+    RUIN_DEBUG("Descriptor Sets updated.\n");
 }
-
+*/
 
 
 
@@ -763,40 +764,6 @@ RnCamera2D *rnCamera2DGet(RnEntity e) {
     return &(from_void(engine.components.camera2ds.begin_points[0], RnCamera2D)[e]);
 }
 
-void rnCamera3DAdd(RnEntity e, RnCamera3D c) {
-    from_void(engine.components.camera3ds.begin_points[0], RnCamera3D)[e] = c;
-    RnEntity *entities  = engine.components.camera3ds.begin_points[2];
-    uint32_t elem_count = engine.components.camera3ds.elem_counts;
-
-    for (uint32_t i = 0; i < elem_count; i++) {
-        if (entities[i] == e) return;
-    }
-
-    entities[elem_count] = e;
-    engine.components.camera3ds.elem_counts += 1;
-}
-
-void rnCamera3DKill(RnEntity e) {
-    RnEntity *entities  = engine.components.camera3ds.begin_points[2];
-    uint32_t elem_count = engine.components.camera3ds.elem_counts;
-
-    for (uint32_t i = 0; i < elem_count; i++) {
-        if (entities[i] == e) {
-            entities[i] = entities[elem_count - 1];
-            engine.components.camera3ds.elem_counts -= 1;
-            break;
-        }
-    }
-}
-
-void rnCamera3DUse(RnEntity e) {
-    engine.components.camera_in_use = e;
-    engine.components.camera_mode = 3;
-}
-
-RnCamera3D *rnCamera3DGet(RnEntity e) {
-    return &(from_void(engine.components.camera3ds.begin_points[0], RnCamera3D)[e]);
-}
 
 
 
@@ -806,38 +773,44 @@ RnCamera3D *rnCamera3DGet(RnEntity e) {
 
 
 
-
-RnSpriteRenderer rnDefaultSpriteRenderer() {
-    return (RnSpriteRenderer){
-        .dead = 0,
-        .material = 0,
+RnRenderer2D rnDefaultRenderer2D() {
+    return (RnRenderer2D) {
+        .aberration = {.x = 0.005F, .y = 0.005F},
+        .aberration_strength = 0,
+        .brightness = 1,
+        .layer = 0,
+        .texture = 0,
+        .saturation = 1,
+        .contrast = 1,
+        .tint = { .r = 1.0F, .g = 1.0F, .b = 1.F, .a = 1.0F },
+        .uv = { .x = 0.0F, .y = 0.0F, .w = 1.0F, .h = 1.0F },
     };
 }
 
-RnSpriteRenderer *rnSpriteRendererGet(RnEntity e) {
-    return &(from_void(engine.components.sprite_renderers.begin_points[0], RnSpriteRenderer)[e]);
+RnRenderer2D *rnRenderer2DGet(RnEntity e) {
+    return &(from_void(engine.components.renderer2ds.begin_points[0], RnRenderer2D)[e]);
 }
 
-void rnSpriteRendererAdd(RnEntity e, RnSpriteRenderer r) {
-    from_void(engine.components.sprite_renderers.begin_points[0], RnSpriteRenderer)[e] = r;
-    RnEntity *entities  = engine.components.sprite_renderers.begin_points[1];
-    uint32_t elem_count = engine.components.sprite_renderers.elem_counts;
+void rnRenderer2DAdd(RnEntity e, RnRenderer2D r) {
+    from_void(engine.components.renderer2ds.begin_points[0], RnRenderer2D)[e] = r;
+    RnEntity *entities  = engine.components.renderer2ds.begin_points[1];
+    uint32_t elem_count = engine.components.renderer2ds.elem_counts;
 
     for (uint32_t i = 0; i < elem_count; i++) {
         if (entities[i] == e) return;
     }
 
     entities[elem_count] = e;
-    engine.components.sprite_renderers.elem_counts += 1;
+    engine.components.renderer2ds.elem_counts += 1;
 }
 
-void rnSpriteRendererKill(RnEntity e) {
-    RnEntity *entities  = engine.components.sprite_renderers.begin_points[1];
-    uint32_t elem_count = engine.components.sprite_renderers.elem_counts;
+void rnRenderer2DKill(RnEntity e) {
+    RnEntity *entities  = engine.components.renderer2ds.begin_points[1];
+    uint32_t elem_count = engine.components.renderer2ds.elem_counts;
 
     for (uint32_t i = 0; i < elem_count; i++) {
         if (entities[i] == e) {
-            engine.components.sprite_renderers.elem_counts -= 1;
+            engine.components.renderer2ds.elem_counts -= 1;
             entities[i] = entities[elem_count - 1];
             break;
         }
@@ -848,14 +821,14 @@ int sort_by_layer(const void *a, const void *b) {
     RnEntity e1 = *(RnEntity*)a;
     RnEntity e2 = *(RnEntity*)b;
 
-    RnSpriteRenderer *r1 = &(from_void(engine.components.sprite_renderers.begin_points[0], RnSpriteRenderer)[e1]);
-    RnSpriteRenderer *r2 = &(from_void(engine.components.sprite_renderers.begin_points[0], RnSpriteRenderer)[e2]);
+    RnRenderer2D *r1 = &(from_void(engine.components.renderer2ds.begin_points[0], RnRenderer2D)[e1]);
+    RnRenderer2D *r2 = &(from_void(engine.components.renderer2ds.begin_points[0], RnRenderer2D)[e2]);
 
     return (r2->layer < r1->layer) - (r1->layer < r2->layer);
 }
 
-void rnSpriteRendererSortByLayer() {
-    qsort(engine.components.sprite_renderers.begin_points[1], engine.components.sprite_renderers.elem_counts, sizeof(RnEntity), sort_by_layer);
+void rnRenderer2DSortByLayer() {
+    qsort(engine.components.renderer2ds.begin_points[1], engine.components.renderer2ds.elem_counts, sizeof(RnEntity), sort_by_layer);
 }
 
 
@@ -866,7 +839,7 @@ void rnSpriteRendererSortByLayer() {
 
 
 
-
+/*
 RnGuiRectInfo rnDefaultGuiRectInfo(void) {
     return (RnGuiRectInfo) {
         ._padding = 0,
@@ -893,7 +866,7 @@ RnGuiRect rnGuiRectCreate(RnGuiRectInfo r) {
 void rnGuiRectKill(RnGuiRect r) {
     rn_assetstorage_kill(&engine.assets.gui_rects, r);
 }
-
+*/
 
 
 

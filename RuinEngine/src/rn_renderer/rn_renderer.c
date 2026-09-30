@@ -108,11 +108,11 @@ void rn_renderer_create_vma(RN_Renderer *r) {
     vma.vulkanApiVersion = VK_API_VERSION_1_3;
 
     if (vmaCreateAllocator(&vma, &r->core.allocator) != VK_SUCCESS) {
-        printf("Failed to create Vulkan Memory Allocator.\n");
+        RUIN_DEBUG("Failed to create Vulkan Memory Allocator.\n");
         return;
     }
 
-    printf("Memory Allocator created.\n");
+    RUIN_DEBUG("Memory Allocator created.\n");
 }
 
 void rn_renderer_kill_vma(RN_Renderer *r) {
@@ -146,20 +146,23 @@ void rn_renderer_init(RN_Renderer *r, RN_Platform *p) {
 
     rn_renderer_create_pipeline_bindless_offscreen_2d(r);
     rn_renderer_create_pipeline_post_process(r);
-    rn_renderer_create_pipeline_rect_gui(r);
+    // rn_renderer_create_pipeline_rect_gui(r);
     
     rn_renderer_create_swapchain_framebuffers(r, p);
     rn_renderer_create_commands(r);
     rn_renderer_create_sync_objects(r);
 
     rn_renderer_init_gpu_buffers_2d(r);
-    rn_renderer_init_gpu_buffers_gui_rect(r);
+    // rn_renderer_init_gpu_buffers_gui_rect(r);
 
     r->post_process.brightness = 1.0f;
     r->post_process.saturation = 1.0f;
     r->post_process.contrast = 1.0f;
     r->post_process.invert = 0.0f;
-    r->post_process.tint = (RnColor){ 1.0f, 1.0f, 1.0f, 1.0f };
+    r->post_process.tint.r = 1.0;
+    r->post_process.tint.g = 1.0;
+    r->post_process.tint.b = 1.0;
+    r->post_process.tint.a = 1.0;
 }
 
 
@@ -167,12 +170,12 @@ void rn_renderer_init(RN_Renderer *r, RN_Platform *p) {
 void rn_renderer_kill(RN_Renderer *r) {
     
     if (r->core.device == VK_NULL_HANDLE) {
-        printf("Renderer was not killed since it has never been created.\n");
+        RUIN_DEBUG("Renderer was not killed since it has never been created.\n");
         return;
     }
     vkDeviceWaitIdle(r->core.device);
 
-    rn_renderer_kill_gpu_buffers_gui_rect(r);
+    // rn_renderer_kill_gpu_buffers_gui_rect(r);
     rn_renderer_kill_gpu_buffers_2d(r);
 
     vmaDestroyImage(r->core.allocator, r->framebuffers.offscreen.color_image, r->framebuffers.offscreen.color_alloc);
@@ -220,12 +223,13 @@ void rn_renderer_kill(RN_Renderer *r) {
         vkDestroyDescriptorSetLayout(r->core.device, r->pipelines.post_process_pipeline.d_set_layouts[i], NULL);
     }
 
+/*
     vkDestroyPipeline(r->core.device, r->pipelines.gui_rect_pipeline.pipeline, NULL);
     vkDestroyPipelineLayout(r->core.device, r->pipelines.gui_rect_pipeline.layout, NULL);
     for (size_t i = 0; i < r->pipelines.gui_rect_pipeline.d_set_count; i++) {
         vkDestroyDescriptorSetLayout(r->core.device, r->pipelines.gui_rect_pipeline.d_set_layouts[i], NULL);
     }    
-
+*/
 
 
 
@@ -249,7 +253,7 @@ void rn_renderer_kill(RN_Renderer *r) {
     vkDestroySurfaceKHR(r->core.instance, r->core.surface, NULL);
     vkDestroyInstance(r->core.instance, NULL);
 
-    printf("Renderer killed.\n");
+    RUIN_DEBUG("Renderer killed.\n");
 }
 
 

@@ -36,25 +36,17 @@ void rn_components_init(RN_Components *c) {
         ) + 100
     );
 
-    c->camera3ds.linear_data = malloc(
-        RUIN_MAX_ENTITIES * (
-            sizeof(RnCamera3D)          +
-            sizeof(RN_Component_Camera) +
-            sizeof(RnEntity)
-        ) + 100
-    );
 
-    c->sprite_renderers.linear_data = malloc(
+    c->renderer2ds.linear_data = malloc(
         RUIN_MAX_ENTITIES * (
-            sizeof(RnSpriteRenderer) +
+            sizeof(RnRenderer2D) +
             sizeof(RnEntity)
         ) + 100
     );
 
     cvec_init(c->transforms.free_entities);
     cvec_init(c->camera2ds.free_entities);
-    cvec_init(c->camera3ds.free_entities);
-    cvec_init(c->sprite_renderers.free_entities);
+    cvec_init(c->renderer2ds.free_entities);
 
     c->transforms.data_sizes[0] = sizeof(RnTransform);
     c->transforms.data_sizes[1] = sizeof(RN_Component_Transform);
@@ -64,12 +56,8 @@ void rn_components_init(RN_Components *c) {
     c->camera2ds.data_sizes[1] = sizeof(RN_Component_Camera);
     c->camera2ds.data_sizes[2] = sizeof(RnEntity);
 
-    c->camera3ds.data_sizes[0] = sizeof(RnCamera3D);
-    c->camera3ds.data_sizes[1] = sizeof(RN_Component_Camera);
-    c->camera3ds.data_sizes[2] = sizeof(RnEntity);
-
-    c->sprite_renderers.data_sizes[0] = sizeof(RnSpriteRenderer);
-    c->sprite_renderers.data_sizes[1] = sizeof(RnEntity);
+    c->renderer2ds.data_sizes[0] = sizeof(RnRenderer2D);
+    c->renderer2ds.data_sizes[1] = sizeof(RnEntity);
 
 
     size_t offset;
@@ -121,44 +109,21 @@ void rn_components_init(RN_Components *c) {
     c->camera2ds.begin_points[2] = base + offset;
 
 
-    
-    // RnCamera3D
-    base = (uint8_t*)c->camera3ds.linear_data;
+
+    // RnRenderer2D
+    base = (uint8_t*)c->renderer2ds.linear_data;
     offset = 0;
 
-    // Block 0: RnCamera3D
-    align = alignof(RnCamera3D);
+    // Block 0: RnRenderer2D
+    align = alignof(RnRenderer2D);
     offset = (offset + align - 1) & ~(align - 1);
-    c->camera3ds.begin_points[0] = base + offset;
-    offset += RUIN_MAX_ENTITIES * sizeof(RnCamera3D);
-
-    // Block 1: RI_Component_Camera
-    align = alignof(RN_Component_Camera);
-    offset = (offset + align - 1) & ~(align - 1);
-    c->camera3ds.begin_points[1] = base + offset;
-    offset += RUIN_MAX_ENTITIES * sizeof(RN_Component_Camera);
-
-    // Block 2: RnEntity
-    align = alignof(RnEntity);
-    offset = (offset + align - 1) & ~(align - 1);
-    c->camera3ds.begin_points[2] = base + offset;
-
-
-
-    // RnSpriteRenderer
-    base = (uint8_t*)c->sprite_renderers.linear_data;
-    offset = 0;
-
-    // Block 0: RnSpriteRenderer
-    align = alignof(RnSpriteRenderer);
-    offset = (offset + align - 1) & ~(align - 1);
-    c->sprite_renderers.begin_points[0] = base + offset;
-    offset += RUIN_MAX_ENTITIES * sizeof(RnSpriteRenderer);
+    c->renderer2ds.begin_points[0] = base + offset;
+    offset += RUIN_MAX_ENTITIES * sizeof(RnRenderer2D);
 
     // Block 1: RnEntity
     align = alignof(RnEntity);
     offset = (offset + align - 1) & ~(align - 1);
-    c->sprite_renderers.begin_points[1] = base + offset;
+    c->renderer2ds.begin_points[1] = base + offset;
 }
 
 
@@ -170,12 +135,11 @@ void rn_components_kill(RN_Components *c) {
 
     free(c->transforms.linear_data);
     free(c->camera2ds.linear_data);
-    free(c->camera3ds.linear_data);
-    free(c->sprite_renderers.linear_data);
+    free(c->renderer2ds.linear_data);
 
     cvec_kill(c->entities);
 
-    printf("Components killed.\n");
+    RUIN_DEBUG("Components killed.\n");
 }
 
 

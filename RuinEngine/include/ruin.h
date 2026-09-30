@@ -27,7 +27,11 @@ typedef uint8_t RnBool;
 #define RN_TRUE  1
 #define RN_FALSE 0
 
-#define RUIN_DEBUG(fmt, ...) printf("[ruin] " fmt "\n", ##__VA_ARGS__)
+#ifdef NDEBUG
+    #define RUIN_DEBUG(...) ((void*)0)
+#else
+    #define RUIN_DEBUG(txt, ...) fprintf(stderr, "[RUIN] " txt "\n", ##__VA_ARGS__)
+#endif
 
 #define RUIN_INVALID_ID          0
 #define RUIN_MAX_TEXTURES        1024
@@ -43,13 +47,10 @@ typedef uint8_t RnBool;
 
 typedef uint32_t RnEntity;
 typedef uint32_t RnTexture;
-typedef uint32_t RnMaterial2D;
-typedef uint32_t RnMaterial3D;
 typedef uint32_t RnSound;
 typedef uint32_t RnMusic;
 typedef uint32_t RnMesh;
 typedef uint32_t RnRenderTarget;
-typedef uint32_t RnGuiRect;
 
 typedef enum {
     RN_KEY_0 = 39,
@@ -130,23 +131,6 @@ typedef enum {
     RN_MOUSE_X2     = 5
 } RnMouseButton;
 
-typedef enum {
-    RN_RIGIDBODY_TYPE_DYNAMIC,
-    RN_RIGIDBODY_TYPE_STATIC,
-    RN_RIGIDBODY_TYPE_KINEMATIC
-} RnRigidBodyType;
-
-typedef enum {
-    RN_RIGIDBODY2D_SHAPE_SQUARE,
-    RN_RIGIDBODY2D_SHAPE_CIRCLE
-} RnRigidBody2DShape;
-
-typedef enum {
-    RN_RIGIDBODY3D_SHAPE_CUBE,
-    RN_RIGIDBODY3D_SHAPE_SPHERE,
-    RN_RIGIDBODY3D_SHAPE_CYLINDER
-} RnRigidBody3DShape;
-
 typedef struct {
     float x, y;
 } RnVec2;
@@ -160,8 +144,15 @@ typedef struct {
 } RnVec4;
 
 typedef struct {
+    float x, y, w, h;
+} RnRect;
+
+typedef struct {
     float r, g, b, a;
 } RnColor;
+
+
+
 
 typedef struct {
     const char *title;
@@ -193,10 +184,10 @@ typedef struct {
 } RnConfig;
 
 typedef struct {
-    float brightness;
-    float saturation;
-    float contrast;
-    float invert;
+    float   brightness;
+    float   saturation;
+    float   contrast;
+    float   invert;
     RnColor tint;
 } RnPostProcess;
 
@@ -207,38 +198,6 @@ typedef struct {
     RnEntity parent;
     RnBool   dead;
 } RnTransform;
-
-typedef struct {
-    RnVec3 gravity;
-} RnPhysicsWorld;
-
-typedef struct {
-    RnRigidBodyType    type;
-    RnRigidBody2DShape shape;
-    RnVec3             position;
-    RnVec3             rotation;
-    RnVec3             scale;
-    RnVec3             velocity;
-    RnVec3             angular_velocity;
-    float              mass;
-    float              friction;
-    float              restitution;
-    RnBool             ignore_gravity;
-} RnRigidBody2D;
-
-typedef struct {
-    RnRigidBodyType    type;
-    RnRigidBody3DShape shape;
-    RnVec3             position;
-    RnVec3             rotation;
-    RnVec3             scale;
-    RnVec3             velocity;
-    RnVec3             angular_velocity;
-    float              mass;
-    float              friction;
-    float              restitution;
-    RnBool             ignore_gravity;
-} RnRigidBody3D;
 
 typedef struct {
     RnVec3 position;
@@ -257,57 +216,27 @@ typedef struct {
 } RnMusicPlayer;
 
 typedef struct {
+    RnRect    uv;
+    RnColor   tint;
+
+    RnVec2    aberration;
+    uint32_t  layer;
     RnTexture texture;
-    float brightness;
-    float saturation;
-    float contrast;
-    float inverse;
-    float bloom;
-    float glitch;
-    float chromatic_aberration;
-    RnColor tint;
-} RnMaterial2DInfo;
+    
+    float     brightness;
+    float     saturation;
+    float     contrast;
+    float     aberration_strength;
+} RnRenderer2D;
 
 typedef struct {
-    RnTexture  albedo;
-    RnTexture  normal;
-    RnTexture  roughness;
-    RnTexture  metallic;
-    RnColor    tint;
-    float      alpha;
-    float      roughness_val;
-    float      metallic_val;
-    float      tiling_x;
-    float      tiling_y;
-} RnMaterial3DInfo;
-
-typedef struct {
-    RnRenderTarget rendertarget;
     float width;
     float height;
     float far;
     float near;
 } RnCamera2D;
 
-typedef struct {
-    RnRenderTarget rendertarget;
-    float width;
-    float height;
-    float far;
-    float near;
-    float fov;
-} RnCamera3D;
-
-typedef struct {
-    RnMaterial2D material;
-    int32_t      layer;
-    RnBool       dead;
-} RnSpriteRenderer;
-
-typedef struct {
-    RnMesh mesh;
-} RnMeshRenderer;
-
+/*
 typedef struct {
     RnMaterial2D material;
     int32_t      layer;
@@ -317,35 +246,34 @@ typedef struct {
     RnVec2       scale;
     RnVec2       pivot;
 } RnGuiRectInfo;
-
+*/
 
 RUIN_API RnVec2 rnVec2(float x, float y);
 RUIN_API RnVec3 rnVec3(float x, float y, float z);
 RUIN_API RnVec4 rnVec4(float x, float y, float z, float w);
 
-RUIN_API RnVec2 rnVec2Sum(const RnVec2 *a, const RnVec2 *b);
-RUIN_API RnVec2 rnVec2Sub(const RnVec2 *a, const RnVec2 *b);
-RUIN_API RnVec2 rnVec2Mul(const RnVec2 *a, float f);
-RUIN_API RnVec2 rnVec2Div(const RnVec2 *a, float f);
+RUIN_API RnVec2 rnVec2Sum(const RnVec2 a, const RnVec2 b);
+RUIN_API RnVec2 rnVec2Sub(const RnVec2 a, const RnVec2 b);
+RUIN_API RnVec2 rnVec2Mul(const RnVec2 a, float f);
+RUIN_API RnVec2 rnVec2Div(const RnVec2 a, float f);
 
-RUIN_API float  rnVec2Mag(const RnVec2 *v);
-RUIN_API RnVec2 rnVec2Nor(const RnVec2 *v);
+RUIN_API float  rnVec2Mag(const RnVec2 v);
+RUIN_API RnVec2 rnVec2Nor(const RnVec2 v);
 
-RUIN_API RnVec3 rnVec3Sum(const RnVec3 *a, const RnVec3 *b);
-RUIN_API RnVec3 rnVec3Sub(const RnVec3 *a, const RnVec3 *b);
-RUIN_API RnVec3 rnVec3Mul(const RnVec3 *a, float f);
-RUIN_API RnVec3 rnVec3Div(const RnVec3 *a, float f);
+RUIN_API RnVec3 rnVec3Sum(const RnVec3 a, const RnVec3 b);
+RUIN_API RnVec3 rnVec3Sub(const RnVec3 a, const RnVec3 b);
+RUIN_API RnVec3 rnVec3Mul(const RnVec3 a, float f);
+RUIN_API RnVec3 rnVec3Div(const RnVec3 a, float f);
 
-RUIN_API float  rnVec3Mag(const RnVec3 *v);
-RUIN_API RnVec3 rnVec3Nor(const RnVec3 *v);
+RUIN_API float  rnVec3Mag(const RnVec3 v);
+RUIN_API RnVec3 rnVec3Nor(const RnVec3 v);
 
-RUIN_API RnVec4 rnVec4Sum(const RnVec4 *a, const RnVec4 *b);
-RUIN_API RnVec4 rnVec4Sub(const RnVec4 *a, const RnVec4 *b);
-RUIN_API RnVec4 rnVec4Mul(const RnVec4 *a, float f);
-RUIN_API RnVec4 rnVec4Div(const RnVec4 *a, float f);
 
-RUIN_API float  rnVec4Mag(const RnVec4 *v);
-RUIN_API RnVec4 rnVec4Nor(const RnVec4 *v);
+RUIN_API float  rnVec4Mag(const RnVec4 v);
+RUIN_API RnVec4 rnVec4Nor(const RnVec4 v);
+
+
+
 
 
 RUIN_API RnBool rnSelfInit(RnConfig *c);
@@ -401,7 +329,7 @@ RUIN_API RnTexture rnTextureFromRenderTarget(RnRenderTarget t);
 RUIN_API void      rnTextureKill(RnTexture t);
 RUIN_API void      rnTextureCreateGpuResources(void);
 RUIN_API void      rnTextureLoadToGpuOffscreen(RnTexture *textures, uint32_t count);
-RUIN_API void      rnTextureLoadToGpuGui(RnTexture *textures, uint32_t count);
+// RUIN_API void      rnTextureLoadToGpuGui(RnTexture *textures, uint32_t count);
 
 RUIN_API RnMesh rnMeshLoad(const char *path);
 RUIN_API void   rnMeshKill(RnMesh m);
@@ -417,15 +345,7 @@ RUIN_API void    rnMusicPlay(RnMusic m);
 RUIN_API void    rnMusicPause(RnMusic m, RnBool pause);
 
 
-RUIN_API RnMaterial2DInfo  rnDefaultMaterial2DInfo(void);
-RUIN_API RnMaterial2D      rnMaterial2DCreate(RnMaterial2DInfo i);
-RUIN_API RnMaterial2DInfo *rnMaterial2DGet(RnMaterial2D m);
-RUIN_API void              rnMaterial2DKill(RnMaterial2D m);
 
-RUIN_API RnMaterial3DInfo  rnDefaultMaterial3DInfo(void);
-RUIN_API RnMaterial3D      rnMaterial3DCreate(RnMaterial3DInfo i);
-RUIN_API RnMaterial3DInfo *rnMaterial3DGet(RnMaterial3D m);
-RUIN_API void              rnMaterial3DKill(RnMaterial3D m);
 
 
 RUIN_API RnTransform  rnDefaultTransform(void);
@@ -438,13 +358,13 @@ RUIN_API RnVec3       rnTransformGetWorldPosition(RnEntity e);
 RUIN_API RnVec3       rnTransformGetWorldRotation(RnEntity e);
 RUIN_API RnVec3       rnTransformGetWorldScale(RnEntity e);
 
-RUIN_API RnRigidBody2D *rnRigidBody2dGet(RnEntity e);
-RUIN_API void           rnRigidBody2dAdd(RnEntity e, RnRigidBody2D b);
-RUIN_API void           rnRigidBody2dKill(RnEntity e);
 
-RUIN_API RnRigidBody3D *rnRigidBody3dGet(RnEntity e);
-RUIN_API void           rnRigidBody3dAdd(RnEntity e, RnRigidBody3D b);
-RUIN_API void           rnRigidBody3dKill(RnEntity e);
+RUIN_API RnRenderer2D  rnDefaultRenderer2D(void);
+RUIN_API RnRenderer2D *rnRenderer2DGet(RnEntity e);
+RUIN_API void          rnRenderer2DAdd(RnEntity e, RnRenderer2D r);
+RUIN_API void          rnRenderer2DKill(RnEntity e);
+RUIN_API void          rnRenderer2DSortByLayer(void);
+
 
 RUIN_API RnSoundListener *rnSoundListenerGet(RnEntity e);
 RUIN_API void             rnSoundListenerAdd(RnEntity e, RnSoundListener l);
@@ -467,26 +387,13 @@ RUIN_API void        rnCamera2DAdd(RnEntity e, RnCamera2D c);
 RUIN_API void        rnCamera2DKill(RnEntity e);
 RUIN_API void        rnCamera2DUse(RnEntity e);
 
-RUIN_API RnCamera3D *rnCamera3DGet(RnEntity e);
-RUIN_API void        rnCamera3DAdd(RnEntity e, RnCamera3D c);
-RUIN_API void        rnCamera3DKill(RnEntity e);
-RUIN_API void        rnCamera3DUse(RnEntity e);
 
-RUIN_API RnSpriteRenderer  rnDefaultSpriteRenderer(void);
-RUIN_API RnSpriteRenderer *rnSpriteRendererGet(RnEntity e);
-RUIN_API void              rnSpriteRendererAdd(RnEntity e, RnSpriteRenderer r);
-RUIN_API void              rnSpriteRendererKill(RnEntity e);
-RUIN_API void              rnSpriteRendererSortByLayer(void);
-
-RUIN_API RnMeshRenderer  rnDefaultMeshRenderer(void);
-RUIN_API RnMeshRenderer *rnMeshRendererGet(RnEntity e);
-RUIN_API void            rnMeshRendererAdd(RnEntity e, RnMeshRenderer r);
-RUIN_API void            rnMeshRendererKill(RnEntity e);
-
+/*
 RUIN_API RnGuiRectInfo rnDefaultGuiRectInfo(void);
 RUIN_API RnGuiRect     rnGuiRectCreate(RnGuiRectInfo r);
 RUIN_API void          rnGuiRectKill(RnGuiRect r);
 RUIN_API void          rnGuiRectSortByLayer(void);
+*/
 
 #ifdef __cplusplus
 }

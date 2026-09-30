@@ -16,9 +16,7 @@
 extern "C" {
 #endif
 
-// #define RUIN_ENABLE_DEBUG
-
-#ifdef RUIN_ENABLE_DEBUG
+#ifndef NDEBUG
     #define enable_validation 1
 #else
     #define enable_validation 0
@@ -102,9 +100,9 @@ typedef struct {
 typedef struct {
     VkRenderPass shadow_pass;
     VkRenderPass geometry_pass;
-    VkRenderPass present_pass;
-
     VkRenderPass offscreen_pass;
+
+    VkRenderPass present_pass;
 } RN_Renderer_RenderPasses;
 
 typedef struct {
@@ -118,11 +116,11 @@ typedef struct {
 
 typedef struct {
     VkDescriptorPool descriptor_pool;
-    RN_Renderer_Pipeline test_pipeline;
+    // RN_Renderer_Pipeline test_pipeline;
 
     RN_Renderer_Pipeline bindless_offscreen_2d;
     RN_Renderer_Pipeline post_process_pipeline;
-    RN_Renderer_Pipeline gui_rect_pipeline;
+    // RN_Renderer_Pipeline gui_rect_pipeline;
 } RN_Renderer_Pipelines;
 
 typedef struct {
@@ -135,7 +133,6 @@ typedef struct {
     VkSemaphore render_finished_semaphores[MAX_SWAPCHAIN_IMAGES];
     VkFence     in_flight_fences[MAX_FRAMES_IN_FLIGHT];
     uint32_t    current_frame;
-    uint8_t     skip_wait;
 } RN_Renderer_Sync;
 
 
@@ -149,18 +146,18 @@ typedef struct {
 } RN_Renderer_GPU_Buffer;
 
 typedef struct {
-    RN_Renderer_GPU_Buffer camera_ubo;
     RN_Renderer_GPU_Buffer entity_ssbo;
     RN_Renderer_GPU_Buffer matrix_ssbo;
-    RN_Renderer_GPU_Buffer material_ssbo;
+    RN_Renderer_GPU_Buffer renderer_ssbo;
 } RN_Renderer_GPU_Buffers_Bindless_2D;
 
+/*
 typedef struct {
     RN_Renderer_GPU_Buffer rect_ssbo;
     RN_Renderer_GPU_Buffer index_ssbo;
     RN_Renderer_GPU_Buffer material_ssbo;
 } RN_Renderer_GPU_Buffers_GuiRect;
-
+*/
 
 typedef struct {
     RnConfigRenderer         active_config;
@@ -175,7 +172,7 @@ typedef struct {
     RN_Renderer_Sync         sync;
 
     RN_Renderer_GPU_Buffers_Bindless_2D gpu_buffers_2d;
-    RN_Renderer_GPU_Buffers_GuiRect     gpu_buffers_gui_rect;
+    // RN_Renderer_GPU_Buffers_GuiRect     gpu_buffers_gui_rect;
 } RN_Renderer;
 
 
@@ -232,9 +229,11 @@ void rn_renderer_create_sync_objects(RN_Renderer *r);
 
 void rn_renderer_init_gpu_buffers_2d(RN_Renderer *r);
 void rn_renderer_kill_gpu_buffers_2d(RN_Renderer *r);
+
+/*
 void rn_renderer_init_gpu_buffers_gui_rect(RN_Renderer *r);
 void rn_renderer_kill_gpu_buffers_gui_rect(RN_Renderer *r);
-
+*/
 
 void rn_renderer_create_descriptor_pool(RN_Renderer *r);
 
@@ -242,7 +241,8 @@ void rn_renderer_create_pipeline_test(RN_Renderer *r);
 
 void rn_renderer_create_pipeline_bindless_offscreen_2d(RN_Renderer *r);
 void rn_renderer_create_pipeline_post_process(RN_Renderer *r);
-void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r);
+
+// void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r);
 
 
 

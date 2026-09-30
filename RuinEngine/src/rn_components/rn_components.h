@@ -30,8 +30,8 @@ typedef struct {
 } RN_Component_Transform;
 
 typedef struct {
-    mat4 proj;
     mat4 view;
+    mat4 proj;
 } RN_Component_Camera;
 
 
@@ -39,8 +39,7 @@ typedef struct {
     
     RN_ComponentArena transforms;
     RN_ComponentArena camera2ds;
-    RN_ComponentArena camera3ds;
-    RN_ComponentArena sprite_renderers;
+    RN_ComponentArena renderer2ds;;
 
     RnEntity camera_in_use;
     uint8_t camera_mode;

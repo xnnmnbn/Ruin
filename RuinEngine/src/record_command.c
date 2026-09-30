@@ -1,4 +1,5 @@
 #include "cvec.h"
+#include "rn_components/rn_components.h"
 #include "ruin.h"
 #include "rn_engine.h"
 #include <stddef.h>
@@ -6,7 +7,7 @@
 #include <stdio.h>
 #include <vulkan/vulkan_core.h>
 
-
+/*
 void record_command(RuinEngine *engine, VkCommandBuffer cmd, uint32_t img_idx) {
     
     VkCommandBufferBeginInfo cbi = {0};
@@ -39,15 +40,12 @@ void record_command(RuinEngine *engine, VkCommandBuffer cmd, uint32_t img_idx) {
     RnEntity c_use = engine->components.camera_in_use;
 
     RnCamera2D *c2 = &(from_void(engine->components.camera2ds.begin_points[0], RnCamera2D)[c_use]);
-    RnCamera3D *c3 = &(from_void(engine->components.camera3ds.begin_points[0], RnCamera3D)[c_use]);
 
     uint32_t w = 0;
     uint32_t h = 0;
 
     if (engine->components.camera_mode == 2) {
         w = c2->width; h = c2->height;
-    } else if (engine->components.camera_mode == 3) {
-        w = c3->width; h = c3->height;
     }
 
     VkViewport vw = (VkViewport){
@@ -81,7 +79,7 @@ void record_command(RuinEngine *engine, VkCommandBuffer cmd, uint32_t img_idx) {
         return;
     }
 }
-
+*/
 
 
 
@@ -92,7 +90,7 @@ void record_command_2d(RuinEngine *engine, VkCommandBuffer cmd, uint32_t img_idx
 
     RN_Renderer_Pipeline *p_bindless_offscreen_2d = &engine->renderer.pipelines.bindless_offscreen_2d;
     RN_Renderer_Pipeline *p_post_process          = &engine->renderer.pipelines.post_process_pipeline;
-    RN_Renderer_Pipeline *p_gui_rect              = &engine->renderer.pipelines.gui_rect_pipeline;
+    // RN_Renderer_Pipeline *p_gui_rect              = &engine->renderer.pipelines.gui_rect_pipeline;
 
     VkClearValue clear = {0};
     clear.color.float32[0] = 0.75f;
@@ -125,15 +123,12 @@ void record_command_2d(RuinEngine *engine, VkCommandBuffer cmd, uint32_t img_idx
     RnEntity c_use = engine->components.camera_in_use;
 
     RnCamera2D *c2 = &(from_void(engine->components.camera2ds.begin_points[0], RnCamera2D)[c_use]);
-    RnCamera3D *c3 = &(from_void(engine->components.camera3ds.begin_points[0], RnCamera3D)[c_use]);
 
     uint32_t w = 0;
     uint32_t h = 0;
 
     if (engine->components.camera_mode == 2) {
         w = c2->width; h = c2->height;
-    } else if (engine->components.camera_mode == 3) {
-        w = c3->width; h = c3->height;
     }
     
     VkViewport vw_offscreen = (VkViewport) {
@@ -155,11 +150,7 @@ void record_command_2d(RuinEngine *engine, VkCommandBuffer cmd, uint32_t img_idx
     VkViewport vw_present = (VkViewport) {
         .x = 0, .y = 0,
         .width  = engine->renderer.swapchain.swapchain_extent.width,
-                // ? engine->renderer.swapchain.swapchain_extent.width
-                // : 1280,
         .height = engine->renderer.swapchain.swapchain_extent.height,
-                // ? engine->renderer.swapchain.swapchain_extent.height
-                // : 720,
         .minDepth = 0.0f,
         .maxDepth = 1.0f
     };
@@ -186,7 +177,10 @@ void record_command_2d(RuinEngine *engine, VkCommandBuffer cmd, uint32_t img_idx
         vkCmdSetScissor(cmd, 0, 1, &sc_offscreen);
         vkCmdBindPipeline(cmd, p_bindless_offscreen_2d->bind_point, p_bindless_offscreen_2d->pipeline);
         vkCmdBindDescriptorSets(cmd, p_bindless_offscreen_2d->bind_point, p_bindless_offscreen_2d->layout, 0, 2, p_bindless_offscreen_2d->d_sets, 0, NULL);
-        vkCmdDraw(cmd, 6, engine->components.sprite_renderers.elem_counts, 0, 0);
+        vkCmdPushConstants(cmd, p_bindless_offscreen_2d->layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(mat4) * 2, &(from_void(engine->components.camera2ds.begin_points[1], RN_Component_Camera)[engine->components.camera_in_use]));
+        if (engine->components.renderer2ds.elem_counts != 0) {
+            vkCmdDraw(cmd, 6, engine->components.renderer2ds.elem_counts, 0, 0);
+        }
     vkCmdEndRenderPass(cmd);
 
     vkCmdBeginRenderPass(cmd, &rp_present, VK_SUBPASS_CONTENTS_INLINE);
@@ -197,11 +191,13 @@ void record_command_2d(RuinEngine *engine, VkCommandBuffer cmd, uint32_t img_idx
         vkCmdPushConstants(cmd, p_post_process->layout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(RnPostProcess), &engine->renderer.post_process);
         vkCmdDraw(cmd, 6, 1, 0, 0);
 
+/*
         vkCmdSetViewport(cmd, 0, 1, &vw_present);
         vkCmdBindPipeline(cmd, p_gui_rect->bind_point, p_gui_rect->pipeline);
         vkCmdBindDescriptorSets(cmd, p_gui_rect->bind_point, p_gui_rect->layout, 0, 2, p_gui_rect->d_sets, 0, NULL);
         vkCmdPushConstants(cmd, p_gui_rect->layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(screen_size), screen_size);
         vkCmdDraw(cmd, 6, engine->assets.gui_rects.valid_indices.len, 0, 0);
+*/
     vkCmdEndRenderPass(cmd);
 
     if (vkEndCommandBuffer(cmd) != VK_SUCCESS) {

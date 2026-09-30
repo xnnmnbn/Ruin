@@ -8,7 +8,7 @@ void rn_platform_init(RN_Platform *p) {
     rn_platform_input_init(p);
     rn_platform_time_init(p);
 
-    printf("Platform initialized.\n");
+    RUIN_DEBUG("Platform initialized.\n");
 }
 
 void rn_platform_kill(RN_Platform *p) {
@@ -20,5 +20,5 @@ void rn_platform_kill(RN_Platform *p) {
         rn_platform_input_kill(p);
     }
 
-    printf("Platform killed.\n");
+    RUIN_DEBUG("Platform killed.\n");
 }

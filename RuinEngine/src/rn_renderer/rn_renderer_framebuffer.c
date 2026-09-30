@@ -1,11 +1,15 @@
 #include "cvec.h"
 #include "rn_platform/rn_platform.h"
 #include "rn_renderer.h"
+#include "ruin.h"
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_core.h>
+
+#ifndef NDEBUG
+    #include <stdio.h>
+#endif
 
 void rn_renderer_create_swapchain_framebuffers(RN_Renderer *r, RN_Platform *p) {
     
@@ -25,12 +29,12 @@ void rn_renderer_create_swapchain_framebuffers(RN_Renderer *r, RN_Platform *p) {
         fi.renderPass      = r->renderpasses.present_pass;
 
         if (vkCreateFramebuffer(r->core.device, &fi, NULL, &(r->swapchain.swapchain_framebuffers[i])) != VK_SUCCESS) {
-            printf("Failed to create swapchain framebuffer #%zu\n", i);
+            RUIN_DEBUG("Failed to create swapchain framebuffer #%zu\n", i);
             return;
         }
     }
 
-    printf("Swapchain framebuffers created.\n");
+    RUIN_DEBUG("Swapchain framebuffers created.\n");
 }
 
 
@@ -62,7 +66,7 @@ void rn_renderer_create_framebuffer_offscreen(RN_Renderer *r) {
         &r->framebuffers.offscreen.color_alloc,
         NULL
     ) != VK_SUCCESS) {
-        printf("Failed to create Image for Bindless Offscreen Pipeline 2D.\n");
+        RUIN_DEBUG("Failed to create Image for Bindless Offscreen Pipeline 2D.\n");
         return;
     }
 
@@ -76,7 +80,7 @@ void rn_renderer_create_framebuffer_offscreen(RN_Renderer *r) {
     vi.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
     if (vkCreateImageView(r->core.device, &vi, NULL, &r->framebuffers.offscreen.color_view) != VK_SUCCESS) {
-        printf("Failed to create Image View for Bindless Offscreen Pipeline 2D.\n");
+        RUIN_DEBUG("Failed to create Image View for Bindless Offscreen Pipeline 2D.\n");
         return;
     }
 
@@ -91,7 +95,7 @@ void rn_renderer_create_framebuffer_offscreen(RN_Renderer *r) {
     fi.renderPass = r->renderpasses.offscreen_pass;
 
     if (vkCreateFramebuffer(r->core.device, &fi, NULL, &r->framebuffers.offscreen.framebuffer) != VK_SUCCESS) {
-        printf("Failed to create Framebuffer for Offscreen Pipeline.\n");
+        RUIN_DEBUG("Failed to create Framebuffer for Offscreen Pipeline.\n");
         return;
     }
 
@@ -111,11 +115,11 @@ void rn_renderer_create_framebuffer_offscreen(RN_Renderer *r) {
     si.maxAnisotropy = r->active_config.max_anisotropy;
 
     if (vkCreateSampler(r->core.device, &si, NULL, &r->framebuffers.offscreen.color_sampler) != VK_SUCCESS) {
-        printf("Failed to create Offscreen Framebuffer Sampler.\n");
+        RUIN_DEBUG("Failed to create Offscreen Framebuffer Sampler.\n");
         return;
     }
     
-    printf("Offscreen Framebuffer created.\n");
+    RUIN_DEBUG("Offscreen Framebuffer created.\n");
 }
 
 
@@ -146,7 +150,7 @@ void rn_renderer_create_framebuffer_post_process(RN_Renderer *r, RN_Platform *p)
         &r->framebuffers.post_process.color_alloc,
         NULL
     ) != VK_SUCCESS) {
-        printf("Failed to create Image for GUI Rect Pipeline.\n");
+        RUIN_DEBUG("Failed to create Image for GUI Rect Pipeline.\n");
         return;
     }
 
@@ -160,7 +164,7 @@ void rn_renderer_create_framebuffer_post_process(RN_Renderer *r, RN_Platform *p)
     vi.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
     if (vkCreateImageView(r->core.device, &vi, NULL, &r->framebuffers.post_process.color_view) != VK_SUCCESS) {
-        printf("Failed to create Image View for GUI Rect Pipeline.\n");
+        RUIN_DEBUG("Failed to create Image View for GUI Rect Pipeline.\n");
         return;
     }
 
@@ -175,7 +179,7 @@ void rn_renderer_create_framebuffer_post_process(RN_Renderer *r, RN_Platform *p)
     fi.renderPass = r->renderpasses.offscreen_pass;
 
     if (vkCreateFramebuffer(r->core.device, &fi, NULL, &r->framebuffers.post_process.framebuffer) != VK_SUCCESS) {
-        printf("Failed to create Framebuffer for GUI Rect Pipeline.\n");
+        RUIN_DEBUG("Failed to create Framebuffer for GUI Rect Pipeline.\n");
         return;
     }
 
@@ -195,11 +199,11 @@ void rn_renderer_create_framebuffer_post_process(RN_Renderer *r, RN_Platform *p)
     si.maxAnisotropy = r->active_config.max_anisotropy;
 
     if (vkCreateSampler(r->core.device, &si, NULL, &r->framebuffers.post_process.color_sampler) != VK_SUCCESS) {
-        printf("Failed to create GUI Rect Framebuffer Sampler.\n");
+        RUIN_DEBUG("Failed to create GUI Rect Framebuffer Sampler.\n");
         return;
     }
     
-    printf("GUI Rect Framebuffer created.\n");
+    RUIN_DEBUG("GUI Rect Framebuffer created.\n");
 }
 
 

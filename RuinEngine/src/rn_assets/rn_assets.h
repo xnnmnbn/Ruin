@@ -8,8 +8,10 @@
 
 #include "rn_renderer/rn_renderer.h"
 
-#include "ruin.h"
 #include "vk_mem_alloc.h"
+#include "miniaudio.h"
+
+#define MAX_SOUND_REF_COUNT 16
 
 
 #ifdef __cplusplus
@@ -46,18 +48,23 @@ typedef struct {
 } RN_Asset_Texture_GPU;
 
 
+typedef struct {
+    ma_sound sounds[MAX_SOUND_REF_COUNT];
+    uint32_t current_ref;
+} RN_Asset_Sound;
+
+
 
 typedef struct {
     RN_AssetStorage sounds;
     RN_AssetStorage musics;
     
     RN_AssetStorage material2Ds;
-    RN_AssetStorage material3Ds;
 
     RN_AssetStorage cpu_textures;
     RN_AssetStorage gpu_textures;
 
-    RN_AssetStorage gui_rects;
+    // RN_AssetStorage gui_rects;
 } RN_Assets;
 
 
@@ -74,10 +81,10 @@ void rn_assets_kill(RN_Assets *a, RN_Renderer *r);
 
 void rn_assets_audio_init(RN_Assets *a);
 void rn_assets_audio_kill(RN_Assets *a);
-
+/*
 void rn_assets_material_init(RN_Assets *a);
 void rn_assets_material_kill(RN_Assets *a);
-
+*/
 void rn_assets_texture_init(RN_Assets *a);
 void rn_assets_texture_kill(RN_Assets *a, RN_Renderer *r);
 
@@ -87,9 +94,10 @@ void rn_assets_rendertarget_kill(RN_Assets *a, RN_Renderer *r);
 void rn_assets_texture_create_gpu_data(RN_Assets *a, RN_Renderer *r);
 void rn_assets_texture_send_to_gpu(RN_Assets *a, RN_Renderer *r);
 
+/*
 void rn_assets_gui_rect_init(RN_Assets *a);
 void rn_assets_gui_rect_kill(RN_Assets *a);
-
+*/
 
 #ifdef __cplusplus
 }

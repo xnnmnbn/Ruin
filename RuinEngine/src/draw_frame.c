@@ -44,27 +44,19 @@ void draw_frame(RuinEngine *engine) {
 
     if (c_mode == 2) {
         cmr = &(from_void(engine->components.camera2ds.begin_points[1], RN_Component_Camera)[c_ent]);
-    } else if (c_mode == 3) {
-        cmr = &(from_void(engine->components.camera3ds.begin_points[1], RN_Component_Camera)[c_ent]);
     }
 
-    memcpy(
-        engine->renderer.gpu_buffers_2d.camera_ubo.mapped,
-        cmr,
-        sizeof(RN_Component_Camera)
-    );
-
-    const uint32_t INSTANCE_COUNT = engine->components.sprite_renderers.elem_counts;
+    const uint32_t INSTANCE_COUNT = engine->components.renderer2ds.elem_counts;
 
     memcpy(
         engine->renderer.gpu_buffers_2d.entity_ssbo.mapped,
-        engine->components.sprite_renderers.begin_points[1],
+        engine->components.renderer2ds.begin_points[1],
         sizeof(RnEntity) * INSTANCE_COUNT
     );
 
 
     for (uint32_t i = 0; i < INSTANCE_COUNT; i++) {
-        RnEntity e = from_void(engine->components.sprite_renderers.begin_points[1], RnEntity)[i];
+        RnEntity e = from_void(engine->components.renderer2ds.begin_points[1], RnEntity)[i];
 
         mat4 *src = &(from_void(engine->components.transforms.begin_points[1], RN_Component_Transform)[e].world_matrix);
         mat4 *dst = &(from_void(engine->renderer.gpu_buffers_2d.matrix_ssbo.mapped, mat4)[e]);
@@ -74,14 +66,14 @@ void draw_frame(RuinEngine *engine) {
 
 
     for (uint32_t i = 0; i < INSTANCE_COUNT; i++) {
-        RnEntity e     = from_void(engine->components.sprite_renderers.begin_points[1], RnEntity)[i];
-        RnMaterial2D m = from_void(engine->components.sprite_renderers.begin_points[0], RnSpriteRenderer)[e].material;
-        
-        RnMaterial2DInfo *gpu_m = &from_void(engine->renderer.gpu_buffers_2d.material_ssbo.mapped, RnMaterial2DInfo)[e];
-        RnMaterial2DInfo *cpu_m = &from_void(engine->assets.material2Ds.data, RnMaterial2DInfo)[m];
+        RnEntity e     = from_void(engine->components.renderer2ds.begin_points[1], RnEntity)[i];
+
+        RnRenderer2D *gpu_m = &from_void(engine->renderer.gpu_buffers_2d.renderer_ssbo.mapped, RnRenderer2D)[e];
+        RnRenderer2D *cpu_m = &from_void(engine->components.renderer2ds.begin_points[0], RnRenderer2D)[e];
         *gpu_m = *cpu_m;
     }
 
+/*
     // GUI Rect Pipeline
     memcpy(
         engine->renderer.gpu_buffers_gui_rect.index_ssbo.mapped,
@@ -97,7 +89,6 @@ void draw_frame(RuinEngine *engine) {
             from_void(engine->assets.gui_rects.data, RnGuiRectInfo)[r];
     }
 
-
     for (uint32_t i = 0; i < engine->assets.gui_rects.valid_indices.len; i++) {
         RnGuiRect    r = from_void(engine->assets.gui_rects.valid_indices.data, RnGuiRect)[i];
         RnMaterial2D m = from_void(engine->assets.gui_rects.data, RnGuiRectInfo)[r].material;
@@ -105,7 +96,7 @@ void draw_frame(RuinEngine *engine) {
         from_void(engine->renderer.gpu_buffers_gui_rect.material_ssbo.mapped, RnMaterial2DInfo)[m] =
             from_void(engine->assets.material2Ds.data, RnMaterial2DInfo)[m];
     }
-
+*/
 
     record_command_2d(engine, engine->renderer.commands.command_buffers[current_frame], image_index);
 

@@ -79,17 +79,15 @@ void rn_assets_texture_create_gpu_data(RN_Assets *a, RN_Renderer *r) {
             r->core.allocator, &s_bi, &s_ai,
             &s_buffer, &s_alloc, &s_info
         ) != VK_SUCCESS) {
-            printf("Failed to create Staging Buffer for Texture #%d.\n", gpu_idx);
+            RUIN_DEBUG("Failed to create Staging Buffer for Texture #%d.\n", gpu_idx);
             return;
         }
         
-        printf("CPU idx: %d\n", cpu_idx);
+        RUIN_DEBUG("CPU idx: %d\n", cpu_idx);
 
-        printf ("%p\n", s_info.pMappedData);
+        RUIN_DEBUG("%p\n", s_info.pMappedData);
 
         memcpy(s_info.pMappedData, cpu_texs[cpu_idx].pixels, image_size);
-
-        printf("bbbbb\n");
 
         stbi_image_free(cpu_texs[cpu_idx].pixels);
 
@@ -117,7 +115,7 @@ void rn_assets_texture_create_gpu_data(RN_Assets *a, RN_Renderer *r) {
             &gpu_texs[gpu_idx].image, &gpu_texs[gpu_idx].allocation,
             NULL
         ) != VK_SUCCESS) {
-            printf("Failed to create Image for Texture #%d.\n", gpu_idx);
+            RUIN_DEBUG("Failed to create Image for Texture #%d.\n", gpu_idx);
             vmaDestroyBuffer(r->core.allocator, s_buffer, s_alloc);
             return;
         }
@@ -180,7 +178,7 @@ void rn_assets_texture_create_gpu_data(RN_Assets *a, RN_Renderer *r) {
         vi.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
         if (vkCreateImageView(r->core.device, &vi, NULL, &gpu_texs[gpu_idx].view) != VK_SUCCESS) {
-            printf("Failed to create Image View for Texture #%d\n", gpu_idx);
+            RUIN_DEBUG("Failed to create Image View for Texture #%d\n", gpu_idx);
             return;
         }
 
@@ -195,11 +193,11 @@ void rn_assets_texture_create_gpu_data(RN_Assets *a, RN_Renderer *r) {
         si.maxAnisotropy = r->active_config.max_anisotropy;
 
         if (vkCreateSampler(r->core.device, &si, NULL, &gpu_texs[gpu_idx].sampler) != VK_SUCCESS) {
-            printf("Failed to create sampler for Texture #%d\n", gpu_idx);
+            RUIN_DEBUG("Failed to create sampler for Texture #%d\n", gpu_idx);
             return;
         }
 
-        printf("GPU Resource for Texture #%d created.\n", gpu_idx);
+        RUIN_DEBUG("GPU Resource for Texture #%d created.\n", gpu_idx);
     }
 }
 

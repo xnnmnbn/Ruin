@@ -35,7 +35,7 @@ void rn_platform_window_init(RN_Platform *p) {
     
     p->window.running = 1;
 
-    printf("Window created.\n");
+    RUIN_DEBUG("Window created.\n");
 }
 
 uint8_t rn_platform_window_running(RN_Platform *p) {
@@ -56,7 +56,7 @@ uint8_t rn_platform_window_running(RN_Platform *p) {
                 break;
 
             case SDL_EVENT_WINDOW_RESIZED:
-                printf("RESIZED\n");
+                RUIN_DEBUG("RESIZED\n");
                 p->window.resized = 1;
                 p->active_config.width  = p->window.event.window.data1;
                 p->active_config.height = p->window.event.window.data2;

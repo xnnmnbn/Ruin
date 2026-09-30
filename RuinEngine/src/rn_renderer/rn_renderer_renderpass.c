@@ -1,6 +1,11 @@
 #include "rn_renderer.h"
-#include <stdio.h>
+#include "ruin.h"
 #include <vulkan/vulkan.h>
+
+#ifndef NDEBUG
+    #include <stdio.h>
+#endif
+
 
 void rn_renderer_create_renderpass_present(RN_Renderer *r) {
     VkAttachmentDescription color_attachment = {0};
@@ -18,7 +23,7 @@ void rn_renderer_create_renderpass_present(RN_Renderer *r) {
     color_attachment_ref.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
     VkSubpassDescription subpass = {0};
-    subpass.pipelineBindPoint    = r->pipelines.test_pipeline.bind_point;
+    subpass.pipelineBindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS;
     subpass.colorAttachmentCount = 1;
     subpass.pColorAttachments    = &color_attachment_ref;
 
@@ -40,11 +45,11 @@ void rn_renderer_create_renderpass_present(RN_Renderer *r) {
     ri.dependencyCount = 1;
 
     if (vkCreateRenderPass(r->core.device, &ri, NULL, &r->renderpasses.present_pass) != VK_SUCCESS) {
-        printf("Failed to create presentation renderpass.\n");
+        RUIN_DEBUG("Failed to create presentation renderpass.\n");
         return;
     }
 
-    printf("Presentation renderpass created.\n");
+    RUIN_DEBUG("Presentation Renderpass created.\n");
 }
 
 
@@ -88,9 +93,9 @@ void rn_renderer_create_renderpass_offscreen(RN_Renderer *r) {
 
 
     if (vkCreateRenderPass(r->core.device, &ri, NULL, &r->renderpasses.offscreen_pass) != VK_SUCCESS) {
-        printf("Failed to create Offscreen Renderpass.\n");
+        RUIN_DEBUG("Failed to create Offscreen Renderpass.\n");
         return;
     }
 
-    printf("Offscreen Renderpass created.\n");
+    RUIN_DEBUG("Offscreen Renderpass created.\n");
 }

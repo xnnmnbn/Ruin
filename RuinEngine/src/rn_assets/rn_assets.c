@@ -1,6 +1,7 @@
 #include "rn_assets.h"
 #include "rn_renderer/rn_renderer.h"
 #include "cvec.h"
+#include "ruin.h"
 #include <stdio.h>
 
 uint32_t rn_assetstorage_idx(RN_AssetStorage *s) {
@@ -27,20 +28,18 @@ void rn_assetstorage_kill(RN_AssetStorage *s, uint32_t idx) {
 }
 void rn_assets_init(RN_Assets *a) {
     rn_assets_audio_init(a);
-    rn_assets_material_init(a);
+    // rn_assets_material_init(a);
     rn_assets_texture_init(a);
-    rn_assets_gui_rect_init(a);
-
-    printf("Assets initialized.\n");
+    // rn_assets_gui_rect_init(a);
+    RUIN_DEBUG("Assets initialized.\n");
 }
 
 void rn_assets_kill(RN_Assets *a, RN_Renderer *r) {
     rn_assets_audio_kill(a);
-    rn_assets_material_kill(a);
+    // rn_assets_material_kill(a);
     rn_assets_texture_kill(a, r);
-    rn_assets_gui_rect_kill(a);
-
-    printf("Assets killed.\n");
+    // rn_assets_gui_rect_kill(a);
+    RUIN_DEBUG("Assets killed.\n");
 }
 
 

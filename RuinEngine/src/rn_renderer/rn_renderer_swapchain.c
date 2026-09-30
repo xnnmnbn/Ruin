@@ -106,12 +106,8 @@ void rn_renderer_create_swapchain(RN_Renderer *r, RN_Platform *p) {
         si.imageSharingMode      = VK_SHARING_MODE_EXCLUSIVE;
     }
 
-
-
-    printf("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa %d\n", si.imageUsage);
-
     if (vkCreateSwapchainKHR(r->core.device, &si, NULL, &r->swapchain.swapchain) != VK_SUCCESS) {
-        printf("Failed to create swapchain.\n");
+        RUIN_DEBUG("Failed to create Swapchain.\n");
         free(details.formats);
         free(details.present_modes);
         return;
@@ -125,8 +121,8 @@ void rn_renderer_create_swapchain(RN_Renderer *r, RN_Platform *p) {
 
     vkDestroySwapchainKHR(r->core.device, si.oldSwapchain, NULL);
 
-    printf("Swapchain created: %d, %d.\n", p->active_config.width, p->active_config.height);
-    printf("You have %d swapchain images.\n", r->swapchain.swapchain_image_count);
+    RUIN_DEBUG("Swapchain created: %d, %d.\n", p->active_config.width, p->active_config.height);
+    RUIN_DEBUG("You have %d swapchain images.\n", r->swapchain.swapchain_image_count);
 
     free(details.formats);
     free(details.present_modes);
@@ -154,12 +150,12 @@ void rn_renderer_get_swapchain_image_views(RN_Renderer *r) {
         vi.subresourceRange.layerCount     = 1;
 
         if (vkCreateImageView(r->core.device, &vi, NULL, &(r->swapchain.swapchain_image_views[i])) != VK_SUCCESS) {
-            printf("Failed to create swapchain image view #%llu", i);
+            RUIN_DEBUG("Failed to create swapchain image view #%llu", i);
             break;
         }
     }
 
-    printf("Swapchain image views created.\n");
+    RUIN_DEBUG("Swapchain Image Views created.\n");
 }
 
 
@@ -182,7 +178,7 @@ void rn_renderer_recreate_swapchain(RN_Renderer *r, RN_Platform *p) {
     rn_renderer_get_swapchain_image_views(r);
     rn_renderer_create_swapchain_framebuffers(r, p);
 
-    printf("Swapchain recreated.\n");
+    RUIN_DEBUG("Swapchain recreated.\n");
 }
 
 
