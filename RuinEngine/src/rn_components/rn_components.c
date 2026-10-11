@@ -44,9 +44,17 @@ void rn_components_init(RN_Components *c) {
         ) + 100
     );
 
+    c->gui_rects.linear_data = malloc(
+        RUIN_MAX_ENTITIES * (
+            sizeof(RnGuiRect) +
+            sizeof(RnEntity)
+        ) + 100
+    );
+
     cvec_init(c->transforms.free_entities);
     cvec_init(c->camera2ds.free_entities);
     cvec_init(c->renderer2ds.free_entities);
+    cvec_init(c->gui_rects.free_entities);
 
     c->transforms.data_sizes[0] = sizeof(RnTransform);
     c->transforms.data_sizes[1] = sizeof(RN_Component_Transform);
@@ -58,6 +66,9 @@ void rn_components_init(RN_Components *c) {
 
     c->renderer2ds.data_sizes[0] = sizeof(RnRenderer2D);
     c->renderer2ds.data_sizes[1] = sizeof(RnEntity);
+
+    c->gui_rects.data_sizes[0] = sizeof(RnGuiRect);
+    c->gui_rects.data_sizes[1] = sizeof(RnEntity);
 
 
     size_t offset;
@@ -124,6 +135,23 @@ void rn_components_init(RN_Components *c) {
     align = alignof(RnEntity);
     offset = (offset + align - 1) & ~(align - 1);
     c->renderer2ds.begin_points[1] = base + offset;
+
+
+
+    // RnGuiRect
+    base = (uint8_t*)c->gui_rects.linear_data;
+    offset = 0;
+
+    // Block 0: RnGuiRect
+    align = alignof(RnGuiRect);
+    offset = (offset + align - 1) & ~(align - 1);
+    c->gui_rects.begin_points[0] = base + offset;
+    offset += RUIN_MAX_ENTITIES * sizeof(RnGuiRect);
+
+    // Block 1: RnEntity
+    align = alignof(RnEntity);
+    offset = (offset + align - 1) & ~(align - 1);
+    c->gui_rects.begin_points[1] = base + offset;
 }
 
 
@@ -136,6 +164,7 @@ void rn_components_kill(RN_Components *c) {
     free(c->transforms.linear_data);
     free(c->camera2ds.linear_data);
     free(c->renderer2ds.linear_data);
+    free(c->gui_rects.linear_data);
 
     cvec_kill(c->entities);
 

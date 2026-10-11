@@ -39,7 +39,8 @@ typedef struct {
     
     RN_ComponentArena transforms;
     RN_ComponentArena camera2ds;
-    RN_ComponentArena renderer2ds;;
+    RN_ComponentArena renderer2ds;
+    RN_ComponentArena gui_rects;
 
     RnEntity camera_in_use;
     uint8_t camera_mode;

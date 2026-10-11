@@ -265,6 +265,7 @@ void rn_renderer_create_logical_device(RN_Renderer *r) {
     f13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
     f13.pNext = &f12;
     f13.dynamicRendering = VK_TRUE;
+    f13.synchronization2 = VK_TRUE;
 
     VkPhysicalDeviceFeatures2 features2 = {0};
     features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;

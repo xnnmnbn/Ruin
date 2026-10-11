@@ -77,7 +77,7 @@ void myGameInit(MyGame *g) {
     rnMusicPlay(g->audios.bgm);
 
     g->textures.troll = rnTextureCreate("assets/images/trollface_suit.jpg", 1 * PPU, 2 * PPU);
-    g->textures.monster = rnTextureCreate("assets/images/trollge_monster.jpg", 2 * PPU, 2 * PPU);
+    g->textures.monster = rnTextureCreate("assets/images/girl.png", 2 * PPU, 3.5 * PPU);
     g->textures.bomb = rnTextureCreate("assets/images/bomb.jpg", 0.5 * PPU, 0.5 * PPU);
     RUIN_DEBUG("All textures are loaded.\n");
 
@@ -287,8 +287,8 @@ int main(void) {
             monster->transform->position.y = cosf(rnTimeElapsed()) * PPU * 4;
             monster->transform->position.x = sinf(rnTimeElapsed()) * PPU * 4;
         } else {
-            monster->transform->rotation.z += 360 * rnTimeDelta();
-            monster->renderer->tint.r = (sinf(rnTimeElapsed()) + 2) / 2; // 0, 0, 1
+            // monster->transform->rotation.z += 360 * rnTimeDelta();
+            // monster->renderer->tint.r = (sinf(rnTimeElapsed()) + 2) / 2; // 0, 0, 1
             g.bomb_pool[g.next_bomb_idx].renderer->brightness = (tanf(rnTimeElapsed()) + 1) / 2;
 
             troll->renderer->aberration_strength = 100;
@@ -298,10 +298,13 @@ int main(void) {
             troll->renderer->aberration.y = troll->renderer->aberration.x;
 
             float rnd = (float)rand() / RAND_MAX;
-
+/*
             monster->renderer->uv = (RnRect) {
                 rnd, rnd, rnd, rnd
             };
+*/
+            monster->renderer->saturation = 0;
+            monster->renderer->contrast   += rnTimeDelta();
         }
 
     

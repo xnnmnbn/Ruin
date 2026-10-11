@@ -389,39 +389,6 @@ RnBool rnEntityValid(RnEntity e) {
 
 
 
-/*
-RnMaterial2DInfo rnDefaultMaterial2DInfo() {
-    return (RnMaterial2DInfo) {
-        .texture = 0,
-        .brightness = 0.0,
-        .saturation = 1.0,
-        .contrast   = 1.0,
-        .inverse    = 0.0,
-        .bloom      = 1.0,
-        .glitch     = 0.0,
-        .chromatic_aberration = 0.0,
-        .tint = (RnColor) {
-            .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f
-        }
-    };
-}
-
-RnMaterial2D rnMaterial2DCreate(RnMaterial2DInfo i) {
-    uint32_t idx = rn_assetstorage_idx(&engine.assets.material2Ds);
-    from_void(engine.assets.material2Ds.data, RnMaterial2DInfo)[idx] = i;
-    rn_assetstorage_update(&engine.assets.material2Ds);
-
-    return idx;
-}
-
-RnMaterial2DInfo *rnMaterial2DGet(RnMaterial2D m) {
-    return &(from_void(engine.assets.material2Ds.data, RnMaterial2DInfo)[m]);
-}
-
-void rnMaterial2DKill(RnMaterial2D m) {
-    rn_assetstorage_kill(&engine.assets.material2Ds, m);
-}
-*/
 
 
 
@@ -475,6 +442,8 @@ RnTexture rnTextureCreate(const char *path, uint32_t w, uint32_t h) {
             (h == 0 ? _h : h),
             0, 4
         );
+
+        free(pixels);
 
         if (!res) {
             printf("Failed to resize image: %s\n", path);
@@ -651,7 +620,7 @@ RnTransform rnDefaultTransform() {
         .rotation = {0},
         .scale    = { 1.0f, 1.0f, 1.0f },
         .parent   = 0,
-        .dead     = 0
+        .dead     = 0,
     };
 }
 

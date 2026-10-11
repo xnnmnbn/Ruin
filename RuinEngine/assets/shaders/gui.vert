@@ -5,15 +5,35 @@
 layout (location = 0) flat out uint out_mat_idx;
 layout (location = 1) out vec2 out_uv;
 
-struct GuiRect {
-    uint  material;
-    int   _layer;
-    float rotation;
-    uint  _padding;
+/*
+typedef struct {
+    RnRect    uv;
+    
+    RnColor   tint;
 
-    vec2  position;
-    vec2  scale;
+    RnVec2    anchor;
+    RnVec2    pivot;
+    
+    RnVec2    size;
+    float     rotation;
+    RnTexture texture;
+
+    uint32_t  layer;
+} RnGuiRect;
+*/
+
+struct GuiRect {
+    vec4  uv;
+    vec4  tint;
+
+    vec2  anchor;
     vec2  pivot;
+
+    vec2  size;
+    float rotation;
+    uint  texture;
+
+    uint  layer;
 };
 
 
@@ -31,10 +51,10 @@ readonly buffer GuiIndexBuffer {
 };
 
 layout (push_constant)
-uniform ScreenSize {
+uniform WindowSize {
     uint width;
     uint height;
-} screen_size;
+} window_size;
 
 
 
@@ -67,12 +87,12 @@ void main() {
     GuiRect rect = gui_rects[gui_idx];
     
     rect.scale.y = -rect.scale.y;
-    rect.position.y = screen_size.height - rect.position.y;
+    rect.anchor.y = screen_size.height - rect.position.y;
 
 
     vec2 local_pos = positions[gl_VertexIndex];
     vec2 centered_uv = local_pos + vec2(0.5);
-    vec2 scaled_pos = (centered_uv - rect.pivot) * rect.scale;
+    vec2 scaled_pos = (centered_uv - rect.pivot) * rect.size;
 
     float c = cos(rect.rotation);
     float s = sin(rect.rotation);

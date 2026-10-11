@@ -49,8 +49,6 @@ typedef uint32_t RnEntity;
 typedef uint32_t RnTexture;
 typedef uint32_t RnSound;
 typedef uint32_t RnMusic;
-typedef uint32_t RnMesh;
-typedef uint32_t RnRenderTarget;
 
 typedef enum {
     RN_KEY_0 = 39,
@@ -196,24 +194,8 @@ typedef struct {
     RnVec3   rotation;
     RnVec3   scale;
     RnEntity parent;
-    RnBool   dead;
+    bool     dead;
 } RnTransform;
-
-typedef struct {
-    RnVec3 position;
-    RnVec3 rotation;
-    RnVec3 velocity;
-} RnSoundListener;
-
-typedef struct {
-    RnSound sound;
-    float   volume;
-} RnSoundPlayer;
-
-typedef struct {
-    RnMusic music;
-    float   volume;
-} RnMusicPlayer;
 
 typedef struct {
     RnRect    uv;
@@ -229,24 +211,30 @@ typedef struct {
     float     aberration_strength;
 } RnRenderer2D;
 
+
+typedef struct {
+    RnRect    uv;
+    
+    RnColor   tint;
+
+    RnVec2    anchor;
+    RnVec2    pivot;
+    
+    RnVec2    size;
+    float     rotation;
+    RnTexture texture;
+
+    uint32_t  layer;
+} RnGuiRect;
+
+
+
 typedef struct {
     float width;
     float height;
     float far;
     float near;
 } RnCamera2D;
-
-/*
-typedef struct {
-    RnMaterial2D material;
-    int32_t      layer;
-    float        rotation;
-    uint32_t     _padding;
-    RnVec2       position;
-    RnVec2       scale;
-    RnVec2       pivot;
-} RnGuiRectInfo;
-*/
 
 RUIN_API RnVec2 rnVec2(float x, float y);
 RUIN_API RnVec3 rnVec3(float x, float y, float z);
@@ -320,19 +308,10 @@ RUIN_API float  rnMouseScroll(void);
 RUIN_API RnVec2 rnMouseMove(void);
 RUIN_API void   rnMouseHideCursor(RnBool b);
 
-
-RUIN_API RnRenderTarget rnRenderTargetCreate(uint32_t w, uint32_t h);
-RUIN_API void           rnRenderTargetKill(RnRenderTarget t);
-
 RUIN_API RnTexture rnTextureCreate(const char *path, uint32_t w, uint32_t h);
-RUIN_API RnTexture rnTextureFromRenderTarget(RnRenderTarget t);
 RUIN_API void      rnTextureKill(RnTexture t);
 RUIN_API void      rnTextureCreateGpuResources(void);
 RUIN_API void      rnTextureLoadToGpuOffscreen(RnTexture *textures, uint32_t count);
-// RUIN_API void      rnTextureLoadToGpuGui(RnTexture *textures, uint32_t count);
-
-RUIN_API RnMesh rnMeshLoad(const char *path);
-RUIN_API void   rnMeshKill(RnMesh m);
 
 RUIN_API RnSound rnSoundLOad(const char *path);
 RUIN_API void    rnSoundKill(RnSound s);
@@ -365,35 +344,10 @@ RUIN_API void          rnRenderer2DAdd(RnEntity e, RnRenderer2D r);
 RUIN_API void          rnRenderer2DKill(RnEntity e);
 RUIN_API void          rnRenderer2DSortByLayer(void);
 
-
-RUIN_API RnSoundListener *rnSoundListenerGet(RnEntity e);
-RUIN_API void             rnSoundListenerAdd(RnEntity e, RnSoundListener l);
-RUIN_API void             rnSoundListenerKill(RnEntity e);
-
-RUIN_API RnSoundPlayer *rnSoundPlayerGet(RnEntity e);
-RUIN_API void           rnSoundPlayerAdd(RnEntity e, RnSoundPlayer p);
-RUIN_API void           rnSoundPlayerKill(RnEntity e);
-RUIN_API void           rnSoundPlayerPlay(RnEntity e);
-RUIN_API void           rnSoundPlayerStop(RnEntity e);
-
-RUIN_API RnMusicPlayer *rnMusicPlayerGet(RnEntity e);
-RUIN_API void           rnMusicPlayerAdd(RnEntity e, RnMusicPlayer p);
-RUIN_API void           rnMusicPlayerKill(RnEntity e);
-RUIN_API void           rnMusicPlayerPlay(RnEntity e);
-RUIN_API void           rnMusicPlayerStop(RnEntity e);
-
 RUIN_API RnCamera2D *rnCamera2DGet(RnEntity e);
 RUIN_API void        rnCamera2DAdd(RnEntity e, RnCamera2D c);
 RUIN_API void        rnCamera2DKill(RnEntity e);
 RUIN_API void        rnCamera2DUse(RnEntity e);
-
-
-/*
-RUIN_API RnGuiRectInfo rnDefaultGuiRectInfo(void);
-RUIN_API RnGuiRect     rnGuiRectCreate(RnGuiRectInfo r);
-RUIN_API void          rnGuiRectKill(RnGuiRect r);
-RUIN_API void          rnGuiRectSortByLayer(void);
-*/
 
 #ifdef __cplusplus
 }
