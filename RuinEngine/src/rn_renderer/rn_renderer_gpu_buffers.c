@@ -1,10 +1,7 @@
-#include "cvec.h"
 #include "rn_renderer.h"
 #include "ruin.h"
 #include <cglm/types.h>
-#include <iso646.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <vulkan/vulkan_core.h>
 
 

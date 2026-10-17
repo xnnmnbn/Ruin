@@ -1,10 +1,10 @@
 #include "ruin.h"
-#include "cvec.h"
 #include <SDL3/SDL_mouse.h>
 #include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_stdinc.h>
 #include <assert.h>
 #include <stdlib.h>
+#include "clists.h"
 #include "rn_assets/rn_assets.h"
 #include "rn_components/rn_components.h"
 #include "rn_engine.h"
@@ -22,7 +22,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <time.h>
-#include <vulkan/vulkan_core.h>
 
 static RuinEngine engine = {0};
 
@@ -52,11 +51,7 @@ RnConfig rnDefaultConfig() {
     };
 }
 
-
-RnConfig *rnConfigGet() {
-    return &engine.pending_config;
-}
-
+/*
 void rnConfigUpdatePlatform() {
     SDL_SetWindowTitle(engine.platform.window.window, engine.pending_config.window.title);
     SDL_SetWindowFullscreen(engine.platform.window.window, engine.pending_config.window.fullscreen);
@@ -66,7 +61,6 @@ void rnConfigUpdatePlatform() {
     engine.active_config.window = engine.pending_config.window;
     engine.platform.window.resized = 1;
 }
-
 
 void rnConfigUpdateRenderer() {
     engine.renderer.sync.current_frame = 0;
@@ -80,6 +74,7 @@ void rnConfigUpdateAll() {
     rnConfigUpdatePlatform();
     rnConfigUpdateRenderer();
 }
+*/
 
 
 
@@ -89,13 +84,7 @@ void rnConfigUpdateAll() {
 
 
 
-
-RnBool rnSelfInit(RnConfig *c) {
-
-    if (!c) {
-        printf("No config provided.\n");
-        return 0;
-    }
+RnBool rnSelfInit(RnConfig c) {
 
     RUIN_DEBUG("Size of engine is %zu bytes.\n", sizeof(engine));
 
@@ -103,13 +92,9 @@ RnBool rnSelfInit(RnConfig *c) {
 
     srand(time(nullptr));
 
-    engine.pending_config = *c;
-    engine.active_config = *c;
+    engine.platform.config  = c.window;
+    engine.renderer.config  = c.renderer;
 
-    engine.platform.active_config  = c->window;
-    engine.platform.pending_config = c->window;
-    engine.renderer.active_config  = c->renderer;
-    engine.renderer.pending_config = c->renderer;
     
     rn_platform_init(&engine.platform);
     rn_audio_init(&engine.audio);
@@ -152,7 +137,7 @@ RnSound rnSoundLOad(const char *path) {
             path,
             MA_SOUND_FLAG_DECODE,
             NULL, NULL,
-            &((from_void(engine.assets.sounds.data, RN_Asset_Sound)[idx].sounds[i])
+            &((from_void(engine.assets.sounds.data.data, RN_Asset_Sound)[idx].sounds[i])
         )) != MA_SUCCESS) {
             return 0;
         }
@@ -172,7 +157,7 @@ RnMusic rnMusicLoad(const char *path) {
         path,
         MA_SOUND_FLAG_STREAM,
         NULL, 0,
-        &(from_void(engine.assets.musics.data, ma_sound)[idx]
+        &(from_void(engine.assets.musics.data.data, ma_sound)[idx]
     )) != MA_SUCCESS) {
         return 0;
     }
@@ -184,13 +169,13 @@ RnMusic rnMusicLoad(const char *path) {
 
 
 void rnSoundPlay(RnSound s) {
-    RN_Asset_Sound *sound = &(from_void(engine.assets.sounds.data, RN_Asset_Sound)[s]);
+    RN_Asset_Sound *sound = fn_fixed_heap_at(&engine.assets.sounds.data, s);
     ma_sound_start(&(sound->sounds[sound->current_ref]));
     sound->current_ref = (sound->current_ref + 1) % MAX_SOUND_REF_COUNT;
 }
 
 void rnMusicPlay(RnMusic m) {
-    ma_sound_start(&(from_void(engine.assets.musics.data, ma_sound)[m]));
+    ma_sound_start(fn_fixed_heap_at(&engine.assets.musics.data, m));
 }
 
 
@@ -237,8 +222,8 @@ void rnFrameEnd() {
 
     if (engine.platform.window.resized) {
 
-        if (engine.platform.active_config.width == 0 || engine.platform.active_config.height == 0) {
-            RUIN_DEBUG("%d, %d\n", engine.platform.active_config.width, engine.platform.active_config.height);
+        if (engine.platform.config.width == 0 || engine.platform.config.height == 0) {
+            RUIN_DEBUG("%d, %d\n", engine.platform.config.width, engine.platform.config.height);
             return;
         }
         rn_renderer_recreate_swapchain(&engine.renderer, &engine.platform);
@@ -246,7 +231,7 @@ void rnFrameEnd() {
         return;
     }
 
-    if (engine.platform.active_config.width == 0 || engine.platform.active_config.height == 0) {
+    if (engine.platform.config.width == 0 || engine.platform.config.height == 0) {
         return;
     }
 
@@ -360,16 +345,17 @@ void rnTimeSetTargetFPS(uint8_t t) {
 RnEntity rnEntityCreate() {
     RnEntity next_id = engine.components.next_entity_id;
     
-    cvec_push(engine.components.entities, next_id, RnEntity);
+    fn_dyn_heap_push(&engine.components.entities, &next_id);
     engine.components.next_entity_id += 1;
 
     return next_id;
 }
 
 void rnEntityKill(RnEntity e) {
-    cvec_remove(engine.components.entities, e, RnEntity);
+    fn_dyn_heap_remove(&engine.components.entities, &e, 1);
 }
 
+/*
 RnBool rnEntityValid(RnEntity e) {
     RnEntity id = RUIN_INVALID_ID;
     cvec_index(engine.components.entities, e, RnEntity, id);
@@ -380,7 +366,7 @@ RnBool rnEntityValid(RnEntity e) {
 
     return RUIN_INVALID_ID;
 }
-
+*/
 
 
 
@@ -418,9 +404,11 @@ RnTexture rnTextureCreate(const char *path, uint32_t w, uint32_t h) {
         return  0;
     }
 
+    RN_Asset_Texture_CPU *tex_cpu = fn_fixed_heap_at(&engine.assets.cpu_textures.data, cpu_next_idx);
+
     
     if (w == 0 && h == 0) {
-        from_void(engine.assets.cpu_textures.data, RN_Asset_Texture_CPU)[cpu_next_idx] = (RN_Asset_Texture_CPU){
+        *tex_cpu = (RN_Asset_Texture_CPU){
             .width = _w,
             .height = _h,
             .channels = 4,
@@ -449,7 +437,7 @@ RnTexture rnTextureCreate(const char *path, uint32_t w, uint32_t h) {
             printf("Failed to resize image: %s\n", path);
             return 0;
         }
-        from_void(engine.assets.cpu_textures.data, RN_Asset_Texture_CPU)[cpu_next_idx] = (RN_Asset_Texture_CPU){
+        *tex_cpu = (RN_Asset_Texture_CPU){
             .width = (w == 0 ? _w : w),
             .height = (h == 0 ? _h : h),
             .channels = 4,
@@ -481,8 +469,8 @@ void rnTextureLoadToGpuOffscreen(RnTexture *textures, uint32_t count) {
     RnTexture *tex_ids = NULL;
 
     if (textures == NULL || count == 0) {
-        t_count = engine.assets.gpu_textures.valid_indices.len;
-        tex_ids = engine.assets.gpu_textures.valid_indices.data;
+        t_count = engine.assets.gpu_textures.valid_indices.data_count;
+        tex_ids = (RnTexture*)engine.assets.gpu_textures.valid_indices.data;
     } else {
         t_count = count;
         tex_ids = textures;
@@ -499,9 +487,9 @@ void rnTextureLoadToGpuOffscreen(RnTexture *textures, uint32_t count) {
 
         RUIN_DEBUG("Tex: %d\n", t);
         
-        img_infos[i].sampler     = from_void(engine.assets.gpu_textures.data, RN_Asset_Texture_GPU)[t].sampler;
-        img_infos[i].imageView   = from_void(engine.assets.gpu_textures.data, RN_Asset_Texture_GPU)[t].view;
-        img_infos[i].imageLayout = from_void(engine.assets.gpu_textures.data, RN_Asset_Texture_GPU)[t].layout;
+        img_infos[i].sampler     = from_void(engine.assets.gpu_textures.data.data, RN_Asset_Texture_GPU)[t].sampler;
+        img_infos[i].imageView   = from_void(engine.assets.gpu_textures.data.data, RN_Asset_Texture_GPU)[t].view;
+        img_infos[i].imageLayout = from_void(engine.assets.gpu_textures.data.data, RN_Asset_Texture_GPU)[t].layout;
         
         writes[i] = (VkWriteDescriptorSet){0};
         writes[i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -520,12 +508,14 @@ void rnTextureLoadToGpuOffscreen(RnTexture *textures, uint32_t count) {
 
     vkUpdateDescriptorSets(engine.renderer.core.device, t_count, writes, 0, NULL);
 
+    RUIN_DEBUG("Textures uploaded.\n");
+
     VkWriteDescriptorSet write = {0};
     VkDescriptorImageInfo img_info = {0};
 
     img_info.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    img_info.imageView = engine.renderer.framebuffers.offscreen.color_view;
-    img_info.sampler = engine.renderer.framebuffers.offscreen.color_sampler;
+    img_info.imageView = engine.renderer.render_targets.offscreen.color_view;
+    img_info.sampler = engine.renderer.render_targets.offscreen.color_sampler;
 
     write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;

@@ -46,8 +46,7 @@ typedef struct RN_Input {
 } RN_Input;
 
 typedef struct RN_Platform {
-    RnConfigWindow active_config;
-    RnConfigWindow pending_config;
+    RnConfigWindow config;
     RN_Window      window;
     RN_Time        time;
     RN_Input       input;

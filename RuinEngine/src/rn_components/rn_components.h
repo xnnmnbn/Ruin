@@ -2,7 +2,7 @@
 #define RI_COMPONENTS_H
 
 
-#include "cvec.h"
+#include "clists.h"
 #include "ruin.h"
 #include <cglm/types.h>
 #include <stdint.h>
@@ -15,11 +15,11 @@ extern "C" {
 #define from_void(p, t) ((t*)(p))
 
 typedef struct {
-    void    *linear_data;
-    void    *begin_points[5];
-    uint32_t data_sizes[5];
-    uint32_t elem_counts;
-    cvec     free_entities;
+    void      *linear_data;
+    void      *begin_points[5];
+    uint32_t   data_sizes[5];
+    uint32_t   elem_counts;
+    c_dyn_heap free_entities;
 } RN_ComponentArena;
 
 
@@ -45,7 +45,7 @@ typedef struct {
     RnEntity camera_in_use;
     uint8_t camera_mode;
 
-    cvec entities;
+    c_dyn_heap entities;
     uint32_t next_entity_id;
 } RN_Components;
 

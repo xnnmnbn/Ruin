@@ -5,7 +5,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <vulkan/vulkan_core.h>
 
 void draw_frame(RuinEngine *engine) {
     VkDevice device = engine->renderer.core.device;
@@ -140,5 +139,5 @@ void draw_frame(RuinEngine *engine) {
     }
 
 
-    engine->renderer.sync.current_frame = (engine->renderer.sync.current_frame + 1) % engine->renderer.active_config.max_frames_in_flight;
+    engine->renderer.sync.current_frame = (engine->renderer.sync.current_frame + 1) % engine->renderer.config.max_frames_in_flight;
 }

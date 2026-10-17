@@ -1,4 +1,4 @@
-#include "cvec.h"
+#include "clists.h"
 #include "rn_assets.h"
 #include "rn_components/rn_components.h"
 #include "rn_renderer/rn_renderer.h"
@@ -12,21 +12,21 @@
 
 
 void rn_assets_texture_init(RN_Assets *a) {
-    a->cpu_textures.data = malloc(RUIN_MAX_TEXTURES * sizeof(RN_Asset_Texture_CPU));
-    a->gpu_textures.data = malloc(RUIN_MAX_TEXTURES * sizeof(RN_Asset_Texture_GPU));
+    a->cpu_textures.data = fn_fixed_heap_new(sizeof(RN_Asset_Texture_CPU), RUIN_MAX_TEXTURES);
+    a->gpu_textures.data = fn_fixed_heap_new(sizeof(RN_Asset_Texture_GPU), RUIN_MAX_TEXTURES);
 
-    cvec_init(a->cpu_textures.valid_indices);
-    cvec_init(a->cpu_textures.free_indices);
-    cvec_init(a->gpu_textures.valid_indices);
-    cvec_init(a->gpu_textures.free_indices);
+    a->cpu_textures.valid_indices = fn_dyn_heap_new(sizeof(RnTexture));
+    a->cpu_textures.free_indices  = fn_dyn_heap_new(sizeof(RnTexture));
+    a->gpu_textures.valid_indices = fn_dyn_heap_new(sizeof(RnTexture));
+    a->gpu_textures.free_indices  = fn_dyn_heap_new(sizeof(RnTexture));
 }
 
 void rn_assets_texture_kill(RN_Assets *a, RN_Renderer *r) {
 
-    RN_Asset_Texture_CPU *cpu_data = a->cpu_textures.data;
-    RN_Asset_Texture_GPU *gpu_data = a->gpu_textures.data;
+    RN_Asset_Texture_CPU *cpu_data = (RN_Asset_Texture_CPU*)a->cpu_textures.data.data;
+    RN_Asset_Texture_GPU *gpu_data = (RN_Asset_Texture_GPU*)a->gpu_textures.data.data;
 
-    for (uint32_t i = 0; i < a->gpu_textures.valid_indices.len; i++) {
+    for (uint32_t i = 0; i < a->gpu_textures.valid_indices.data_count; i++) {
         RnTexture t = from_void(a->gpu_textures.valid_indices.data, RnTexture)[i];
         vmaDestroyImage(
             r->core.allocator,
@@ -38,19 +38,21 @@ void rn_assets_texture_kill(RN_Assets *a, RN_Renderer *r) {
         vkDestroySampler(r->core.device, gpu_data[t].sampler, NULL);
     }
 
-    free(a->cpu_textures.data);
-    free(a->gpu_textures.data);
+    fn_fixed_heap_kill(&a->cpu_textures.data);
+    fn_fixed_heap_kill(&a->gpu_textures.data);
 
-    cvec_kill(a->cpu_textures.valid_indices);
-    cvec_kill(a->gpu_textures.valid_indices);
+    fn_dyn_heap_kill(&a->cpu_textures.valid_indices);
+    fn_dyn_heap_kill(&a->gpu_textures.valid_indices);
+    fn_dyn_heap_kill(&a->cpu_textures.free_indices);
+    fn_dyn_heap_kill(&a->gpu_textures.free_indices);
 }
 
 void rn_assets_texture_create_gpu_data(RN_Assets *a, RN_Renderer *r) {
-    RnTexture *texs = a->cpu_textures.valid_indices.data;
-    RN_Asset_Texture_CPU *cpu_texs = a->cpu_textures.data;
-    RN_Asset_Texture_GPU *gpu_texs = a->gpu_textures.data;
+    RnTexture *texs = (RnTexture*)a->cpu_textures.valid_indices.data;
+    RN_Asset_Texture_CPU *cpu_texs = (RN_Asset_Texture_CPU*)a->cpu_textures.data.data;
+    RN_Asset_Texture_GPU *gpu_texs = (RN_Asset_Texture_GPU*)a->gpu_textures.data.data;
   
-    for (uint32_t i = 0; i < a->cpu_textures.valid_indices.len; i++) {
+    for (uint32_t i = 0; i < a->cpu_textures.valid_indices.data_count; i++) {
 
         RnTexture cpu_idx = texs[i];
         RnTexture gpu_idx = cpu_texs[cpu_idx].gpu_idx;
@@ -190,7 +192,8 @@ void rn_assets_texture_create_gpu_data(RN_Assets *a, RN_Renderer *r) {
         si.magFilter = VK_FILTER_NEAREST;
         si.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
         si.maxLod = 0.0f;
-        si.maxAnisotropy = r->active_config.max_anisotropy;
+        si.anisotropyEnable = VK_TRUE;
+        si.maxAnisotropy = r->config.max_anisotropy;
 
         if (vkCreateSampler(r->core.device, &si, NULL, &gpu_texs[gpu_idx].sampler) != VK_SUCCESS) {
             RUIN_DEBUG("Failed to create sampler for Texture #%d\n", gpu_idx);

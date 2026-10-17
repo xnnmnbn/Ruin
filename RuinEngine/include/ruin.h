@@ -256,7 +256,6 @@ RUIN_API RnVec3 rnVec3Div(const RnVec3 a, float f);
 RUIN_API float  rnVec3Mag(const RnVec3 v);
 RUIN_API RnVec3 rnVec3Nor(const RnVec3 v);
 
-
 RUIN_API float  rnVec4Mag(const RnVec4 v);
 RUIN_API RnVec4 rnVec4Nor(const RnVec4 v);
 
@@ -264,16 +263,11 @@ RUIN_API RnVec4 rnVec4Nor(const RnVec4 v);
 
 
 
-RUIN_API RnBool rnSelfInit(RnConfig *c);
+RUIN_API RnBool rnSelfInit(RnConfig c);
 RUIN_API RnBool rnSelfRunning(void);
 RUIN_API void   rnSelfKill(void);
 
 RUIN_API RnConfig  rnDefaultConfig(void);
-RUIN_API RnConfig *rnConfigGet(void);
-RUIN_API void      rnConfigUpdatePlatform(void);
-RUIN_API void      rnConfigUpdateRenderer(void);
-RUIN_API void      rnConfigUpdateAudio(void);
-RUIN_API void      rnConfigUpdateAll(void);
 RUIN_API void      rnConfigReset(void);
 
 RUIN_API RnPostProcess  rnDefaultPostProcess(void);

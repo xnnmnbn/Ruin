@@ -1,5 +1,5 @@
 #include "rn_components.h"
-#include "cvec.h"
+#include "clists.h"
 #include "ruin.h"
 #include <stdalign.h>
 #include <stdint.h>
@@ -17,7 +17,7 @@
 
 void rn_components_init(RN_Components *c) {
     *c = (RN_Components){0};
-    cvec_init(c->entities);
+    c->entities = fn_dyn_heap_new(sizeof(RnEntity));
     c->next_entity_id = 1;
 
     c->transforms.linear_data = malloc(
@@ -51,10 +51,10 @@ void rn_components_init(RN_Components *c) {
         ) + 100
     );
 
-    cvec_init(c->transforms.free_entities);
-    cvec_init(c->camera2ds.free_entities);
-    cvec_init(c->renderer2ds.free_entities);
-    cvec_init(c->gui_rects.free_entities);
+    c->transforms.free_entities  = fn_dyn_heap_new(sizeof(RnEntity));
+    c->camera2ds.free_entities   = fn_dyn_heap_new(sizeof(RnEntity));
+    c->renderer2ds.free_entities = fn_dyn_heap_new(sizeof(RnEntity));
+    c->gui_rects.free_entities   = fn_dyn_heap_new(sizeof(RnEntity));
 
     c->transforms.data_sizes[0] = sizeof(RnTransform);
     c->transforms.data_sizes[1] = sizeof(RN_Component_Transform);
@@ -166,7 +166,13 @@ void rn_components_kill(RN_Components *c) {
     free(c->renderer2ds.linear_data);
     free(c->gui_rects.linear_data);
 
-    cvec_kill(c->entities);
+
+    fn_dyn_heap_kill(&c->transforms.free_entities);
+    fn_dyn_heap_kill(&c->renderer2ds.free_entities);
+    fn_dyn_heap_kill(&c->camera2ds.free_entities);
+    fn_dyn_heap_kill(&c->gui_rects.free_entities);
+
+    fn_dyn_heap_kill(&c->entities);
 
     RUIN_DEBUG("Components killed.\n");
 }

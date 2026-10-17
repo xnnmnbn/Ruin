@@ -43,13 +43,11 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
             -Wl,--whole-archive
             SDL3::SDL3-static
             -Wl,--no-whole-archive
-            Vulkan::Vulkan
     )
 else()
     target_link_libraries(Ruin
         PRIVATE
             SDL3::SDL3-static
-            Vulkan::Vulkan
     )
 endif()
 

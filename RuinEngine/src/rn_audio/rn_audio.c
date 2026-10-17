@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "rn_audio.h"
+#include "clists.h"
 #include "rn_assets/rn_assets.h"
 #include "ruin.h"
 
@@ -20,8 +21,8 @@ void rn_audio_kill(RN_Audio *a, void *ass) {
 
 
     RN_Assets *as = ass;
-    free(as->sounds.data);
-    free(as->musics.data);
+    fn_fixed_heap_kill(&as->sounds.data);
+    fn_fixed_heap_kill(&as->musics.data);
 
     RUIN_DEBUG("Audio killed.\n");
 }

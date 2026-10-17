@@ -3,11 +3,15 @@
 
 #include "rn_platform/rn_platform.h"
 #include "ruin.h"
-#include <cglm/types.h>
+#include <cglm/cglm.h>
+#include <complex.h>
 #include <stddef.h>
 #include <stdint.h>
+
+
+#define VK_NO_PROTOTYPES
+#include "Volk/volk.h"
 #include <vulkan/vulkan.h>
-#include <vulkan/vulkan_core.h>
 
 #include "vk_mem_alloc.h"
 
@@ -60,6 +64,7 @@ typedef struct {
     VkSurfaceKHR             surface;
     VkPhysicalDevice         physical_device;
     VkDevice                 device;
+    QueueFamilyIndices       queue_families;
     VkQueue                  graphics_queue;
     VkQueue                  present_queue;
     VmaAllocator             allocator;
@@ -76,7 +81,6 @@ typedef struct {
 } RN_Renderer_Swapchain;
 
 typedef struct {
-    VkFramebuffer framebuffer;
     VkExtent2D    extent;
 
     VmaAllocation color_alloc;
@@ -90,20 +94,12 @@ typedef struct {
     VkSampler     depth_sampler;
 
     uint32_t gpu_index;
-} RN_Renderer_Framebuffer;
+} RN_Renderer_RenderTarget;
+
 
 typedef struct {
-    RN_Renderer_Framebuffer offscreen;
-    RN_Renderer_Framebuffer post_process;
-} RN_Renderer_Framebuffers;
-
-typedef struct {
-    VkRenderPass shadow_pass;
-    VkRenderPass geometry_pass;
-    VkRenderPass offscreen_pass;
-
-    VkRenderPass present_pass;
-} RN_Renderer_RenderPasses;
+    RN_Renderer_RenderTarget offscreen;
+} RN_Renderer_RenderTargets;
 
 typedef struct {
     VkPipeline            pipeline;
@@ -116,7 +112,6 @@ typedef struct {
 
 typedef struct {
     VkDescriptorPool descriptor_pool;
-    // RN_Renderer_Pipeline test_pipeline;
 
     RN_Renderer_Pipeline bindless_offscreen_2d;
     RN_Renderer_Pipeline post_process_pipeline;
@@ -160,16 +155,14 @@ typedef struct {
 */
 
 typedef struct {
-    RnConfigRenderer         active_config;
-    RnConfigRenderer         pending_config;
-    RnPostProcess            post_process;
-    RN_Renderer_Core         core;
-    RN_Renderer_Swapchain    swapchain;
-    RN_Renderer_Framebuffers framebuffers;
-    RN_Renderer_RenderPasses renderpasses;
-    RN_Renderer_Pipelines    pipelines;
-    RN_Renderer_Commands     commands;
-    RN_Renderer_Sync         sync;
+    RnConfigRenderer          config;
+    RnPostProcess             post_process;
+    RN_Renderer_Core          core;
+    RN_Renderer_Swapchain     swapchain;
+    RN_Renderer_RenderTargets render_targets;
+    RN_Renderer_Pipelines     pipelines;
+    RN_Renderer_Commands      commands;
+    RN_Renderer_Sync          sync;
 
     RN_Renderer_GPU_Buffers_Bindless_2D gpu_buffers_2d;
     // RN_Renderer_GPU_Buffers_GuiRect     gpu_buffers_gui_rect;
@@ -209,13 +202,7 @@ void rn_renderer_get_swapchain_image_views(RN_Renderer *r);
 void rn_renderer_recreate_swapchain(RN_Renderer *r, RN_Platform *p);
 
 
-void rn_renderer_create_renderpass_present(RN_Renderer *r);
-void rn_renderer_create_renderpass_offscreen(RN_Renderer *r);
-
-
-void rn_renderer_create_swapchain_framebuffers(RN_Renderer *r, RN_Platform *p);
-void rn_renderer_create_framebuffer_offscreen(RN_Renderer *r);
-void rn_renderer_create_framebuffer_post_process(RN_Renderer *r, RN_Platform *p);
+void rn_renderer_create_rendertarget_offscreen_2d(RN_Renderer *r);
 
 
 void rn_renderer_create_commands(RN_Renderer *r);

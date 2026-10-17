@@ -17,6 +17,7 @@ uint32_t u_clamp(uint32_t v, uint32_t min, uint32_t max) {
 }
 
 VkSurfaceFormatKHR choose_swap_surface_format(VkSurfaceFormatKHR *formats, uint32_t count) {
+    
     for (size_t i = 0; i < count; i++) {
         if (formats[i].format == VK_FORMAT_B8G8R8A8_UNORM && formats[i].colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
             return formats[i];
@@ -45,8 +46,8 @@ VkExtent2D choose_swap_extent(VkSurfaceCapabilitiesKHR *caps, RN_Platform *p) {
     }
 
     VkExtent2D extent = {
-        p->active_config.width,
-        p->active_config.height
+        p->config.width,
+        p->config.height
     };
 
     extent.width  = u_clamp(extent.width, caps->minImageExtent.width, caps->maxImageExtent.width);
@@ -74,7 +75,7 @@ void rn_renderer_create_swapchain(RN_Renderer *r, RN_Platform *p) {
         indices.present_family
     };
 
-    if (r->active_config.vsync) {
+    if (r->config.vsync) {
         present_mode = VK_PRESENT_MODE_FIFO_KHR;
     } else {
         present_mode = VK_PRESENT_MODE_IMMEDIATE_KHR;
@@ -85,6 +86,7 @@ void rn_renderer_create_swapchain(RN_Renderer *r, RN_Platform *p) {
     si.surface          = r->core.surface;
     si.minImageCount    = image_count;
     si.imageFormat      = surface_format.format;
+    // si.imageFormat      = VK_FORMAT_R8G8B8A8_SRGB;
     si.imageColorSpace  = surface_format.colorSpace;
     si.imageExtent      = extent;
     si.imageArrayLayers = 1;
@@ -121,7 +123,7 @@ void rn_renderer_create_swapchain(RN_Renderer *r, RN_Platform *p) {
 
     vkDestroySwapchainKHR(r->core.device, si.oldSwapchain, NULL);
 
-    RUIN_DEBUG("Swapchain created: %d, %d.\n", p->active_config.width, p->active_config.height);
+    RUIN_DEBUG("Swapchain created: %d, %d.\n", p->config.width, p->config.height);
     RUIN_DEBUG("You have %d swapchain images.\n", r->swapchain.swapchain_image_count);
 
     free(details.formats);
@@ -172,11 +174,11 @@ void rn_renderer_recreate_swapchain(RN_Renderer *r, RN_Platform *p) {
     // vkDestroySwapchainKHR(r->core.device, r->swapchain.swapchain, NULL);
 
     
-    if (p->active_config.width == 0 || p->active_config.height == 0) return;
+    if (p->config.width == 0 || p->config.height == 0) return;
     
     rn_renderer_create_swapchain(r, p);
     rn_renderer_get_swapchain_image_views(r);
-    rn_renderer_create_swapchain_framebuffers(r, p);
+    // rn_renderer_create_swapchain_framebuffers(r, p);
 
     RUIN_DEBUG("Swapchain recreated.\n");
 }

@@ -149,25 +149,26 @@ void myGameInit(MyGame *g) {
 
 int main(void) {
 
-    RnConfig *cfg = rnConfigGet();
+    RnConfig cfg;
 
     RnBool cursor_hidden = 0;
 
-    cfg->window.title      = "Ruin Test";
-    cfg->window.width      = 1280;
-    cfg->window.height     = 720;
-    cfg->window.resizable  = RN_TRUE;
-    cfg->window.borderless = RN_FALSE;
+    cfg.window.title      = "Ruin Test";
+    cfg.window.width      = 1280;
+    cfg.window.height     = 720;
+    cfg.window.resizable  = RN_TRUE;
+    cfg.window.borderless = RN_FALSE;
+    cfg.window.fullscreen = RN_FALSE;
 
-    cfg->audio.sound_volume = 1.0f;
-    cfg->audio.music_volume = 1.0f;
+    cfg.audio.sound_volume = 1.0f;
+    cfg.audio.music_volume = 1.0f;
 
-    cfg->renderer.max_frames_in_flight = 2;
-    cfg->renderer.resolution_x         = 1290;
-    cfg->renderer.resolution_y         = 720;
-    cfg->renderer.max_anisotropy       = 1.0;
-    cfg->renderer.multisampling        = 1;
-    cfg->renderer.vsync                = RN_FALSE;
+    cfg.renderer.max_frames_in_flight = 2;
+    cfg.renderer.resolution_x         = 1290;
+    cfg.renderer.resolution_y         = 720;
+    cfg.renderer.max_anisotropy       = 16.0;
+    cfg.renderer.multisampling        = 1;
+    cfg.renderer.vsync                = RN_FALSE;
     
 
     rnSelfInit(cfg);
@@ -205,11 +206,12 @@ int main(void) {
             monster->renderer->contrast += rnTimeDelta();
         }
 
+/*
         if (rnKeyDown(RN_KEY_F12)) {
             cfg->window.fullscreen = !cfg->window.fullscreen;
             rnConfigUpdatePlatform();
         }
-
+*/
         const float ms = 10;
 
         if (rnKeyHold(RN_KEY_M)) {
@@ -226,12 +228,12 @@ int main(void) {
         if (rnKeyHold(RN_KEY_SPACE)) {
             rnTimeSetSpeed(0.5);
         }
-
+/*
         if (rnKeyDown(RN_KEY_V)) {
             cfg->renderer.vsync = !cfg->renderer.vsync;
             rnConfigUpdateRenderer();
         }
-
+*/
         RnVec2 mv = rnMouseMove();
 
         if (rnMouseHold(RN_MOUSE_RIGHT) && !thrown) {
@@ -294,15 +296,15 @@ int main(void) {
             troll->renderer->aberration_strength = 100;
 
 
-            troll->renderer->aberration.x = sinf(rnTimeElapsed());
-            troll->renderer->aberration.y = troll->renderer->aberration.x;
+            troll->renderer->uv.x = sinf(rnTimeElapsed());
+            troll->renderer->uv.y = troll->renderer->uv.x;
 
             float rnd = (float)rand() / RAND_MAX;
-/*
+
             monster->renderer->uv = (RnRect) {
                 rnd, rnd, rnd, rnd
             };
-*/
+
             monster->renderer->saturation = 0;
             monster->renderer->contrast   += rnTimeDelta();
         }
@@ -313,6 +315,8 @@ int main(void) {
     }
 
     rnSelfKill();
+
+    printf("ok\n");
 
     return 0;
 }

@@ -4,23 +4,23 @@
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_oldnames.h>
 #include <SDL3/SDL_video.h>
-#include <corecrt_wconio.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <vulkan/vk_platform.h>
-#include <vulkan/vulkan_core.h>
 
 
 #include <SDL3/SDL_vulkan.h>
+#include <vulkan/vulkan_core.h>
 
 static const char *validation_layers[] = {
     "VK_LAYER_KHRONOS_validation"
 };
 
 static const char *device_extentions[] = {
-    VK_KHR_SWAPCHAIN_EXTENSION_NAME
+    VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+    VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME,
+    VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME
 };
 
 static const size_t validation_layer_count = 1;
@@ -70,6 +70,11 @@ uint8_t check_validation_layer_support() {
 
 
 void rn_renderer_create_instance(RN_Renderer *r, RN_Platform *p) {
+
+    if (volkInitialize() != VK_SUCCESS) {
+        RUIN_DEBUG("Vulkan Library not found.\n");
+        return;
+    }
     
     uint32_t extension_count = 0;
     const char * const *sdl_extensions = SDL_Vulkan_GetInstanceExtensions(&extension_count);
@@ -94,7 +99,7 @@ void rn_renderer_create_instance(RN_Renderer *r, RN_Platform *p) {
 
     VkApplicationInfo ai  = {0};
     ai.sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-    ai.pApplicationName   = p->active_config.title;
+    ai.pApplicationName   = p->config.title;
     ai.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
     ai.pEngineName        = "Ruin Engine";
     ai.engineVersion      = VK_MAKE_VERSION(1, 0, 0);
@@ -125,6 +130,8 @@ void rn_renderer_create_instance(RN_Renderer *r, RN_Platform *p) {
     }
 
     RUIN_DEBUG("Instance created.\n");
+
+    volkLoadInstance(r->core.instance);
 
     
     return;
@@ -235,6 +242,8 @@ void rn_renderer_select_physical_device(RN_Renderer *r) {
 void rn_renderer_create_logical_device(RN_Renderer *r) {
     QueueFamilyIndices indices = find_queue_family_indices(&r->core);
 
+    r->core.queue_families = indices;
+
     uint32_t q_count = (indices.graphics_family == indices.present_family) ? 1 : 2;
     float queue_priority = 1.0f;
 
@@ -249,6 +258,9 @@ void rn_renderer_create_logical_device(RN_Renderer *r) {
         qis[i].pNext            = NULL;
         qis[i].flags            = 0;
     }
+
+    VkPhysicalDeviceFeatures f = {};
+    f.samplerAnisotropy = VK_TRUE;
 
     VkPhysicalDeviceVulkan12Features f12 = {0};
     f12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
@@ -269,15 +281,16 @@ void rn_renderer_create_logical_device(RN_Renderer *r) {
 
     VkPhysicalDeviceFeatures2 features2 = {0};
     features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+    features2.features = f;
     features2.pNext = &f13;
 
     VkDeviceCreateInfo di = {0};
     di.sType                   = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     di.pQueueCreateInfos       = qis;
     di.queueCreateInfoCount    = q_count;
-    di.pEnabledFeatures        = NULL;
+    di.pEnabledFeatures        = nullptr;
     di.ppEnabledExtensionNames = device_extentions;
-    di.enabledExtensionCount   = 1;
+    di.enabledExtensionCount   = 3;
     di.pNext                   = &features2;
 
     if (vkCreateDevice(r->core.physical_device, &di, NULL, &r->core.device) != VK_SUCCESS) {
@@ -286,6 +299,10 @@ void rn_renderer_create_logical_device(RN_Renderer *r) {
     }
 
     RUIN_DEBUG("Logical device created.\n");
+
+
+    volkLoadDevice(r->core.device);
+    
 
     vkGetDeviceQueue(r->core.device, indices.graphics_family, 0, &r->core.graphics_queue);
     RUIN_DEBUG("Graphics queue acquired.\n");

@@ -1,13 +1,10 @@
 #include "rn_renderer.h"
 #include "rn_platform/rn_platform.h"
 #include "ruin.h"
-#include <corecrt_wconio.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <vulkan/vk_platform.h>
-#include <vulkan/vulkan_core.h>
 
 QueueFamilyIndices find_queue_family_indices(RN_Renderer_Core *c) {
     QueueFamilyIndices indices;
@@ -101,11 +98,18 @@ Text read_file(const char *path) {
 
 
 void rn_renderer_create_vma(RN_Renderer *r) {
+
+    VmaVulkanFunctions fns = {0};
+    fns.vkGetInstanceProcAddr = vkGetInstanceProcAddr;
+    fns.vkGetDeviceProcAddr   = vkGetDeviceProcAddr;
+    
     VmaAllocatorCreateInfo vma = {0};
     vma.instance = r->core.instance;
     vma.physicalDevice = r->core.physical_device;
     vma.device = r->core.device;
     vma.vulkanApiVersion = VK_API_VERSION_1_3;
+    vma.flags = VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT;
+    vma.pVulkanFunctions = &fns;
 
     if (vmaCreateAllocator(&vma, &r->core.allocator) != VK_SUCCESS) {
         RUIN_DEBUG("Failed to create Vulkan Memory Allocator.\n");
@@ -135,20 +139,22 @@ void rn_renderer_init(RN_Renderer *r, RN_Platform *p) {
     rn_renderer_create_swapchain(r, p);
     rn_renderer_get_swapchain_image_views(r);
 
+    rn_renderer_create_rendertarget_offscreen_2d(r);
 
+/*
     rn_renderer_create_renderpass_offscreen(r);
     rn_renderer_create_renderpass_present(r);
 
     rn_renderer_create_framebuffer_offscreen(r);
     rn_renderer_create_framebuffer_post_process(r, p);
-
+*/
     rn_renderer_create_descriptor_pool(r);
 
     rn_renderer_create_pipeline_bindless_offscreen_2d(r);
     rn_renderer_create_pipeline_post_process(r);
     // rn_renderer_create_pipeline_rect_gui(r);
     
-    rn_renderer_create_swapchain_framebuffers(r, p);
+    // rn_renderer_create_swapchain_framebuffers(r, p);
     rn_renderer_create_commands(r);
     rn_renderer_create_sync_objects(r);
 
@@ -178,17 +184,16 @@ void rn_renderer_kill(RN_Renderer *r) {
     // rn_renderer_kill_gpu_buffers_gui_rect(r);
     rn_renderer_kill_gpu_buffers_2d(r);
 
-    vmaDestroyImage(r->core.allocator, r->framebuffers.offscreen.color_image, r->framebuffers.offscreen.color_alloc);
-    vkDestroyImageView(r->core.device, r->framebuffers.offscreen.color_view, NULL);
-    vkDestroySampler(r->core.device, r->framebuffers.offscreen.color_sampler, NULL);
-    vkDestroyFramebuffer(r->core.device, r->framebuffers.offscreen.framebuffer, NULL);
+    vmaDestroyImage(r->core.allocator, r->render_targets.offscreen.color_image, r->render_targets.offscreen.color_alloc);
+    vkDestroyImageView(r->core.device, r->render_targets.offscreen.color_view, NULL);
+    vkDestroySampler(r->core.device, r->render_targets.offscreen.color_sampler, NULL);
+    // vkDestroyFramebuffer(r->core.device, r->render_targets.offscreen.framebuffer, NULL);
 
     
-    vmaDestroyImage(r->core.allocator, r->framebuffers.post_process.color_image, r->framebuffers.post_process.color_alloc);
-    vkDestroyImageView(r->core.device, r->framebuffers.post_process.color_view, NULL);
-    vkDestroySampler(r->core.device, r->framebuffers.post_process.color_sampler, NULL);
-    vkDestroyFramebuffer(r->core.device, r->framebuffers.post_process.framebuffer, NULL);
-
+    // vmaDestroyImage(r->core.allocator, r->render_targets.post_process.color_image, r->render_targets.post_process.color_alloc);
+    // vkDestroyImageView(r->core.device, r->render_targets.post_process.color_view, NULL);
+    // vkDestroySampler(r->core.device, r->render_targets.post_process.color_sampler, NULL);
+    // vkDestroyFramebuffer(r->core.device, r->framebuffers.post_process.framebuffer, NULL);
 
     
     rn_renderer_kill_vma(r);
@@ -233,8 +238,8 @@ void rn_renderer_kill(RN_Renderer *r) {
 
 
 
-    vkDestroyRenderPass(r->core.device, r->renderpasses.offscreen_pass, NULL);
-    vkDestroyRenderPass(r->core.device, r->renderpasses.present_pass, NULL);
+    // vkDestroyRenderPass(r->core.device, r->renderpasses.offscreen_pass, NULL);
+    // vkDestroyRenderPass(r->core.device, r->renderpasses.present_pass, NULL);
 
 
 
@@ -243,13 +248,16 @@ void rn_renderer_kill(RN_Renderer *r) {
         vkDestroyImageView(r->core.device, r->swapchain.swapchain_image_views[i], NULL);
     }
     vkDestroySwapchainKHR(r->core.device, r->swapchain.swapchain, NULL);
+
+    
  
     
     vkDestroyDevice(r->core.device, NULL);
 
     if (enable_validation) {
-        
+        vkDestroyDebugUtilsMessengerEXT(r->core.instance, r->core.messenger, NULL);
     }
+    
     vkDestroySurfaceKHR(r->core.instance, r->core.surface, NULL);
     vkDestroyInstance(r->core.instance, NULL);
 

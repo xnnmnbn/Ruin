@@ -19,7 +19,7 @@ void rn_platform_window_init(RN_Platform *p) {
 
     SDL_WindowFlags flags = SDL_WINDOW_VULKAN;
 
-    RnConfigWindow *cfg = &p->active_config;
+    RnConfigWindow *cfg = &p->config;
 
     if (cfg->borderless) flags |= SDL_WINDOW_BORDERLESS;
     if (cfg->fullscreen) flags |= SDL_WINDOW_FULLSCREEN;
@@ -58,8 +58,8 @@ uint8_t rn_platform_window_running(RN_Platform *p) {
             case SDL_EVENT_WINDOW_RESIZED:
                 RUIN_DEBUG("RESIZED\n");
                 p->window.resized = 1;
-                p->active_config.width  = p->window.event.window.data1;
-                p->active_config.height = p->window.event.window.data2;
+                p->config.width  = p->window.event.window.data1;
+                p->config.height = p->window.event.window.data2;
                 break;
 
             case SDL_EVENT_MOUSE_MOTION:
@@ -93,6 +93,6 @@ void  rn_platform_window_kill(RN_Platform *p) {
     if (p->window.window) {
         SDL_DestroyWindow(p->window.window);
     }
-    p->active_config = (RnConfigWindow){0};
+    p->config = (RnConfigWindow){0};
 }
 

@@ -125,13 +125,13 @@ void rn_renderer_create_pipeline_bindless_offscreen_2d(RN_Renderer *r) {
     viewport.y        = 0.0f;
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
-    viewport.width    = r->active_config.resolution_x;
-    viewport.height   = r->active_config.resolution_y;
+    viewport.width    = r->config.resolution_x;
+    viewport.height   = r->config.resolution_y;
 
     VkRect2D scissor = {0};
     scissor.extent   = (VkExtent2D) {
-        r->active_config.resolution_x,
-        r->active_config.resolution_y
+        r->config.resolution_x,
+        r->config.resolution_y
     };
     scissor.offset.x = 0;
     scissor.offset.y = 0;
@@ -261,11 +261,20 @@ void rn_renderer_create_pipeline_bindless_offscreen_2d(RN_Renderer *r) {
         return;
     }
 
+    VkFormat format = VK_FORMAT_R8G8B8A8_SRGB;
+
+
+    VkPipelineRenderingCreateInfoKHR pri = {0};
+    pri.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
+    pri.colorAttachmentCount = 1;
+    pri.pColorAttachmentFormats = &format;
+
 
     VkGraphicsPipelineCreateInfo pi = {0};
     pi.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     pi.layout = r->pipelines.bindless_offscreen_2d.layout;
-    pi.renderPass = r->renderpasses.offscreen_pass;
+    pi.renderPass = VK_NULL_HANDLE;
+    // pi.renderPass = r->renderpasses.offscreen_pass;
     pi.subpass = 0;
     pi.stageCount = 2;
     pi.pStages = shader_stages;
@@ -278,6 +287,7 @@ void rn_renderer_create_pipeline_bindless_offscreen_2d(RN_Renderer *r) {
     pi.pColorBlendState = &color_blending;
     pi.pDynamicState = &dynamic_state;
     pi.basePipelineHandle = VK_NULL_HANDLE;
+    pi.pNext = &pri;
 
     if (vkCreateGraphicsPipelines(r->core.device, VK_NULL_HANDLE, 1, &pi, NULL, &r->pipelines.bindless_offscreen_2d.pipeline) != VK_SUCCESS) {
         RUIN_DEBUG("Failed to create Bindless Offscreen Pipeline 2D.\n");
@@ -462,11 +472,20 @@ void rn_renderer_create_pipeline_post_process(RN_Renderer *r) {
         return;
     }
 
+    VkFormat format = r->swapchain.swapchain_image_format;
+
+
+    VkPipelineRenderingCreateInfoKHR pri = {0};
+    pri.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
+    pri.colorAttachmentCount = 1;
+    pri.pColorAttachmentFormats = &format;
+
 
     VkGraphicsPipelineCreateInfo pi = {0};
     pi.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     pi.layout = r->pipelines.post_process_pipeline.layout;
-    pi.renderPass = r->renderpasses.offscreen_pass;
+    // pi.renderPass = r->renderpasses.offscreen_pass;
+    pi.renderPass = VK_NULL_HANDLE;
     pi.subpass = 0;
     pi.stageCount = 2;
     pi.pStages = shader_stages;
@@ -479,6 +498,7 @@ void rn_renderer_create_pipeline_post_process(RN_Renderer *r) {
     pi.pColorBlendState = &color_blending;
     pi.pDynamicState = &dynamic_state;
     pi.basePipelineHandle = VK_NULL_HANDLE;
+    pi.pNext = &pri;
 
     if (vkCreateGraphicsPipelines(r->core.device, VK_NULL_HANDLE, 1, &pi, NULL, &r->pipelines.post_process_pipeline.pipeline) != VK_SUCCESS) {
         RUIN_DEBUG("Failed to create Post Process Pipeline.\n");

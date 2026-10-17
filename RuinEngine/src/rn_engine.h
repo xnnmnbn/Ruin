@@ -18,16 +18,12 @@
 extern "C" {
 #endif
 
-#include "ruin.h"
-
 #include <SDL3/SDL.h>
 
 #define void_t(d, t) ((t*)(d))
 
 
 typedef struct {
-    RnConfig    active_config;
-    RnConfig    pending_config;
 
     RN_Platform   platform;
     RN_Renderer   renderer;

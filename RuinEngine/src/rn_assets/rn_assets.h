@@ -2,13 +2,10 @@
 #define RUIN_ASSETS_H
 
 
-#include "cvec.h"
+#include "clists.h"
 #include <stdint.h>
-#include <vulkan/vulkan_core.h>
 
 #include "rn_renderer/rn_renderer.h"
-
-#include "vk_mem_alloc.h"
 #include "miniaudio.h"
 
 #define MAX_SOUND_REF_COUNT 16
@@ -19,9 +16,9 @@ extern "C" {
 #endif
 
 typedef struct {
-    void    *data;
-    cvec     valid_indices;
-    cvec     free_indices;
+    c_fixed_heap data;
+    c_dyn_heap   valid_indices;
+    c_dyn_heap   free_indices;
 } RN_AssetStorage;
 
 typedef struct {
