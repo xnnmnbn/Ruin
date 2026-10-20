@@ -54,7 +54,7 @@ MyGameObject myGameObjectCreate(RnTexture t) {
     rnTransformAdd(o.id, rnDefaultTransform());
     o.transform = rnTransformGet(o.id);
 
-    if (t) {
+    if (t.id) {
         RnRenderer2D rend = rnDefaultRenderer2D();
         rend.texture = t;
         rnRenderer2DAdd(o.id, rend);
@@ -82,7 +82,7 @@ void myGameInit(MyGame *g) {
     RUIN_DEBUG("All textures are loaded.\n");
 
 
-    g->camera = myGameObjectCreate(0);
+    g->camera = myGameObjectCreate((RnTexture){0});
     g->troll = myGameObjectCreate(g->textures.troll);
     g->monster = myGameObjectCreate(g->textures.monster);
 

@@ -17,10 +17,11 @@ static const char *validation_layers[] = {
     "VK_LAYER_KHRONOS_validation"
 };
 
-static const char *device_extentions[] = {
+static const char *device_extensions[] = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME,
     VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME,
-    VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME
+    VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME,
+    VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME
 };
 
 static const size_t validation_layer_count = 1;
@@ -289,8 +290,8 @@ void rn_renderer_create_logical_device(RN_Renderer *r) {
     di.pQueueCreateInfos       = qis;
     di.queueCreateInfoCount    = q_count;
     di.pEnabledFeatures        = nullptr;
-    di.ppEnabledExtensionNames = device_extentions;
-    di.enabledExtensionCount   = 3;
+    di.ppEnabledExtensionNames = device_extensions;
+    di.enabledExtensionCount   = 4;
     di.pNext                   = &features2;
 
     if (vkCreateDevice(r->core.physical_device, &di, NULL, &r->core.device) != VK_SUCCESS) {

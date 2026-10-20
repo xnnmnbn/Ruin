@@ -27,7 +27,10 @@ void rn_assets_texture_kill(RN_Assets *a, RN_Renderer *r) {
     RN_Asset_Texture_GPU *gpu_data = (RN_Asset_Texture_GPU*)a->gpu_textures.data.data;
 
     for (uint32_t i = 0; i < a->gpu_textures.valid_indices.data_count; i++) {
-        RnTexture t = from_void(a->gpu_textures.valid_indices.data, RnTexture)[i];
+        RnTexture _t = from_void(a->gpu_textures.valid_indices.data, RnTexture)[i];
+
+        uint32_t t = _t.id;
+        
         vmaDestroyImage(
             r->core.allocator,
             gpu_data[t].image,
@@ -54,8 +57,8 @@ void rn_assets_texture_create_gpu_data(RN_Assets *a, RN_Renderer *r) {
   
     for (uint32_t i = 0; i < a->cpu_textures.valid_indices.data_count; i++) {
 
-        RnTexture cpu_idx = texs[i];
-        RnTexture gpu_idx = cpu_texs[cpu_idx].gpu_idx;
+        uint32_t cpu_idx = texs[i].id;
+        uint32_t gpu_idx = cpu_texs[cpu_idx].gpu_idx;
 
         gpu_texs[gpu_idx].width  = cpu_texs[cpu_idx].width;
         gpu_texs[gpu_idx].height = cpu_texs[cpu_idx].height;

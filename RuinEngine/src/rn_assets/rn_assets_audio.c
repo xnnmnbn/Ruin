@@ -20,7 +20,7 @@ void rn_assets_audio_kill(RN_Assets *a) {
     for (uint32_t i = 0; i < a->sounds.valid_indices.data_count; i++) {
         
         RnSound *idx = fn_dyn_heap_at(&a->sounds.valid_indices, i);
-        RN_Asset_Sound *s = fn_fixed_heap_at(&a->sounds.data, *idx);
+        RN_Asset_Sound *s = fn_fixed_heap_at(&a->sounds.data, idx->id);
 
         for (uint8_t j = 0; j < MAX_SOUND_REF_COUNT; j++) {
             if (ma_sound_is_playing(&s->sounds[j])) {
@@ -36,7 +36,7 @@ void rn_assets_audio_kill(RN_Assets *a) {
 
         RnMusic *idx = fn_dyn_heap_at(&a->musics.valid_indices, i);
 
-        ma_sound *m = fn_fixed_heap_at(&a->musics.data, *idx);
+        ma_sound *m = fn_fixed_heap_at(&a->musics.data, idx->id);
 
         if (ma_sound_is_playing(m)) {
             ma_sound_stop(m);

@@ -24,7 +24,7 @@ void rn_components_camera_update(RN_Components *c) {
     RnTransform *raw_transforms = (RnTransform*)(c->transforms.begin_points[0]);
 
     for (size_t i = 0; i < c2_count; i++) {
-        RnEntity e                 = c2_es[i];
+        uint32_t e                 = c2_es[i].id;
         RnCamera2D *cmr            = &c2s[e];
         RN_Component_Camera *c2_i  = &c2_is[e];
         RnTransform *t             = &raw_transforms[e];

@@ -38,7 +38,7 @@ void draw_frame(RuinEngine *engine) {
     
     // Bindless Offscreen 2D Pipeline
     RN_Component_Camera *cmr;
-    RnEntity c_ent = engine->components.camera_in_use;
+    uint32_t c_ent = engine->components.camera_in_use.id;
     uint8_t c_mode = engine->components.camera_mode;
 
     if (c_mode == 2) {
@@ -55,7 +55,7 @@ void draw_frame(RuinEngine *engine) {
 
 
     for (uint32_t i = 0; i < INSTANCE_COUNT; i++) {
-        RnEntity e = from_void(engine->components.renderer2ds.begin_points[1], RnEntity)[i];
+        uint32_t e = from_void(engine->components.renderer2ds.begin_points[1], RnEntity)[i].id;
 
         mat4 *src = &(from_void(engine->components.transforms.begin_points[1], RN_Component_Transform)[e].world_matrix);
         mat4 *dst = &(from_void(engine->renderer.gpu_buffers_2d.matrix_ssbo.mapped, mat4)[e]);
@@ -65,7 +65,7 @@ void draw_frame(RuinEngine *engine) {
 
 
     for (uint32_t i = 0; i < INSTANCE_COUNT; i++) {
-        RnEntity e     = from_void(engine->components.renderer2ds.begin_points[1], RnEntity)[i];
+        uint32_t e     = from_void(engine->components.renderer2ds.begin_points[1], RnEntity)[i].id;
 
         RnRenderer2D *gpu_m = &from_void(engine->renderer.gpu_buffers_2d.renderer_ssbo.mapped, RnRenderer2D)[e];
         RnRenderer2D *cpu_m = &from_void(engine->components.renderer2ds.begin_points[0], RnRenderer2D)[e];

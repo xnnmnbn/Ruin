@@ -50,7 +50,7 @@ void record_command_2d(RuinEngine *engine, VkCommandBuffer cmd, uint32_t img_idx
     
     RnEntity c_use = engine->components.camera_in_use;
 
-    RnCamera2D *c2 = &(from_void(engine->components.camera2ds.begin_points[0], RnCamera2D)[c_use]);
+    RnCamera2D *c2 = &(from_void(engine->components.camera2ds.begin_points[0], RnCamera2D)[c_use.id]);
 
     uint32_t w = 0;
     uint32_t h = 0;
@@ -141,7 +141,7 @@ image_barrier(cmd, swapchain_image,
         vkCmdSetScissor(cmd, 0, 1, &sc_offscreen);
         vkCmdBindPipeline(cmd, p_bindless_offscreen_2d->bind_point, p_bindless_offscreen_2d->pipeline);
         vkCmdBindDescriptorSets(cmd, p_bindless_offscreen_2d->bind_point, p_bindless_offscreen_2d->layout, 0, 2, p_bindless_offscreen_2d->d_sets, 0, NULL);
-        vkCmdPushConstants(cmd, p_bindless_offscreen_2d->layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(mat4) * 2, &(from_void(engine->components.camera2ds.begin_points[1], RN_Component_Camera)[engine->components.camera_in_use]));
+        vkCmdPushConstants(cmd, p_bindless_offscreen_2d->layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(mat4) * 2, &(from_void(engine->components.camera2ds.begin_points[1], RN_Component_Camera)[engine->components.camera_in_use.id]));
         if (engine->components.renderer2ds.elem_counts != 0) {
             vkCmdDraw(cmd, 6, engine->components.renderer2ds.elem_counts, 0, 0);
         }

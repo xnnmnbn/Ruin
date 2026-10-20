@@ -129,7 +129,8 @@ RnBool rnSelfRunning() {
 
 
 RnSound rnSoundLOad(const char *path) {
-    RnSound idx = rn_assetstorage_idx(&engine.assets.sounds);
+    RnSound idx;
+    idx.id = rn_assetstorage_idx(&engine.assets.sounds);
 
     for (uint8_t i = 0; i < MAX_SOUND_REF_COUNT; i++) {
         if (ma_sound_init_from_file(
@@ -137,9 +138,9 @@ RnSound rnSoundLOad(const char *path) {
             path,
             MA_SOUND_FLAG_DECODE,
             NULL, NULL,
-            &((from_void(engine.assets.sounds.data.data, RN_Asset_Sound)[idx].sounds[i])
+            &((from_void(engine.assets.sounds.data.data, RN_Asset_Sound)[idx.id].sounds[i])
         )) != MA_SUCCESS) {
-            return 0;
+            return (RnSound){0};
         }
     }
 
@@ -150,16 +151,17 @@ RnSound rnSoundLOad(const char *path) {
 
 
 RnMusic rnMusicLoad(const char *path) {
-    RnMusic idx = rn_assetstorage_idx(&engine.assets.musics);
+    RnMusic idx;
+    idx.id = rn_assetstorage_idx(&engine.assets.musics);
 
     if (ma_sound_init_from_file(
         &engine.audio.engine,
         path,
         MA_SOUND_FLAG_STREAM,
         NULL, 0,
-        &(from_void(engine.assets.musics.data.data, ma_sound)[idx]
+        &(from_void(engine.assets.musics.data.data, ma_sound)[idx.id]
     )) != MA_SUCCESS) {
-        return 0;
+        return (RnMusic){0};
     }
 
     rn_assetstorage_update(&engine.assets.musics);
@@ -169,13 +171,13 @@ RnMusic rnMusicLoad(const char *path) {
 
 
 void rnSoundPlay(RnSound s) {
-    RN_Asset_Sound *sound = fn_fixed_heap_at(&engine.assets.sounds.data, s);
+    RN_Asset_Sound *sound = fn_fixed_heap_at(&engine.assets.sounds.data, s.id);
     ma_sound_start(&(sound->sounds[sound->current_ref]));
     sound->current_ref = (sound->current_ref + 1) % MAX_SOUND_REF_COUNT;
 }
 
 void rnMusicPlay(RnMusic m) {
-    ma_sound_start(fn_fixed_heap_at(&engine.assets.musics.data, m));
+    ma_sound_start(fn_fixed_heap_at(&engine.assets.musics.data, m.id));
 }
 
 
@@ -343,16 +345,17 @@ void rnTimeSetTargetFPS(uint8_t t) {
 
 
 RnEntity rnEntityCreate() {
-    RnEntity next_id = engine.components.next_entity_id;
+    RnEntity next_id;
+    next_id.id = engine.components.next_entity_id;
     
-    fn_dyn_heap_push(&engine.components.entities, &next_id);
+    fn_dyn_heap_push(&engine.components.entities, &next_id.id);
     engine.components.next_entity_id += 1;
 
     return next_id;
 }
 
 void rnEntityKill(RnEntity e) {
-    fn_dyn_heap_remove(&engine.components.entities, &e, 1);
+    fn_dyn_heap_remove(&engine.components.entities, &e.id, 1);
 }
 
 /*
@@ -389,22 +392,24 @@ RnBool rnEntityValid(RnEntity e) {
 
 
 RnTexture rnDefaultTexture() {
-    return 0;
+    return (RnTexture){0};
 }
 
 RnTexture rnTextureCreate(const char *path, uint32_t w, uint32_t h) {
-    RnTexture cpu_next_idx = rn_assetstorage_idx(&engine.assets.cpu_textures);
-    RnTexture gpu_next_idx = rn_assetstorage_idx(&engine.assets.gpu_textures);
+    RnTexture cpu_next_idx;
+    cpu_next_idx.id = rn_assetstorage_idx(&engine.assets.cpu_textures);
+    RnTexture gpu_next_idx;
+    gpu_next_idx.id = rn_assetstorage_idx(&engine.assets.gpu_textures);
 
     int _w, _h, _ch;
 
     stbi_uc *pixels = stbi_load(path, &_w, &_h, &_ch, STBI_rgb_alpha);
     if (!pixels) {
         RUIN_DEBUG("Failed to load Texture to CPU: %s.\n", path);
-        return  0;
+        return  (RnTexture){0};
     }
 
-    RN_Asset_Texture_CPU *tex_cpu = fn_fixed_heap_at(&engine.assets.cpu_textures.data, cpu_next_idx);
+    RN_Asset_Texture_CPU *tex_cpu = fn_fixed_heap_at(&engine.assets.cpu_textures.data, cpu_next_idx.id);
 
     
     if (w == 0 && h == 0) {
@@ -414,7 +419,7 @@ RnTexture rnTextureCreate(const char *path, uint32_t w, uint32_t h) {
             .channels = 4,
             .format = VK_FORMAT_R8G8B8A8_SRGB,
             .pixels = pixels,
-            .gpu_idx = gpu_next_idx
+            .gpu_idx = gpu_next_idx.id
         };
     } else {
         stbi_uc *res_pixels = malloc(
@@ -435,7 +440,7 @@ RnTexture rnTextureCreate(const char *path, uint32_t w, uint32_t h) {
 
         if (!res) {
             printf("Failed to resize image: %s\n", path);
-            return 0;
+            return (RnTexture){0};
         }
         *tex_cpu = (RN_Asset_Texture_CPU){
             .width = (w == 0 ? _w : w),
@@ -443,7 +448,7 @@ RnTexture rnTextureCreate(const char *path, uint32_t w, uint32_t h) {
             .channels = 4,
             .format = VK_FORMAT_R8G8B8A8_SRGB,
             .pixels = res_pixels,
-            .gpu_idx = gpu_next_idx
+            .gpu_idx = gpu_next_idx.id
         };
     }
 
@@ -454,7 +459,7 @@ RnTexture rnTextureCreate(const char *path, uint32_t w, uint32_t h) {
     rn_assetstorage_update(&engine.assets.gpu_textures);
 
     RUIN_DEBUG("Texture loaded to CPU: %s\n", path);
-    RUIN_DEBUG("CPU idx: %d\n", cpu_next_idx);
+    RUIN_DEBUG("CPU idx: %d\n", cpu_next_idx.id);
 
     return gpu_next_idx;
 }
@@ -483,7 +488,8 @@ void rnTextureLoadToGpuOffscreen(RnTexture *textures, uint32_t count) {
     
     for (uint32_t i = 0; i < t_count; i++) {
 
-        RnTexture t = from_void(tex_ids, RnTexture)[i];
+        RnTexture _t = from_void(tex_ids, RnTexture)[i];
+        Uint32 t = _t.id;
 
         RUIN_DEBUG("Tex: %d\n", t);
         
@@ -615,12 +621,12 @@ RnTransform rnDefaultTransform() {
 }
 
 void rnTransformAdd(RnEntity e, RnTransform t) {
-   from_void(engine.components.transforms.begin_points[0], RnTransform)[e] = t;
+   from_void(engine.components.transforms.begin_points[0], RnTransform)[e.id] = t;
    RnEntity *entities  = engine.components.transforms.begin_points[2];
    uint32_t elem_count = engine.components.transforms.elem_counts;
 
    for (uint32_t i = 0; i < elem_count; i++) {
-       if (entities[i] == e) return;
+       if (entities[i].id == e.id) return;
    }
 
    entities[elem_count] = e;
@@ -631,8 +637,8 @@ void rnTransformKill(RnEntity e) {
     uint32_t elem_count = engine.components.transforms.elem_counts;
 
     for (uint32_t i = 0; i < elem_count; i++) {
-        if (entities[i] == e) {
-            entities[i] = entities[elem_count - 1];
+        if (entities[i].id == e.id) {
+            entities[i].id = entities[elem_count - 1].id;
             engine.components.transforms.elem_counts -= 1;
             break;
         }
@@ -640,11 +646,11 @@ void rnTransformKill(RnEntity e) {
 }
 
 RnTransform *rnTransformGet(RnEntity e) {
-    return &(from_void(engine.components.transforms.begin_points[0], RnTransform)[e]);
+    return &(from_void(engine.components.transforms.begin_points[0], RnTransform)[e.id]);
 }
 
 RnVec3 rnTransformGetWorldPosition(RnEntity e) {
-    mat4 *m = &(from_void(engine.components.transforms.begin_points[1], RN_Component_Transform)[e].world_matrix);
+    mat4 *m = &(from_void(engine.components.transforms.begin_points[1], RN_Component_Transform)[e.id].world_matrix);
     vec3 v;
 
     float *mm = (float*)*m;
@@ -657,7 +663,7 @@ RnVec3 rnTransformGetWorldPosition(RnEntity e) {
 }
 
 RnVec3 rnTransformGetWorldRotation(RnEntity e) {
-    mat4 *m = &(from_void(engine.components.transforms.begin_points[1], RN_Component_Transform)[e].world_matrix);
+    mat4 *m = &(from_void(engine.components.transforms.begin_points[1], RN_Component_Transform)[e.id].world_matrix);
     vec3 v;
 
     glm_euler_angles(*m, v);
@@ -670,7 +676,7 @@ RnVec3 rnTransformGetWorldRotation(RnEntity e) {
 }
 
 RnVec3 rnTransformGetWorldScale(RnEntity e) {
-    vec3 *v = &(from_void(engine.components.transforms.begin_points[1], RN_Component_Transform)[e].world_scale);
+    vec3 *v = &(from_void(engine.components.transforms.begin_points[1], RN_Component_Transform)[e.id].world_scale);
 
     return (RnVec3){
         .x = (*v)[0],
@@ -689,12 +695,12 @@ RnVec3 rnTransformGetWorldScale(RnEntity e) {
 
 
 void rnCamera2DAdd(RnEntity e, RnCamera2D c) {
-    from_void(engine.components.camera2ds.begin_points[0], RnCamera2D)[e] = c;
+    from_void(engine.components.camera2ds.begin_points[0], RnCamera2D)[e.id] = c;
     RnEntity *entities  = engine.components.camera2ds.begin_points[2];
     uint32_t elem_count = engine.components.camera2ds.elem_counts;
 
     for (uint32_t i = 0; i < elem_count; i++) {
-        if (entities[i] == e) return;
+        if (entities[i].id == e.id) return;
     }
 
     entities[elem_count] = e;
@@ -706,7 +712,7 @@ void rnCamera2DKill(RnEntity e) {
     uint32_t elem_count = engine.components.camera2ds.elem_counts;
 
     for (uint32_t i = 0; i < elem_count; i++) {
-        if (entities[i] == e) {
+        if (entities[i].id == e.id) {
             entities[i] = entities[elem_count - 1];
             engine.components.camera2ds.elem_counts -= 1;
             break;
@@ -720,7 +726,7 @@ void rnCamera2DUse(RnEntity e) {
 }
 
 RnCamera2D *rnCamera2DGet(RnEntity e) {
-    return &(from_void(engine.components.camera2ds.begin_points[0], RnCamera2D)[e]);
+    return &(from_void(engine.components.camera2ds.begin_points[0], RnCamera2D)[e.id]);
 }
 
 
@@ -747,16 +753,16 @@ RnRenderer2D rnDefaultRenderer2D() {
 }
 
 RnRenderer2D *rnRenderer2DGet(RnEntity e) {
-    return &(from_void(engine.components.renderer2ds.begin_points[0], RnRenderer2D)[e]);
+    return &(from_void(engine.components.renderer2ds.begin_points[0], RnRenderer2D)[e.id]);
 }
 
 void rnRenderer2DAdd(RnEntity e, RnRenderer2D r) {
-    from_void(engine.components.renderer2ds.begin_points[0], RnRenderer2D)[e] = r;
+    from_void(engine.components.renderer2ds.begin_points[0], RnRenderer2D)[e.id] = r;
     RnEntity *entities  = engine.components.renderer2ds.begin_points[1];
     uint32_t elem_count = engine.components.renderer2ds.elem_counts;
 
     for (uint32_t i = 0; i < elem_count; i++) {
-        if (entities[i] == e) return;
+        if (entities[i].id == e.id) return;
     }
 
     entities[elem_count] = e;
@@ -768,7 +774,7 @@ void rnRenderer2DKill(RnEntity e) {
     uint32_t elem_count = engine.components.renderer2ds.elem_counts;
 
     for (uint32_t i = 0; i < elem_count; i++) {
-        if (entities[i] == e) {
+        if (entities[i].id == e.id) {
             engine.components.renderer2ds.elem_counts -= 1;
             entities[i] = entities[elem_count - 1];
             break;
@@ -780,8 +786,8 @@ int sort_by_layer(const void *a, const void *b) {
     RnEntity e1 = *(RnEntity*)a;
     RnEntity e2 = *(RnEntity*)b;
 
-    RnRenderer2D *r1 = &(from_void(engine.components.renderer2ds.begin_points[0], RnRenderer2D)[e1]);
-    RnRenderer2D *r2 = &(from_void(engine.components.renderer2ds.begin_points[0], RnRenderer2D)[e2]);
+    RnRenderer2D *r1 = &(from_void(engine.components.renderer2ds.begin_points[0], RnRenderer2D)[e1.id]);
+    RnRenderer2D *r2 = &(from_void(engine.components.renderer2ds.begin_points[0], RnRenderer2D)[e2.id]);
 
     return (r2->layer < r1->layer) - (r1->layer < r2->layer);
 }

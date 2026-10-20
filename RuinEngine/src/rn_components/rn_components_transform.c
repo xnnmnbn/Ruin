@@ -16,7 +16,7 @@ void rn_components_transform_update(RN_Components *c) {
     uint32_t     elem_count = c->transforms.elem_counts;
 
     for (size_t i = 0; i < elem_count; i++) {
-        RnEntity e = entities[i];
+        uint32_t e = entities[i].id;
         RnTransform *transform = &transforms[e];
 
         if (transform->dead) continue;
@@ -52,7 +52,7 @@ void rn_components_transform_update(RN_Components *c) {
             transform->scale.z
         });
 
-        if (transform->parent == 0) {
+        if (transform->parent.id == 0) {
             glm_mat4_copy(*l_mat, *w_mat);
             glm_vec3_copy((vec3){
                 transform->scale.x,
@@ -62,7 +62,7 @@ void rn_components_transform_update(RN_Components *c) {
             continue;
         }
 
-        RnEntity p = transforms[e].parent;
+        uint32_t p = transforms[e].parent.id;
         RnTransform *p_transform = &transforms[p];
         RN_Component_Transform *i_p_transform = &i_transforms[p];
         mat4 *p_mat = &i_p_transform->world_matrix;

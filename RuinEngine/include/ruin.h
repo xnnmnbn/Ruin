@@ -45,10 +45,21 @@ typedef uint8_t RnBool;
 #define RUIN_MAX_ENTITIES        10000
 #define RUIN_MAX_GUI_RECTS       512
 
-typedef uint32_t RnEntity;
-typedef uint32_t RnTexture;
-typedef uint32_t RnSound;
-typedef uint32_t RnMusic;
+typedef struct RnEntity {
+    uint32_t id;
+} RnEntity;
+
+typedef struct RnTexture {
+    uint32_t id;
+} RnTexture;
+
+typedef struct RnSound {
+    uint32_t id;
+} RnSound;
+
+typedef struct RnMusic {
+    uint32_t id;
+} RnMusic;
 
 typedef enum {
     RN_KEY_0 = 39,
