@@ -499,7 +499,7 @@ void rnTextureLoadToGpuOffscreen(RnTexture *textures, uint32_t count) {
         
         writes[i] = (VkWriteDescriptorSet){0};
         writes[i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        writes[i].dstSet = engine.renderer.pipelines.bindless_offscreen_2d.d_sets[1];
+        writes[i].dstSet = engine.renderer.pipelines.shared_image_set;
         writes[i].dstBinding = 0;
         writes[i].dstArrayElement = t;
         writes[i].descriptorCount = 1;
@@ -533,76 +533,12 @@ void rnTextureLoadToGpuOffscreen(RnTexture *textures, uint32_t count) {
 
     vkUpdateDescriptorSets(engine.renderer.core.device, 1, &write, 0, NULL);
 
-
-/*
-    img_info.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    img_info.imageView = engine.renderer.framebuffers.post_process.color_view;
-    img_info.sampler = engine.renderer.framebuffers.post_process.color_sampler;
-
-    write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    write.dstSet = engine.renderer.pipelines.gui_rect_pipeline.d_sets[1];
-    write.dstBinding = 0;
-    write.dstArrayElement = 0;
-    write.descriptorCount = 1;
-    write.pImageInfo = &img_info;
-
-    vkUpdateDescriptorSets(engine.renderer.core.device, 1, &write, 0, NULL);
-*/
-    RUIN_DEBUG("Descriptor Sets updated.\n");
-}
-
-
-
-/*
-void rnTextureLoadToGpuGui(RnTexture *textures, uint32_t count) {
-
-    uint32_t t_count = 0;
-    RnTexture *tex_ids = NULL;
-
-    if (textures == NULL || count == 0) {
-        t_count = engine.assets.gpu_textures.valid_indices.len;
-        tex_ids = engine.assets.gpu_textures.valid_indices.data;
-    } else {
-        t_count = count;
-        tex_ids = textures;
-    }
-
-    VkWriteDescriptorSet writes[t_count];
-    VkDescriptorImageInfo img_infos[t_count];
-
-
     
-    for (uint32_t i = 0; i < t_count; i++) {
-
-        RnTexture t = from_void(tex_ids, RnTexture)[i];
-
-        RUIN_DEBUG("Tex: %d\n", t);
-        
-        img_infos[i].sampler     = from_void(engine.assets.gpu_textures.data, RN_Asset_Texture_GPU)[t].sampler;
-        img_infos[i].imageView   = from_void(engine.assets.gpu_textures.data, RN_Asset_Texture_GPU)[t].view;
-        img_infos[i].imageLayout = from_void(engine.assets.gpu_textures.data, RN_Asset_Texture_GPU)[t].layout;
-        
-        writes[i] = (VkWriteDescriptorSet){0};
-        writes[i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        writes[i].dstSet = engine.renderer.pipelines.gui_rect_pipeline.d_sets[1];
-        writes[i].dstBinding = 0;
-        writes[i].dstArrayElement = t;
-        writes[i].descriptorCount = 1;
-        writes[i].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-        writes[i].pImageInfo = &img_infos[i];
-
-        RUIN_DEBUG("Updating %u Texture Descriptors, t=%u, view=%p, sampler=%p\n",
-            t_count, t,
-            img_infos[i].imageView,
-            img_infos[i].sampler);
-    }
-
-    vkUpdateDescriptorSets(engine.renderer.core.device, t_count, writes, 0, NULL);
-
     RUIN_DEBUG("Descriptor Sets updated.\n");
 }
-*/
+
+
+
 
 
 
@@ -804,34 +740,56 @@ void rnRenderer2DSortByLayer() {
 
 
 
-/*
-RnGuiRectInfo rnDefaultGuiRectInfo(void) {
-    return (RnGuiRectInfo) {
+RnGuiRect rnDefaultGuiRect(void) {
+    return (RnGuiRect) {
         ._padding = 0,
         .layer = 0,
-        .material = 0,
         .pivot = (RnVec2) {0},
-        .position = (RnVec2) {0},
+        .anchor = (RnVec2) {0},
         .rotation = 0,
-        .scale = (RnVec2) {
-            .x = 160.0f,
-            .y = 90.0f
-        }
+        .size = (RnVec2) {
+            .x = 0.2,
+            .y = 0.2
+        },
+        .tint = (RnColor) {
+            1.0, 1.0, 1.0, 1.0
+        },
+        .uv = (RnRect) {
+            0.0, 0.0, 1.0, 1.0
+        },
     };
 }
 
-RnGuiRect rnGuiRectCreate(RnGuiRectInfo r) {
-    uint32_t idx = rn_assetstorage_idx(&engine.assets.gui_rects);
-    from_void(engine.assets.gui_rects.data, RnGuiRectInfo)[idx] = r;
-    rn_assetstorage_update(&engine.assets.gui_rects);
-
-    return idx;
+RnGuiRect *rnGuiRectGet(RnEntity e) {
+    return &(from_void(engine.components.gui_rects.begin_points[0], RnGuiRect)[e.id]);
 }
 
-void rnGuiRectKill(RnGuiRect r) {
-    rn_assetstorage_kill(&engine.assets.gui_rects, r);
+void rnGuiRectAdd(RnEntity e, RnGuiRect r) {
+    from_void(engine.components.gui_rects.begin_points[0], RnGuiRect)[e.id] = r;
+    RnEntity *entities  = engine.components.gui_rects.begin_points[1];
+    uint32_t elem_count = engine.components.gui_rects.elem_counts;
+
+    for (uint32_t i = 0; i < elem_count; i++) {
+        if (entities[i].id == e.id) return;
+    }
+
+    entities[elem_count] = e;
+    engine.components.gui_rects.elem_counts += 1;
 }
-*/
+
+void rnGuiRectKill(RnEntity e) {
+
+    RnEntity *entities  = engine.components.gui_rects.begin_points[1];
+    uint32_t elem_count = engine.components.gui_rects.elem_counts;
+
+    for (uint32_t i = 0; i < elem_count; i++) {
+        if (entities[i].id == e.id) {
+            engine.components.gui_rects.elem_counts -= 1;
+            entities[i] = entities[elem_count - 1];
+            break;
+        }
+    }
+}
 
 
 

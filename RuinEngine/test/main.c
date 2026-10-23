@@ -25,6 +25,11 @@ typedef struct {
 } MyGameAudios;
 
 
+typedef struct {
+    RnGuiRect *gui;
+} MyGameGUIs;
+
+
 enum {
     e_bomb_count = 999
 };
@@ -35,6 +40,8 @@ typedef struct {
 
     MyGameTextures  textures;
     MyGameAudios    audios;
+
+    MyGameGUIs guis;
 
     
     MyGameObject troll;
@@ -133,14 +140,13 @@ void myGameInit(MyGame *g) {
     
     rnTimeSetTargetFPS(60);
 
-/*
-    RnGuiRectInfo dri = rnDefaultGuiRectInfo();
-    dri.material = g->material2Ds.bomb;
-    dri.scale = (RnVec2){100, 100};;
-    dri.pivot = (RnVec2){0.0, 0.0};
+    rnGuiRectAdd(g->monster.id, rnDefaultGuiRect());
+    g->guis.gui = rnGuiRectGet(g->monster.id);
+    g->guis.gui->texture = g->textures.bomb;
 
-    RnGuiRect gui = rnGuiRectCreate(dri);
-*/
+    g->guis.gui->size = rnVec2(0.9, 0.9);
+
+
     RUIN_DEBUG("My Game inited.\n");
 }
 

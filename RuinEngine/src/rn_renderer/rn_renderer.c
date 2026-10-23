@@ -141,25 +141,18 @@ void rn_renderer_init(RN_Renderer *r, RN_Platform *p) {
 
     rn_renderer_create_rendertarget_offscreen_2d(r);
 
-/*
-    rn_renderer_create_renderpass_offscreen(r);
-    rn_renderer_create_renderpass_present(r);
-
-    rn_renderer_create_framebuffer_offscreen(r);
-    rn_renderer_create_framebuffer_post_process(r, p);
-*/
     rn_renderer_create_descriptor_pool(r);
+    rn_renderer_create_shared_image_descriptor_set(r);
 
     rn_renderer_create_pipeline_bindless_offscreen_2d(r);
     rn_renderer_create_pipeline_post_process(r);
-    // rn_renderer_create_pipeline_rect_gui(r);
-    
-    // rn_renderer_create_swapchain_framebuffers(r, p);
+    rn_renderer_create_pipeline_rect_gui(r);
+
     rn_renderer_create_commands(r);
     rn_renderer_create_sync_objects(r);
 
     rn_renderer_init_gpu_buffers_2d(r);
-    // rn_renderer_init_gpu_buffers_gui_rect(r);
+    rn_renderer_init_gpu_buffers_gui_rect(r);
 
     r->post_process.brightness = 1.0f;
     r->post_process.saturation = 1.0f;
@@ -181,19 +174,14 @@ void rn_renderer_kill(RN_Renderer *r) {
     }
     vkDeviceWaitIdle(r->core.device);
 
-    // rn_renderer_kill_gpu_buffers_gui_rect(r);
+
+    rn_renderer_kill_gpu_buffers_gui_rect(r);
     rn_renderer_kill_gpu_buffers_2d(r);
 
     vmaDestroyImage(r->core.allocator, r->render_targets.offscreen.color_image, r->render_targets.offscreen.color_alloc);
     vkDestroyImageView(r->core.device, r->render_targets.offscreen.color_view, NULL);
     vkDestroySampler(r->core.device, r->render_targets.offscreen.color_sampler, NULL);
-    // vkDestroyFramebuffer(r->core.device, r->render_targets.offscreen.framebuffer, NULL);
 
-    
-    // vmaDestroyImage(r->core.allocator, r->render_targets.post_process.color_image, r->render_targets.post_process.color_alloc);
-    // vkDestroyImageView(r->core.device, r->render_targets.post_process.color_view, NULL);
-    // vkDestroySampler(r->core.device, r->render_targets.post_process.color_sampler, NULL);
-    // vkDestroyFramebuffer(r->core.device, r->framebuffers.post_process.framebuffer, NULL);
 
     
     rn_renderer_kill_vma(r);
@@ -228,18 +216,21 @@ void rn_renderer_kill(RN_Renderer *r) {
         vkDestroyDescriptorSetLayout(r->core.device, r->pipelines.post_process_pipeline.d_set_layouts[i], NULL);
     }
 
-/*
     vkDestroyPipeline(r->core.device, r->pipelines.gui_rect_pipeline.pipeline, NULL);
     vkDestroyPipelineLayout(r->core.device, r->pipelines.gui_rect_pipeline.layout, NULL);
-    for (size_t i = 0; i < r->pipelines.gui_rect_pipeline.d_set_count; i++) {
+    for (size_t i = 0; i < 1; i++) {
         vkDestroyDescriptorSetLayout(r->core.device, r->pipelines.gui_rect_pipeline.d_set_layouts[i], NULL);
-    }    
-*/
+    }
+
+    vkDestroyDescriptorSetLayout(r->core.device, r->pipelines.shared_image_layout, nullptr);
+
+    
 
 
 
-    // vkDestroyRenderPass(r->core.device, r->renderpasses.offscreen_pass, NULL);
-    // vkDestroyRenderPass(r->core.device, r->renderpasses.present_pass, NULL);
+
+
+
 
 
 

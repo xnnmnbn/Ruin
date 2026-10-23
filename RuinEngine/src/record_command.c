@@ -1,4 +1,5 @@
 #include "rn_components/rn_components.h"
+#include "rn_renderer/rn_renderer.h"
 #include "ruin.h"
 #include "rn_engine.h"
 #include <stddef.h>
@@ -38,6 +39,7 @@ void record_command_2d(RuinEngine *engine, VkCommandBuffer cmd, uint32_t img_idx
 
     RN_Renderer_Pipeline *p_bindless_offscreen_2d = &engine->renderer.pipelines.bindless_offscreen_2d;
     RN_Renderer_Pipeline *p_post_process          = &engine->renderer.pipelines.post_process_pipeline;
+    RN_Renderer_Pipeline *p_gui_rect              = &engine->renderer.pipelines.gui_rect_pipeline;
 
     VkClearValue clear = {};
     clear.color.float32[0] = 0.75f;
@@ -88,9 +90,9 @@ void record_command_2d(RuinEngine *engine, VkCommandBuffer cmd, uint32_t img_idx
         .extent = engine->renderer.swapchain.swapchain_extent
     };
 
-    uint32_t screen_size[2] = {
-        engine->platform.config.width,
-        engine->platform.config.height
+    float screen_size[2] = {
+        (float)engine->platform.config.width,
+        (float)engine->platform.config.height
     };
 
     VkRenderingAttachmentInfo rai_offscreen = {0};
@@ -135,12 +137,23 @@ image_barrier(cmd, swapchain_image,
     ri.layerCount = 1; 
     ri.renderArea = sc_offscreen;
 
+    VkDescriptorSet offscreen_dsets[2] = {
+        engine->renderer.pipelines.bindless_offscreen_2d.d_sets[0],
+        engine->renderer.pipelines.shared_image_set
+    };
+
+    VkDescriptorSet gui_rect_dsets[2] = {
+        engine->renderer.pipelines.gui_rect_pipeline.d_sets[0],
+        engine->renderer.pipelines.shared_image_set
+    };
+
 
     vkCmdBeginRenderingKHR(cmd, &ri);
         vkCmdSetViewport(cmd, 0, 1, &vw_offscreen);
         vkCmdSetScissor(cmd, 0, 1, &sc_offscreen);
+
         vkCmdBindPipeline(cmd, p_bindless_offscreen_2d->bind_point, p_bindless_offscreen_2d->pipeline);
-        vkCmdBindDescriptorSets(cmd, p_bindless_offscreen_2d->bind_point, p_bindless_offscreen_2d->layout, 0, 2, p_bindless_offscreen_2d->d_sets, 0, NULL);
+        vkCmdBindDescriptorSets(cmd, p_bindless_offscreen_2d->bind_point, p_bindless_offscreen_2d->layout, 0, 2, offscreen_dsets, 0, nullptr);
         vkCmdPushConstants(cmd, p_bindless_offscreen_2d->layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(mat4) * 2, &(from_void(engine->components.camera2ds.begin_points[1], RN_Component_Camera)[engine->components.camera_in_use.id]));
         if (engine->components.renderer2ds.elem_counts != 0) {
             vkCmdDraw(cmd, 6, engine->components.renderer2ds.elem_counts, 0, 0);
@@ -158,10 +171,20 @@ image_barrier(cmd, offscreen_image,
     vkCmdBeginRenderingKHR(cmd, &ri);
         vkCmdSetViewport(cmd, 0, 1, &vw_present);
         vkCmdSetScissor(cmd, 0, 1, &sc_present);
+
         vkCmdBindPipeline(cmd, p_post_process->bind_point, p_post_process->pipeline);
         vkCmdBindDescriptorSets(cmd, p_post_process->bind_point, p_post_process->layout, 0, 1, p_post_process->d_sets, 0, NULL);
         vkCmdPushConstants(cmd, p_post_process->layout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(RnPostProcess), &engine->renderer.post_process);
         vkCmdDraw(cmd, 6, 1, 0, 0);
+
+        vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, p_gui_rect->pipeline);
+        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, p_gui_rect->layout, 0, 2, gui_rect_dsets, 0, NULL);
+        vkCmdPushConstants(cmd, p_gui_rect->layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(float) * 2, screen_size);
+        vkCmdDraw(cmd, 6, engine->components.gui_rects.elem_counts, 0, 0);
+
+
+        // RUIN_DEBUG("%d\n", engine->components.gui_rects.elem_counts);
+        
     vkCmdEndRenderingKHR(cmd);
 
 image_barrier(cmd, swapchain_image,

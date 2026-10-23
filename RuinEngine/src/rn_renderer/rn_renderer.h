@@ -7,9 +7,9 @@
 #include <complex.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <vulkan/vulkan_core.h>
 
 
-#define VK_NO_PROTOTYPES
 #include "Volk/volk.h"
 #include <vulkan/vulkan.h>
 
@@ -113,9 +113,12 @@ typedef struct {
 typedef struct {
     VkDescriptorPool descriptor_pool;
 
+    VkDescriptorSetLayout shared_image_layout;
+    VkDescriptorSet       shared_image_set;
+
     RN_Renderer_Pipeline bindless_offscreen_2d;
     RN_Renderer_Pipeline post_process_pipeline;
-    // RN_Renderer_Pipeline gui_rect_pipeline;
+    RN_Renderer_Pipeline gui_rect_pipeline;
 } RN_Renderer_Pipelines;
 
 typedef struct {
@@ -146,13 +149,10 @@ typedef struct {
     RN_Renderer_GPU_Buffer renderer_ssbo;
 } RN_Renderer_GPU_Buffers_Bindless_2D;
 
-/*
 typedef struct {
     RN_Renderer_GPU_Buffer rect_ssbo;
-    RN_Renderer_GPU_Buffer index_ssbo;
-    RN_Renderer_GPU_Buffer material_ssbo;
-} RN_Renderer_GPU_Buffers_GuiRect;
-*/
+    RN_Renderer_GPU_Buffer entity_ssbo;
+} RN_Renderer_GPU_Buffers_GUI_Rect;
 
 typedef struct {
     RnConfigRenderer          config;
@@ -165,7 +165,7 @@ typedef struct {
     RN_Renderer_Sync          sync;
 
     RN_Renderer_GPU_Buffers_Bindless_2D gpu_buffers_2d;
-    // RN_Renderer_GPU_Buffers_GuiRect     gpu_buffers_gui_rect;
+    RN_Renderer_GPU_Buffers_GUI_Rect    gpu_buffers_gui_rect;
 } RN_Renderer;
 
 
@@ -213,23 +213,22 @@ void            rn_renderer_single_cmd_end(RN_Renderer *r, VkCommandBuffer cmd);
 void rn_renderer_create_sync_objects(RN_Renderer *r);
 
 
+void rn_renderer_create_shared_image_descriptor_set(RN_Renderer *r);
+
+
 
 void rn_renderer_init_gpu_buffers_2d(RN_Renderer *r);
 void rn_renderer_kill_gpu_buffers_2d(RN_Renderer *r);
 
-/*
 void rn_renderer_init_gpu_buffers_gui_rect(RN_Renderer *r);
 void rn_renderer_kill_gpu_buffers_gui_rect(RN_Renderer *r);
-*/
 
 void rn_renderer_create_descriptor_pool(RN_Renderer *r);
 
-void rn_renderer_create_pipeline_test(RN_Renderer *r);
 
 void rn_renderer_create_pipeline_bindless_offscreen_2d(RN_Renderer *r);
 void rn_renderer_create_pipeline_post_process(RN_Renderer *r);
-
-// void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r);
+void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r);
 
 
 

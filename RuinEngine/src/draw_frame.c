@@ -1,3 +1,4 @@
+#include "rn_components/rn_components.h"
 #include "rn_engine.h"
 #include "ruin.h"
 #include <SDL3/SDL_events.h>
@@ -46,13 +47,13 @@ void draw_frame(RuinEngine *engine) {
     }
 
     const uint32_t INSTANCE_COUNT = engine->components.renderer2ds.elem_counts;
+    const uint32_t RECT_COUNT     = engine->components.gui_rects.elem_counts;
 
     memcpy(
         engine->renderer.gpu_buffers_2d.entity_ssbo.mapped,
         engine->components.renderer2ds.begin_points[1],
         sizeof(RnEntity) * INSTANCE_COUNT
     );
-
 
     for (uint32_t i = 0; i < INSTANCE_COUNT; i++) {
         uint32_t e = from_void(engine->components.renderer2ds.begin_points[1], RnEntity)[i].id;
@@ -63,39 +64,28 @@ void draw_frame(RuinEngine *engine) {
         memcpy(dst, src, sizeof(mat4));
     }
 
-
     for (uint32_t i = 0; i < INSTANCE_COUNT; i++) {
-        uint32_t e     = from_void(engine->components.renderer2ds.begin_points[1], RnEntity)[i].id;
+        uint32_t e = from_void(engine->components.renderer2ds.begin_points[1], RnEntity)[i].id;
 
-        RnRenderer2D *gpu_m = &from_void(engine->renderer.gpu_buffers_2d.renderer_ssbo.mapped, RnRenderer2D)[e];
-        RnRenderer2D *cpu_m = &from_void(engine->components.renderer2ds.begin_points[0], RnRenderer2D)[e];
+        RnRenderer2D *gpu_m = &(from_void(engine->renderer.gpu_buffers_2d.renderer_ssbo.mapped, RnRenderer2D)[e]);
+        RnRenderer2D *cpu_m = &(from_void(engine->components.renderer2ds.begin_points[0], RnRenderer2D)[e]);
         *gpu_m = *cpu_m;
     }
 
-/*
     // GUI Rect Pipeline
-    memcpy(
-        engine->renderer.gpu_buffers_gui_rect.index_ssbo.mapped,
-        engine->assets.gui_rects.valid_indices.data,
-        engine->assets.gui_rects.valid_indices.len * sizeof(RnGuiRect)
-    );
+    for (uint32_t i = 0; i < RECT_COUNT; i++) {
+        uint32_t e =from_void(engine->components.gui_rects.begin_points[1], RnEntity)[i].id;
+        
+        RnGuiRect *gpu_r = &(from_void(engine->renderer.gpu_buffers_gui_rect.rect_ssbo.mapped, RnGuiRect)[e]);
+        RnGuiRect *cpu_r = &(from_void(engine->components.gui_rects.begin_points[0], RnGuiRect)[e]);
+        *gpu_r = *cpu_r;
+    }
     
-    for (uint32_t i = 0; i < engine->assets.gui_rects.valid_indices.len; i++) {
-        RnGuiRect r =  from_void(engine->assets.gui_rects.valid_indices.data, RnGuiRect)[i];
-        RnGuiRectInfo r_info = from_void(engine->assets.gui_rects.data, RnGuiRectInfo)[r];
-
-        from_void(engine->renderer.gpu_buffers_gui_rect.rect_ssbo.mapped, RnGuiRectInfo)[r] =
-            from_void(engine->assets.gui_rects.data, RnGuiRectInfo)[r];
-    }
-
-    for (uint32_t i = 0; i < engine->assets.gui_rects.valid_indices.len; i++) {
-        RnGuiRect    r = from_void(engine->assets.gui_rects.valid_indices.data, RnGuiRect)[i];
-        RnMaterial2D m = from_void(engine->assets.gui_rects.data, RnGuiRectInfo)[r].material;
-
-        from_void(engine->renderer.gpu_buffers_gui_rect.material_ssbo.mapped, RnMaterial2DInfo)[m] =
-            from_void(engine->assets.material2Ds.data, RnMaterial2DInfo)[m];
-    }
-*/
+    memcpy(
+        engine->renderer.gpu_buffers_gui_rect.entity_ssbo.mapped,
+        engine->components.gui_rects.begin_points[1],
+        sizeof(RnEntity) * RECT_COUNT
+    );
 
     record_command_2d(engine, engine->renderer.commands.command_buffers[current_frame], image_index);
 

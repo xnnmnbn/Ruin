@@ -41,9 +41,7 @@ typedef uint8_t RnBool;
 #define RUIN_MAX_RENDER_TARGETS  16
 #define RUIN_MAX_SOUNDS          512
 #define RUIN_MAX_MUSICS          32
-#define RUIN_MAX_SOUND_LISTENERS 1
 #define RUIN_MAX_ENTITIES        10000
-#define RUIN_MAX_GUI_RECTS       512
 
 typedef struct RnEntity {
     uint32_t id;
@@ -161,6 +159,11 @@ typedef struct {
 } RnColor;
 
 
+typedef union {
+    RnVec4  vec4;
+    RnRect  rect;
+    RnColor color;
+} RnFloat4;
 
 
 typedef struct {
@@ -236,6 +239,7 @@ typedef struct {
     RnTexture texture;
 
     uint32_t  layer;
+    uint32_t  _padding[3];
 } RnGuiRect;
 
 
@@ -301,7 +305,6 @@ RUIN_API float    rnTimeElapsedFixed(void);
 RUIN_API void     rnTimeSetSpeed(float s);
 RUIN_API void     rnTimeSetTargetFPS(uint8_t t);
 
-
 RUIN_API RnBool rnKeyDown(RnKey k);
 RUIN_API RnBool rnKeyHold(RnKey k);
 RUIN_API RnBool rnKeyUp(RnKey k);
@@ -328,10 +331,6 @@ RUIN_API void    rnMusicKill(RnMusic m);
 RUIN_API void    rnMusicPlay(RnMusic m);
 RUIN_API void    rnMusicPause(RnMusic m, RnBool pause);
 
-
-
-
-
 RUIN_API RnTransform  rnDefaultTransform(void);
 RUIN_API RnTransform *rnTransformGet(RnEntity e);
 RUIN_API void         rnTransformAdd(RnEntity e, RnTransform t);
@@ -342,17 +341,23 @@ RUIN_API RnVec3       rnTransformGetWorldPosition(RnEntity e);
 RUIN_API RnVec3       rnTransformGetWorldRotation(RnEntity e);
 RUIN_API RnVec3       rnTransformGetWorldScale(RnEntity e);
 
-
 RUIN_API RnRenderer2D  rnDefaultRenderer2D(void);
 RUIN_API RnRenderer2D *rnRenderer2DGet(RnEntity e);
 RUIN_API void          rnRenderer2DAdd(RnEntity e, RnRenderer2D r);
 RUIN_API void          rnRenderer2DKill(RnEntity e);
 RUIN_API void          rnRenderer2DSortByLayer(void);
 
+RUIN_API RnCamera2D  rnDefaultCamera2D(void);
 RUIN_API RnCamera2D *rnCamera2DGet(RnEntity e);
 RUIN_API void        rnCamera2DAdd(RnEntity e, RnCamera2D c);
 RUIN_API void        rnCamera2DKill(RnEntity e);
 RUIN_API void        rnCamera2DUse(RnEntity e);
+
+RUIN_API RnGuiRect  rnDefaultGuiRect(void);
+RUIN_API RnGuiRect *rnGuiRectGet(RnEntity e);
+RUIN_API void       rnGuiRectAdd(RnEntity e, RnGuiRect r);
+RUIN_API void       rnGuiRectKill(RnEntity e);
+RUIN_API void       rnGuiRectSortByLayer(void);
 
 #ifdef __cplusplus
 }

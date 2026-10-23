@@ -14,7 +14,7 @@
 
 void rn_renderer_create_descriptor_pool(RN_Renderer *r) {
 
-    const size_t sizes_count = 3;
+    constexpr size_t sizes_count = 4;
 
     
     VkDescriptorPoolSize pool_sizes[sizes_count];
@@ -23,6 +23,7 @@ void rn_renderer_create_descriptor_pool(RN_Renderer *r) {
     pool_sizes[0].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     pool_sizes[0].descriptorCount = 3;
 
+    // shared image descriptor
     pool_sizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     pool_sizes[1].descriptorCount = RUIN_MAX_TEXTURES;
 
@@ -30,14 +31,10 @@ void rn_renderer_create_descriptor_pool(RN_Renderer *r) {
     pool_sizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     pool_sizes[2].descriptorCount = 1;
 
-/*
-    // gui rect pipeline
-    pool_sizes[4].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-    pool_sizes[4].descriptorCount = 3;
 
-    pool_sizes[5].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    pool_sizes[5].descriptorCount = RUIN_MAX_TEXTURES;
-*/
+    // gui rect pipeline
+    pool_sizes[3].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    pool_sizes[3].descriptorCount = 2;
 
     VkDescriptorPoolCreateInfo pi = {0};
     pi.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -53,6 +50,57 @@ void rn_renderer_create_descriptor_pool(RN_Renderer *r) {
 
     RUIN_DEBUG("Descriptor Pool created.\n");
 }
+
+
+
+
+
+void rn_renderer_create_shared_image_descriptor_set(RN_Renderer *r) {
+
+    VkDescriptorSetLayoutBinding b = {0};
+    b.binding = 0;
+    b.descriptorCount = RUIN_MAX_TEXTURES;
+    b.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    b.stageFlags = VK_SHADER_STAGE_VERTEX_BIT |
+                   VK_SHADER_STAGE_FRAGMENT_BIT;
+
+    VkDescriptorBindingFlags flags = VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT |
+                                     VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT;
+
+    VkDescriptorSetLayoutBindingFlagsCreateInfo dslbfi = {};
+    dslbfi.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
+    dslbfi.bindingCount = 1;
+    dslbfi.pBindingFlags = &flags;
+
+
+    VkDescriptorSetLayoutCreateInfo dsli = {};
+    dsli.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    dsli.bindingCount = 1;
+    dsli.pBindings = &b;
+    dsli.pNext = &dslbfi;
+    dsli.flags = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT;
+
+
+    if (vkCreateDescriptorSetLayout(r->core.device, &dsli, nullptr, &r->pipelines.shared_image_layout) != VK_SUCCESS) {
+        RUIN_DEBUG("Failed to create Shared Image Descriptor Layout.\n");
+        return;
+    }
+
+
+    VkDescriptorSetAllocateInfo dsai = {};
+    dsai.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    dsai.descriptorPool = r->pipelines.descriptor_pool;
+    dsai.descriptorSetCount = 1;
+    dsai.pSetLayouts = &r->pipelines.shared_image_layout;
+
+
+    if (vkAllocateDescriptorSets(r->core.device, &dsai, &r->pipelines.shared_image_set) != VK_SUCCESS) {
+        RUIN_DEBUG("Failed to create Shared Image Descriptor Set.\n");
+    }
+
+    RUIN_DEBUG("Shared Image Descriptor Set created.\n");
+}
+
 
 
 
@@ -186,10 +234,8 @@ void rn_renderer_create_pipeline_bindless_offscreen_2d(RN_Renderer *r) {
     color_blending.attachmentCount = 1;
 
     constexpr uint8_t set0_binding_count = 3;
-    constexpr uint8_t set1_binding_count = 1;
 
     VkDescriptorSetLayoutBinding set0_bindings[set0_binding_count] = {0};
-    VkDescriptorSetLayoutBinding set1_bindings[set1_binding_count] = {0};
 
     for (uint8_t i = 0; i < set0_binding_count; i++) {
         set0_bindings[i].binding            = i;
@@ -204,44 +250,20 @@ void rn_renderer_create_pipeline_bindless_offscreen_2d(RN_Renderer *r) {
     set0_bindings[1].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     set0_bindings[2].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
 
-    set1_bindings->binding            = 0;
-    set1_bindings->descriptorCount    = RUIN_MAX_TEXTURES;
-    set1_bindings->pImmutableSamplers = NULL;
-    set1_bindings->stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
-    set1_bindings->descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-
     r->pipelines.bindless_offscreen_2d.d_set_count = 2;
     uint8_t set_count = r->pipelines.bindless_offscreen_2d.d_set_count;
+    constexpr uint8_t new_set_count = 1;
 
+    VkDescriptorSetLayoutCreateInfo dsli = {};
+    dsli.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    dsli.pBindings    = set0_bindings;
+    dsli.bindingCount = set0_binding_count;
+    dsli.flags        = 0;
+    dsli.pNext        = NULL;
 
-
-    VkDescriptorBindingFlags flags = VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT |
-                                     VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT;
-
-    VkDescriptorSetLayoutBindingFlagsCreateInfo dslbfci = {0};
-    dslbfci.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
-    dslbfci.bindingCount  = set1_binding_count;
-    dslbfci.pBindingFlags = &flags;
-
-    VkDescriptorSetLayoutCreateInfo dslis[2] = {0};
-
-    dslis[0].sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    dslis[0].pBindings    = set0_bindings;
-    dslis[0].bindingCount = set0_binding_count;
-    dslis[0].flags        = 0;
-    dslis[0].pNext        = NULL;
-
-    dslis[1].sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    dslis[1].pBindings    = set1_bindings;
-    dslis[1].bindingCount = set1_binding_count;
-    dslis[1].pNext        = &dslbfci;
-    dslis[1].flags        = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT;
-
-    for (uint8_t i = 0; i < set_count; i++) {
-        if (vkCreateDescriptorSetLayout(r->core.device, &(dslis[i]), NULL, &(r->pipelines.bindless_offscreen_2d.d_set_layouts[i])) != VK_SUCCESS) {
-            RUIN_DEBUG("Failed to create descriptor set layout #%d of bindless pipeline 2D.\n", i);
-            return;
-        }
+    if (vkCreateDescriptorSetLayout(r->core.device, &dsli, NULL, &(r->pipelines.bindless_offscreen_2d.d_set_layouts[0])) != VK_SUCCESS) {
+        RUIN_DEBUG("Failed to create descriptor set layout of bindless pipeline 2D.\n");
+        return;
     }
 
     VkPushConstantRange pc = {0};
@@ -249,9 +271,14 @@ void rn_renderer_create_pipeline_bindless_offscreen_2d(RN_Renderer *r) {
     pc.size = sizeof(mat4) * 2;
     pc.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 
+    VkDescriptorSetLayout d_set_layouts[2] = {
+        r->pipelines.bindless_offscreen_2d.d_set_layouts[0],
+        r->pipelines.shared_image_layout
+    };
+
     VkPipelineLayoutCreateInfo layout = {0};
     layout.sType          = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    layout.pSetLayouts    = r->pipelines.bindless_offscreen_2d.d_set_layouts;
+    layout.pSetLayouts    = d_set_layouts;
     layout.setLayoutCount = set_count;
     layout.pPushConstantRanges    = &pc;
     layout.pushConstantRangeCount = 1;
@@ -273,8 +300,6 @@ void rn_renderer_create_pipeline_bindless_offscreen_2d(RN_Renderer *r) {
     VkGraphicsPipelineCreateInfo pi = {0};
     pi.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     pi.layout = r->pipelines.bindless_offscreen_2d.layout;
-    pi.renderPass = VK_NULL_HANDLE;
-    // pi.renderPass = r->renderpasses.offscreen_pass;
     pi.subpass = 0;
     pi.stageCount = 2;
     pi.pStages = shader_stages;
@@ -304,7 +329,7 @@ void rn_renderer_create_pipeline_bindless_offscreen_2d(RN_Renderer *r) {
     dsai.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     dsai.descriptorPool = r->pipelines.descriptor_pool;
     dsai.pSetLayouts = r->pipelines.bindless_offscreen_2d.d_set_layouts;
-    dsai.descriptorSetCount = 2;
+    dsai.descriptorSetCount = new_set_count;
 
     if (vkAllocateDescriptorSets(r->core.device, &dsai, r->pipelines.bindless_offscreen_2d.d_sets) != VK_SUCCESS) {
         RUIN_DEBUG("Failed to allocate Descriptor Sets for Bindless Offscreen Pipeline 2D.\n");
@@ -484,8 +509,6 @@ void rn_renderer_create_pipeline_post_process(RN_Renderer *r) {
     VkGraphicsPipelineCreateInfo pi = {0};
     pi.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     pi.layout = r->pipelines.post_process_pipeline.layout;
-    // pi.renderPass = r->renderpasses.offscreen_pass;
-    pi.renderPass = VK_NULL_HANDLE;
     pi.subpass = 0;
     pi.stageCount = 2;
     pi.pStages = shader_stages;
@@ -535,11 +558,11 @@ void rn_renderer_create_pipeline_post_process(RN_Renderer *r) {
 
 
 
-/*
+
 void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r) {
 
-    VkShaderModule vert_module = create_shader_module(r, gui_vert_spv, gui_vert_spv_len);
-    VkShaderModule frag_module = create_shader_module(r, gui_frag_spv, gui_frag_spv_len);
+    VkShaderModule vert_module = create_shader_module(r, gui_rect_vert_spv, gui_rect_vert_spv_len);
+    VkShaderModule frag_module = create_shader_module(r, gui_rect_frag_spv, gui_rect_frag_spv_len);
 
     VkPipelineShaderStageCreateInfo v_shader = {0};
     VkPipelineShaderStageCreateInfo f_shader = {0};
@@ -587,13 +610,13 @@ void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r) {
     viewport.y        = 0.0f;
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
-    viewport.width    = r->active_config.resolution_x;
-    viewport.height   = r->active_config.resolution_y;
+    viewport.width    = r->config.resolution_x;
+    viewport.height   = r->config.resolution_y;
 
     VkRect2D scissor = {0};
     scissor.extent   = (VkExtent2D) {
-        r->active_config.resolution_x,
-        r->active_config.resolution_y
+        r->config.resolution_x,
+        r->config.resolution_y
     };
     scissor.offset.x = 0;
     scissor.offset.y = 0;
@@ -647,10 +670,8 @@ void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r) {
     color_blending.pAttachments    = &color_blend_attachment;
     color_blending.attachmentCount = 1;
 
-    enum {
-        set0_binding_count = 3,
-        set1_binding_count = 1
-    };
+    constexpr uint32_t set0_binding_count = 2;
+    constexpr uint32_t set1_binding_count = 1;
 
     VkDescriptorSetLayoutBinding set0_bindings[set0_binding_count] = {0};
     VkDescriptorSetLayoutBinding set1_bindings[set1_binding_count] = {0};
@@ -661,13 +682,12 @@ void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r) {
         set0_bindings[i].pImmutableSamplers = NULL;
     }
 
-    set0_bindings[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    set0_bindings[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT |
+                                  VK_SHADER_STAGE_FRAGMENT_BIT;
     set0_bindings[1].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-    set0_bindings[2].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
     set0_bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     set0_bindings[1].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-    set0_bindings[2].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
 
     set1_bindings->binding            = 0;
     set1_bindings->descriptorCount    = RUIN_MAX_TEXTURES;
@@ -676,7 +696,7 @@ void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r) {
     set1_bindings->descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 
     r->pipelines.gui_rect_pipeline.d_set_count = 2;
-    uint8_t set_count = r->pipelines.gui_rect_pipeline.d_set_count;
+    const uint8_t set_count = r->pipelines.gui_rect_pipeline.d_set_count;
 
 
 
@@ -702,21 +722,24 @@ void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r) {
     dslis[1].pNext        = &dslbfci;
     dslis[1].flags        = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT;
 
-    for (uint8_t i = 0; i < set_count; i++) {
-        if (vkCreateDescriptorSetLayout(r->core.device, &(dslis[i]), NULL, &(r->pipelines.gui_rect_pipeline.d_set_layouts[i])) != VK_SUCCESS) {
-            RUIN_DEBUG("Failed to create descriptor set layout #%d of GUI Rect Pipeline.\n", i);
-            return;
-        }
+    if (vkCreateDescriptorSetLayout(r->core.device, &(dslis[0]), nullptr, &(r->pipelines.gui_rect_pipeline.d_set_layouts[0])) != VK_SUCCESS) {
+        RUIN_DEBUG("Failed to create descriptor set layout #%d of GUI Rect Pipeline.\n", 0);
+        return;
     }
 
     VkPushConstantRange pc_range = {0};
     pc_range.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
     pc_range.offset = 0;
-    pc_range.size = sizeof(uint32_t) * 2;
+    pc_range.size = sizeof(float) * 2;
+
+    VkDescriptorSetLayout dset_layouts[2] = {
+        r->pipelines.gui_rect_pipeline.d_set_layouts[0],
+        r->pipelines.shared_image_layout
+    };
 
     VkPipelineLayoutCreateInfo layout = {0};
     layout.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    layout.pSetLayouts            = r->pipelines.gui_rect_pipeline.d_set_layouts;
+    layout.pSetLayouts            = dset_layouts;
     layout.setLayoutCount         = set_count;
     layout.pPushConstantRanges    = &pc_range;
     layout.pushConstantRangeCount = 1;
@@ -726,11 +749,17 @@ void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r) {
         return;
     }
 
+    VkFormat format = r->swapchain.swapchain_image_format;
 
+    VkPipelineRenderingCreateInfoKHR pri = {0};
+    pri.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
+    pri.colorAttachmentCount = 1;
+    pri.pColorAttachmentFormats = &format;
+
+    
     VkGraphicsPipelineCreateInfo pi = {0};
     pi.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     pi.layout = r->pipelines.gui_rect_pipeline.layout;
-    pi.renderPass = r->renderpasses.present_pass;
     pi.subpass = 0;
     pi.stageCount = 2;
     pi.pStages = shader_stages;
@@ -743,6 +772,7 @@ void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r) {
     pi.pColorBlendState = &color_blending;
     pi.pDynamicState = &dynamic_state;
     pi.basePipelineHandle = VK_NULL_HANDLE;
+    pi.pNext = &pri;
 
     if (vkCreateGraphicsPipelines(r->core.device, VK_NULL_HANDLE, 1, &pi, NULL, &r->pipelines.gui_rect_pipeline.pipeline) != VK_SUCCESS) {
         RUIN_DEBUG("Failed to create GUI Rect Pipeline.\n");
@@ -759,7 +789,7 @@ void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r) {
     dsai.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     dsai.descriptorPool = r->pipelines.descriptor_pool;
     dsai.pSetLayouts = r->pipelines.gui_rect_pipeline.d_set_layouts;
-    dsai.descriptorSetCount = 2;
+    dsai.descriptorSetCount = 1;
 
     VkResult res = vkAllocateDescriptorSets(r->core.device, &dsai, r->pipelines.gui_rect_pipeline.d_sets);
 
@@ -771,4 +801,3 @@ void rn_renderer_create_pipeline_rect_gui(RN_Renderer *r) {
     RUIN_DEBUG("Descriptor Sets allocated for GUI Rect Pipeline.\n");
 
 }
-*/
